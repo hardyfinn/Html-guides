@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Loopshifter for Max for Live</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}
+.fig{background:var(--card);border:1px dashed var(--line);border-radius:6px;padding:10px 14px;color:var(--mut);font-size:.9rem;margin:1em 0}</style></head><body><main>
+<h1>Loopshifter for Max for Live</h1>
+<p class="sub">Ableton Live audio effect: tempo-synced buffer with a moving loop window</p>
+<div class="fig">The original PDF opens with a picture of the device display (drawn by the real display script from the real engine) beside a drawing of the control layout. The display shows the capture window, the play head and the current beat; see "Controls" below for the layout.</div>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#install">Install</a></li><li><a href="#play">Playing it</a></li><li><a href="#controls">Controls</a></li><li><a href="#ideas">Ideas for loop fatigue</a></li><li><a href="#notes">Notes</a></li><li><a href="#files">Files</a></li></ul></nav>
+<p>An Ableton Live audio effect that captures a tempo-synced buffer and plays a short loop from it. After each pass the loop's window moves a little further through the buffer, and the material stays on the beat.</p>
+<h2 id="idea">The idea</h2>
+<p>Capture 16 beats, <code>ABCDEFGHIJKLMNOP</code>. Set Loop to 4 beats and Shift to 1 beat. Loopshifter plays the loop plus the shift, then starts again one shift later:</p>
+<pre>ABCDE   BCDEF   CDEFG   DEFGH   EFGHI ...</pre>
+<p>Every pass lasts loop + shift, and the next one starts later by the same shift, so every hit stays on its beat, whatever the shift is, even an odd number of milliseconds. Only the place where it jumps moves around. That's where the stuttery edits come from.</p>
+<p>Backwards starts on the last loop of the buffer and plays loop minus shift, then steps back by the shift: <code>MNO LMN KLM ...</code>. That's the backwards version that stays on the beat. Because it plays loop minus shift, the shift has to be shorter than the loop.</p>
+<h2 id="install">Install</h2>
+<p>Unzip <code>Loopshifter-M4L.zip</code> and keep the three files together in one folder (for example <code>User Library/Presets/Audio Effects/Max Audio Effect/</code>):</p>
+<ul><li><code>Loopshifter.amxd</code>, the device</li><li><code>loopshifter_display_xxxxxxxx.js</code>, which draws the display</li><li><code>loopshifter_live_xxxxxxxx.js</code>, which stops Live and switches the clip off and on</li></ul>
+<p>Drag <code>Loopshifter.amxd</code> onto the audio track that holds the clip. The letters at the end of the script names change with every version, so a new version never picks up an old script that Live is still holding. You can delete the old ones.</p>
+<div class="note">If the display stays white, open the device in Max (the Edit button on its title bar), press Freeze Device (the snowflake at the bottom of the Max window) and save. The device then carries both scripts inside itself.</div>
+<h2 id="play">Playing it</h2>
+<p>Put Loopshifter on the track that holds the clip you want to loop.</p>
+<ol>
+<li>With Live stopped, press <strong>ARM</strong>. The button says ARMED.</li>
+<li>Press Play in Live. Recording starts on the very first sample, wherever you start from. The button flashes REC and the display counts the beats in red.</li>
+<li>When the buffer is full, the button says COMPLETE. With auto stop on (the default), Loopshifter stops Live and switches off the clip that was playing into it (the clip on this track: the playing Session clip, or the Arrangement clip under the part it recorded).</li>
+<li>Press Play again. The loop plays in place of the clip.</li>
+<li>Change Loop, Shift and the direction while it plays. Each change takes effect at the next jump. Restart goes back to the first window on the next bar line.</li>
+<li>Clear empties the buffer, switches the clip back on, and turns the button back into ARM, ready for a new capture.</li></ol>
+<p>Pressing ARMED or REC cancels, back to ARM. Pressing COMPLETE does nothing: press Clear first. If you press ARM while Live is already playing, recording waits for the next bar line. With auto stop off, Live keeps playing and the loop starts as soon as the buffer is full.</p>
+<p>Before a capture, and after At end: stop, you hear the track as normal. When Live stops, the buffer is kept, and the next time Live plays, the loop starts again from the top.</p>
+<h2 id="controls">Controls</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td>ARM / ARMED / REC / COMPLETE</td><td>Arms the capture and shows where it's at. Live stopped: recording starts when you press Play. Live playing: it starts on the next bar line. Press again while ARMED or REC to cancel.</td></tr>
+<tr><td>auto stop</td><td>On: when the buffer is full, Live stops and the clip on this track is switched off, so the loop takes over at the next Play. Off: Live keeps going and the loop starts straight away.</td></tr>
+<tr><td>Clear</td><td>Empties the buffer and switches back on any clip that auto stop switched off.</td></tr>
+<tr><td>Buffer</td><td>How many beats to capture: 8, 16 or 32.</td></tr>
+<tr><td>Loop</td><td>Loop length, from 1 to 16 beats.</td></tr>
+<tr><td>Shift: ms / beat</td><td>Set the shift in milliseconds (a knob, 1 to 2000 ms) or as a fraction of a beat.</td></tr>
+<tr><td>1/32 ... 1</td><td>Shift as a fraction of a beat: 1 = one beat, 1/4 = a sixteenth note, 1/32 = a very small nudge.</td></tr>
+<tr><td>fwd / back</td><td>Which way the window moves through the buffer.</td></tr>
+<tr><td>Fade</td><td>Crossfade at each jump, from 0 to 40 ms (20 ms by default). 0 gives hard, clicky edits.</td></tr>
+<tr><td>At end: wrap</td><td>The window runs on past the end of the buffer and comes round to the start (<code>MNOPA</code>), still on the beat.</td></tr>
+<tr><td>At end: stop</td><td>Once the next window would run past the end (or before the start, going back), the loop stops and you hear the track again.</td></tr>
+<tr><td>Restart</td><td>Back to the first window, on the next bar line.</td></tr></table></div>
+<p>Every control is a Live parameter, so Key Map (Cmd/Ctrl+K), MIDI Map (Cmd/Ctrl+M) and automation all work. For example, automating Restart at the start of each section, or the Shift fraction across a breakdown.</p>
+<h2 id="ideas">Ideas for loop fatigue</h2>
+<ul>
+<li><strong>Slow drift:</strong> a 32-beat buffer with a 4-beat loop and a 1/16 shift. It takes a long time to get through the buffer, so the groove changes gradually over a whole section.</li>
+<li><strong>Off-grid edits:</strong> set Shift to ms (try 37 ms or 113 ms). The hits stay on the beat, but the jump lands in odd places, which gives you Autechre-style stutters.</li>
+<li><strong>Build and release:</strong> use stop with a 2-beat loop and a 1/2 shift. The window runs through the buffer and then hands back to the live track. Automate Restart to set it off again.</li>
+<li><strong>Back and forth:</strong> automate fwd/back every 8 bars, and the window wanders around the middle of the buffer.</li></ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>Assumes 4/4. The loop remembers where in the bar the capture started (normally the bar line), and Restart waits for that point, so the loop stays lined up with the bars.</li>
+<li>The buffer remembers the tempo it was captured at. If you change Live's tempo after capturing, capture again.</li>
+<li>The window, the play head and the beat it's on are shown in the display. The status line says when it's waiting for a bar.</li></ul>
+<h2 id="files">Files</h2>
+<ul>
+<li><code>m4l/loopshifter.genexpr</code>: the engine (it goes in the gen~ codebox)</li>
+<li><code>m4l/loopshifter_display.js</code>: the display ([jsui])</li>
+<li><code>m4l/build_device.py</code>: writes <code>m4l/dist/Loopshifter.amxd</code> (and a .maxpat copy to read in Max)</li>
+<li><code>m4l/test/gen_test.js</code>: turns the GenExpr into JavaScript and checks the playback order (ABCDE BCDEF..., ms shifts, backwards, wrap, stop, restart, transport, fades, arming while Live is stopped, ARM/cancel, Clear, auto stop): <code>node m4l/test/gen_test.js</code></li>
+<li><code>m4l/loopshifter_live.js</code>: stops Live and switches the clip off and on again ([js], Live API)</li></ul>
+
+</main></body></html>

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gridworks</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}
+.fig{background:var(--card);border:1px dashed var(--line);border-radius:6px;padding:10px 14px;color:var(--mut);font-size:.9rem;margin:1em 0}</style></head><body><main>
+<h1>Gridworks</h1>
+<p class="sub">Four monome grid modules for VCV Rack 2: GridDrums, GridKeys, GridMutes, LessConcepts</p>
+<nav><strong>Contents</strong><ul><li><a href="#drums">GridDrums</a></li><li><a href="#keys">GridKeys</a></li><li><a href="#mutes">GridMutes</a></li><li><a href="#lc">LessConcepts</a></li></ul></nav>
+<p>Four modules for VCV Rack 2 that turn a monome grid into a drum sequencer, a note keyboard, a performance mute matrix and a cellular-automaton melody generator. All by Hær. They need <code>serialosc</code> (free from monome.org) running, the same helper the monome-rack modules use. Each Gridworks module uses its own grid, and only one module or app can use a grid at a time.</p>
+<div class="fig">The original PDFs include a panel picture for each module; those are not reproduced here.</div>
+
+<h2 id="drums">GridDrums</h2>
+<p><em>A six-track drum sequencer for the monome grid.</em></p>
+<h3>What it does</h3>
+<p>Six drum tracks of sixteen steps. Each track is one row on your grid. Press a key to switch a step on or off; the lights show the pattern and the step that's playing. The same grid is drawn on the panel and you can click it, so it also works without the grid plugged in.</p>
+<p>Sixteen memory slots hold sixteen patterns. Press a slot and it takes over at the start of the next bar, so changes always land on the one.</p>
+<h3>Before you start</h3>
+<ul><li>Install serialosc from monome.org (the free helper that lets apps talk to the grid).</li><li>Install <code>Gridworks-2.0.0-mac-arm64.vcvplugin</code> by dropping it into Rack's plugins folder, then restart Rack.</li></ul>
+<h3>The grid map</h3>
+<div class="tw"><table><tr><th>Row</th><th>Function</th></tr>
+<tr><td>Rows 1-6</td><td>Track 1 to 6. One key per step (column 1 = step 1)</td></tr>
+<tr><td>Row 7</td><td>MUTE tracks 1-6, plus CLEAR and COPY</td></tr>
+<tr><td>Row 8</td><td>SLOTS 1 to 16 (bright = playing, blinking = waiting for the bar, dim = has a pattern)</td></tr></table></div>
+<div class="tw"><table><tr><th>To…</th><th>On the grid</th><th>On the panel</th></tr>
+<tr><td>Switch a step on/off</td><td>Press its key</td><td>Click it</td></tr>
+<tr><td>Mute a track</td><td>Row 7, keys 1-6 (they flash as the track plays)</td><td>Click the same keys</td></tr>
+<tr><td>Change pattern</td><td>Row 8: press a slot</td><td>Click a slot</td></tr>
+<tr><td>Copy this pattern to a new slot (to make a variation)</td><td>Hold COPY, press the slot</td><td>Click COPY, then the slot</td></tr>
+<tr><td>Empty one track</td><td>Hold CLEAR, press any key in that track</td><td>Click CLEAR, then the track</td></tr>
+<tr><td>Empty a slot</td><td>Hold CLEAR, press the slot</td><td>Click CLEAR, then the slot</td></tr></table></div>
+<h3>First patch (2 minutes)</h3>
+<ol>
+<li>Add GridDrums. Its GRID light turns green when it has found your grid (the status line says which).</li>
+<li>Clock: a VCV Clock ×4 output (16th notes) → CLOCK. Its reset output → RESET.</li>
+<li>TR 1 → kick (e.g. Boohm), TR 2 → snare, TR 3/TR 4 → closed/open hat (808 Metal), TR 5/6 → percussion. Slot 1 starts with a basic four-to-the-floor beat.</li>
+<li>Press COPY + slot 2, change a few steps in slot 2, then jump between slots 1 and 2 to build a section.</li></ol>
+<div class="note"><strong>Arrangement idea.</strong> Plug a sequencer's pitch output into SLOT: each semitone picks the next slot (0 V/C = slot 1, C# = slot 2…). A slow sequence of notes, one per bar or per 4 bars, becomes the song form. Long Form or Metropolix can drive it. BAR gives a trigger on every step 1 to clock that sequencer.</div>
+<h3>Right-click menu</h3>
+<ul>
+<li><strong>Grid list:</strong> choose which grid this module uses. Only one module or app can use a grid at a time; choosing it here takes it from monome-rack or other apps, and choosing it there takes it back.</li>
+<li><strong>Let go of the grid / Look for grids again</strong> (if you plugged the grid in after opening Rack and it isn't found).</li>
+<li><strong>Gate outputs:</strong> outputs stay high as long as the clock pulse instead of a short 5 ms trigger.</li>
+<li><strong>Change slot at once:</strong> skip waiting for the bar. (If the clock is stopped, slot changes are always at once.)</li>
+<li><strong>Clear the playing slot · Unmute all.</strong> Rack's Randomize makes a random beat in the playing slot.</li></ul>
+<p>Everything (all 16 slots, mutes, the grid choice) is saved with the patch. A 16×16 grid uses its top half; an 8-wide grid shows steps 1-8.</p>
+
+<h2 id="keys">GridKeys</h2>
+<p><em>A Push-style note keyboard for the monome grid.</em></p>
+<h3>The idea</h3>
+<p>The grid becomes a keyboard. The bottom-left key is the root note in the starting octave. Notes rise one step per key to the right, and each row starts a little higher than the row below (a 4th by default, just like Ableton Push). Because a row is wider than that jump, rows overlap, so the same note appears in several places. Every copy lights up when you play it, and you can reach a chord or a melody from whichever spot is closest.</p>
+<h3>Patch it up</h3>
+<ol><li>POLY V/OCT + POLY GATE → a polyphonic synth (e.g. Buchla 259t), or any poly voice.</li><li>Or use MONO V/OCT + GATE for a single voice. It follows the newest key you hold, with GLIDE.</li><li>Set ROOT, SCALE and OCTAVE, then play.</li></ol>
+<h3>Panel</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td>ROOT, SCALE</td><td>Root note C–B and one of Push's 26 scales (Major, Minor, Dorian … Spanish, Chromatic). The knob's tooltip shows the name. Root keys glow gold.</td></tr>
+<tr><td>OCTAVE</td><td>The octave of the bottom-left key (0–7, default 3, so C3). The grid's OCT +/− keys shift this up or down on top.</td></tr>
+<tr><td>WIDTH</td><td>How many columns are notes, from 4 to 10 (default 8). Narrow rows mean more repeats of each note and smaller hand shapes. Columns 11–15 are always the chord area.</td></tr>
+<tr><td>ROW</td><td>How much higher each row starts: 4th (Push default), 3rd, 5th, octave, or sequential (each row carries on where the row below ends, so no repeats). If the jump would be wider than the row, it's limited to the width so no notes get skipped; the status line then shows "=W".</td></tr>
+<tr><td>IN KEY / CHROM</td><td>In Key: only scale notes, so you can't play a wrong note. Chrom: all 12 notes, with scale notes lit and the others dark (menu: dim instead of dark).</td></tr>
+<tr><td>PLAYS</td><td>Note: one key, one note. Triad / 7th: each key plays a chord built from the scale on that note (in C major, D gives D F A, or D F A C). In Chromatic mode, keys outside the scale still play a single note.</td></tr>
+<tr><td>STRUM</td><td>The gap between the notes of a chord key, 0–100 ms, from the bottom note up. 0 = all at once.</td></tr>
+<tr><td>GLIDE</td><td>Portamento on the mono output only (0–1 s).</td></tr>
+<tr><td>LATCH</td><td>Notes keep playing after you let go. The next key or chord you press replaces them. Turning latch off stops them.</td></tr>
+<tr><td>CHORD in</td><td>Patch a poly V/OCT (from The Changes, a chord module or another keyboard). Its notes become the scale, with the lowest note as the root. The grid then only offers chord tones, and SCALE and ROOT are ignored while it's patched. The status line shows the chord.</td></tr>
+<tr><td>SHOW in</td><td>Patch a poly V/OCT from a sequencer and its notes light up on the grid in teal (bright on the hardware), so you can follow along or play against it.</td></tr>
+<tr><td>Outputs</td><td>POLY V/OCT/GATE: one channel per voice (8 by default, menu 1–16). The oldest note is replaced when you run out. MONO V/OCT/GATE: newest held note. Letting go falls back to the one you're still holding. TRIG: a short trigger for every new note, including each strummed one.</td></tr></table></div>
+<h3>The grid</h3>
+<p>Columns 1–10 are notes (up to WIDTH; the rest stay dark), columns 11–15 are the chord area, and column 16 holds the controls.</p>
+<div class="tw"><table><tr><th>Column 16, row</th><th>Key</th></tr>
+<tr><td>1 · 2</td><td>OCT + / OCT −: shift the whole keyboard an octave. The key gets brighter the further you've shifted.</td></tr>
+<tr><td>3</td><td>LATCH on/off (the same as the panel button).</td></tr>
+<tr><td>4</td><td>KEY/CHR: switch between In Key and Chromatic.</td></tr>
+<tr><td>5</td><td>ROW: step through 4th → 3rd → 5th → octave → sequential.</td></tr>
+<tr><td>6</td><td>PLAYS: step through note → triad → 7th.</td></tr>
+<tr><td>8</td><td>SUSTAIN, held like a pedal: notes you release keep sounding until you let go of this key.</td></tr></table></div>
+<p>Lights: bright = sounding (every copy of the note), gold on screen = root, dim = scale note, teal on screen = SHOW input. The panel's grid shows the note names and works with the mouse. Hold the button down to hold a note.</p>
+<h3>Chord mode (columns 11–15)</h3>
+<p>Inspired by the chord modes on the Hapax and OXI One sequencers. Rows 1–5 are modifier pads. Tap a pad and it stays on (bright) until you tap it again. Hold a pad while you play and it only applies to the notes you press while it's held. Pads in the same family replace each other. Pads change the next notes you play, not the ones already sounding.</p>
+<div class="tw"><table><tr><th>Row</th><th>Pads (columns 11 → 15)</th></tr>
+<tr><td>1 shape</td><td>MAJ MIN DIM SUS2 SUS4. With no shape pad on, chords follow the scale (D in C major = D minor). A shape pad forces that chord on any key, even outside the scale.</td></tr>
+<tr><td>2 added notes</td><td>6 · 7 · MAJ7 · 9 · ADD9. 9, 11 and 13 bring the 7th with them, as in chord symbols; ADD9 adds just the 9th. Without a shape pad the added notes come from the scale.</td></tr>
+<tr><td>3 more</td><td>11 · 13 · AUG (shape) · PWR (root + 5th, shape) · RND: a random extension every time you play.</td></tr>
+<tr><td>4 inversion</td><td>INV0 (none, dim-lit as the default) · INV1–3: lowest note(s) moved up an octave · DRP2: drop 2, the second-highest note down an octave.</td></tr>
+<tr><td>5 voicing</td><td>OPEN: second note up an octave · SPRD: notes spread over several octaves · BASS: adds the root an octave below · TOP+: top note up an octave · RST: turns every pad off.</td></tr>
+<tr><td>6 memory keys</td><td>SAVE · DEL · COPY · PREV · NEXT (see below)</td></tr>
+<tr><td>7–8 slots</td><td>Chord memory slots 1–5 (row 7) and 6–10 (row 8). Dark = empty, dim = stored, brighter = last used, bright = playing.</td></tr></table></div>
+<p>With PLAYS on NOTE and no pads on, a key plays one note as before. PLAYS TRIAD or 7TH still works and the pads add to it.</p>
+<h3>Chord memory</h3>
+<ul>
+<li><strong>Save:</strong> tap SAVE (it stays lit), then tap a slot. It stores the last chord you played, exactly as it sounded: the same notes, whatever you change later.</li>
+<li><strong>Play:</strong> tap a slot. It works like a note key: it sounds while held, and LATCH, SUSTAIN and STRUM all apply.</li>
+<li><strong>Delete:</strong> tap DEL, then a slot. <strong>Copy:</strong> tap COPY, the slot to copy, then where it goes. Tap the lit key again to cancel. Nothing needs holding, so the mouse works too.</li>
+<li>PREV / NEXT play the previous / next stored slot, so you can step through a progression with one key.</li>
+<li><strong>SLOT input:</strong> one semitone per slot, from C4 = slot 1 up to A4 = slot 10 (the same as GridDrums' slot CV). Any quantised sequencer can play your progression this way.</li>
+<li><strong>PLAY input:</strong> a gate. The slot sounds while it's high, and each new gate retriggers it. Without a PLAY cable, every change on SLOT plays the new chord and holds it until the next change.</li></ul>
+<p>The memory and the pads you left on are saved with the patch. The right-click menu can clear either.</p>
+<h3>Right-click menu</h3>
+<ul>
+<li>Pick the grid, let go of it, look for grids again. serialosc must be running. Each Gridworks module uses its own grid, so to play GridKeys and GridDrums together you need two grids.</li>
+<li>Polyphony: how many poly channels (1–16, default 8).</li>
+<li>Dimly light notes outside the scale in Chromatic mode.</li>
+<li>Clear all chord pads · Clear the chord memory.</li>
+<li>Reset the grid's octave shift.</li></ul>
+<div class="note"><strong>Ideas.</strong> (1) Patch The Changes poly out into CHORD: the grid now only offers the current chord's notes, so every key fits the harmony. (2) Put PLAYS on Triad with STRUM at 30–60 ms and LATCH on for arpeggio-like pads you change with one finger. (3) Feed LessConcepts' V/OCT into SHOW and play answers to its melody. (4) Use TRIG to fire an envelope or a drum each time you play.</div>
+<p>All settings, the octave shift, menu choices and the chosen grid are saved with the patch. Made for 16×8 grids such as the grid 128.</p>
+
+<h2 id="mutes">GridMutes</h2>
+<p><em>18 clocked performance mutes for the monome grid.</em></p>
+<h3>Patch it up</h3>
+<ol>
+<li>Patch up to 18 sounds, CVs or trigger streams into INPUTS (down each column: 1–6, 7–12, 13–18). Poly cables work too: all of a cable's channels mute together.</li>
+<li>Take each OUTPUT to your mixer, or leave an output unpatched and that channel goes into MIX, so GridMutes is also an 18-input submixer.</li>
+<li>Patch your clock (16th notes) into CLOCK and its reset into RESET. Without a clock, every change happens at once.</li></ol>
+<h3>The grid</h3>
+<div class="tw"><table><tr><th>Where</th><th>What</th></tr>
+<tr><td>Columns 1–3, rows 1–6</td><td>Channels 1–18, laid out like the jacks. Tap to mute or unmute. Bright = playing, dark = muted, flashing = waiting for the timing point.</td></tr>
+<tr><td>Column 5</td><td>CUE · LOCK · SOLO · A/B · PAIR · INV</td></tr>
+<tr><td>Column 6</td><td>ALL+ (everything on) · ALL- (everything off) · CLR (forget waiting/cued changes and solos) · SAVE · DEL · COPY</td></tr>
+<tr><td>Columns 8–10</td><td>Signal activity, in the same shape as the channel block: each key glows with that channel's level. A muted channel with signal glows dimly (grey on screen), so you can see what you'd bring in.</td></tr>
+<tr><td>Columns 13–16, rows 1–4</td><td>Scenes 1–16. Dark = empty, dim = stored, bright = current, flashing = coming at the next timing point.</td></tr>
+<tr><td>Columns 13–16, row 6</td><td>Timing: NOW · BEAT (default) · BAR · 2BAR. Every change waits for the next one of these. Picking NOW lands anything waiting straight away.</td></tr></table></div>
+<p>Every key is a tap, nothing needs holding, so the grid picture on the panel works just as well with the mouse.</p>
+<h3>Performance keys</h3>
+<ul>
+<li><strong>CUE:</strong> turn cue on, then tap channels to line up changes (they blink slowly). LOCK drops them all together at the next timing point. Turning CUE off also drops anything still lined up; CLR forgets them.</li>
+<li><strong>SOLO:</strong> while it's lit, tapping channels solos them (several at once is fine). Tap SOLO again to go back to muting; the solos stay until you tap them off or press CLR.</li>
+<li><strong>A/B:</strong> tap A/B, then two channels. From then on they're always opposite: tapping either swaps them. Do the same two again to undo it.</li>
+<li><strong>PAIR:</strong> tap PAIR, then a channel: it's linked to the next one (1 with 2, 7 with 8…) for stereo. Tap it again in PAIR mode to undo.</li>
+<li><strong>INV:</strong> every channel flips: what was playing mutes, what was muted plays.</li></ul>
+<h3>Scenes</h3>
+<ul>
+<li><strong>Save:</strong> tap SAVE, then a scene key. <strong>Delete:</strong> tap DEL, then a scene. <strong>Copy:</strong> tap COPY, the scene to copy, then where it goes. Tap the lit key again to cancel.</li>
+<li><strong>Recall:</strong> tap a scene. It lands at the next timing point like any other change.</li>
+<li><strong>SCENE CV:</strong> 1 semitone per scene, C4 = scene 1 up to D#5 = scene 16 (the same idea as GridDrums and GridKeys). Any quantised sequencer can play your arrangement.</li>
+<li><strong>TRIG:</strong> recalls the CV's scene. Without a CV cable, each trigger steps to the next stored scene. Without a TRIG cable, every change on the CV recalls.</li></ul>
+<h3>Panel and menu</h3>
+<ul>
+<li><strong>FADE</strong> (1–50 ms, default 5): how long a mute takes. A few ms stops clicks on audio; turn it right down for triggers and gates.</li>
+<li>The small light by each output is lit while that channel is heard.</li>
+<li>Right-click: pick the grid · Clock input: 16ths, 8ths, quarters or 24 PPQN · Beats per bar: 2–7 (for BAR and 2BAR) · Clear all scenes.</li></ul>
+<div class="note"><strong>Ideas.</strong> (1) Build a track's sections as scenes 1–8, then sequence them from a slow sequencer into SCENE CV. (2) Put kick and bass on an A/B pair so dropping one brings in the other. (3) Use CUE to line up a big change during a fill, then LOCK on the bar. (4) Leave the outputs unpatched and use MIX as a quick submix of all 18.</div>
+<p>Inspired by the NO BPM Mute Performer, written from scratch for Rack. Mutes, solos, links, scenes and settings are saved with the patch.</p>
+
+<h2 id="lc">LessConcepts</h2>
+<p><em>After the norns script "less concepts" by dan derks and linus schrab.</em></p>
+<h3>The idea in one minute</h3>
+<p>An 8-bit number, the SEED, changes once per step according to a RULE (0–255). This is a cellular automaton: each bit's next value depends on itself and its two neighbours. Some rules settle into loops, others never repeat. Rule 30 is the classic chaotic one.</p>
+<p>Each of the two voices watches one of the 8 bits. When that bit is 1, the voice plays a note. The note comes from the whole 8-bit number, squeezed into a LOW–HIGH range of scale steps. Small changes such as a different bit, rule or range give you a related but new melody. That's how the script gives you 65,536 seed/rule combinations to explore.</p>
+<h3>Patch it up</h3>
+<ol>
+<li>CLOCK ← 16th notes (VCV Clock ×4, or change it in the menu). RESET ← clock reset.</li>
+<li>V/OCT 1 + GATE 1 → a synth voice (e.g. Buchla 259t). V/OCT 2 + GATE 2 → a second voice, or the same synth an octave apart.</li>
+<li>Turn SEED and RULE, or press RAND keys on the grid, until something catches. Then take a snapshot (KEYS row, key 16).</li></ol>
+<h3>The grid (same map as the norns script)</h3>
+<div class="tw"><table><tr><th>Row</th><th>Keys</th></tr>
+<tr><td>1 V1 · 2 V2</td><td>Keys 1–8: which bit the voice follows (left = bit 8, right = bit 1). Dim = bits that are 1 now, bright = the voice playing. Key 9: voice off. Keys 10–16: octave −3 to +3.</td></tr>
+<tr><td>3 RAND</td><td>1 seed · 2 rule · 4/5 bit for V1/V2 · 7 low · 8 high · 10/11 octave V1/V2 · 13 time · 14 time + everything · 16 everything</td></tr>
+<tr><td>4–5 notes</td><td>The 32 scale steps (row 4 = 1–16, row 5 = 17–32). The two brighter keys are LOW and HIGH; the dim one is the note just played. To set them, hold KEYS 1 (low) or KEYS 2 (high) and press a note. If LOW is above HIGH, the melody runs upside down.</td></tr>
+<tr><td>6 KEYS</td><td>1 = set LOW, 2 = set HIGH (hold) · 9 / 10 / 11 = cycle snapshots down / random / up · 14 hold = clear all snapshots · 15 hold = clear the selected one · 16 = take a snapshot</td></tr>
+<tr><td>7–8 SNAP</td><td>Keys 9–16: snapshots 1–8 (row 7) and 9–16 (row 8). Dim = empty, mid = stored, bright = selected. Holding a snapshot pauses cycling.</td></tr>
+<tr><td>8 TIME</td><td>Keys 1 / 2 / 3: slower · middle (1/16) · faster. The steps are 1/8, 1/8t, 1/16, 1/16t, 1/32 (menu: wider ranges).</td></tr></table></div>
+<p>On the panel, click the same keys. For LOW/HIGH, click KEYS 1 or 2 once, then click a note. The hold keys work by holding the mouse button down.</p>
+<h3>Snapshots and cycling</h3>
+<p>A snapshot stores seed, rule, both bits, both octaves, LOW/HIGH, time and cycle length. With snapshots stored, tap 9 / 10 / 11 on the KEYS row to cycle down / random / up, changing every 4 beats (menu: 1–32). Tap the same key again to stop.</p>
+<p>Hold a cycle key for half a second to make cycling destructive (the key goes brighter). In this mode, whatever you change is written straight into the selected snapshot, so you can sculpt each snapshot while it plays. Hold again to switch it back.</p>
+<h3>Panel</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td>SEED, RULE (+ CV)</td><td>0–255. A CV of 0–10 V sweeps the full range on top of the knob. Each new value restarts the automaton from that seed. The knobs follow the grid's RAND keys and snapshots.</td></tr>
+<tr><td>SCALE</td><td>The norns scale list: Major, Natural Minor, Dorian… Chromatic (41 scales), root C. The knob's tooltip shows the name.</td></tr>
+<tr><td>TRANSP</td><td>Moves both voices ±24 semitones.</td></tr>
+<tr><td>PROB 1 / 2</td><td>Chance (%) that a voice plays when its bit says so. Lower it for space.</td></tr>
+<tr><td>Outputs</td><td>V/OCT 1/2 (0 V = C4, held between notes) · GATE 1/2 · SEED: the 8 bits as 0–10 V, a stepped random-ish CV for filters, etc. · STEP: a trigger every step.</td></tr></table></div>
+<h3>Right-click menu</h3>
+<ul>
+<li>Pick the grid, let go of it, look for grids again. serialosc must be running, as for the monome-rack modules.</li>
+<li><strong>Clock input:</strong> 16ths, 8ths, quarters or 24 PPQN. <strong>Time range:</strong> legacy 1/8–1/32, slow 1/1–1/16, full 2/1–1/32.</li>
+<li><strong>Gate length:</strong> 5 ms trigger, half a step (default) or a whole step.</li>
+<li><strong>Voice note jump:</strong> the script's "transpose / tran prob". Gives each note a chance of jumping by an octave, a fifth, and so on.</li>
+<li>Snapshot cycle length · random octave range · randomise everything · clear all snapshots.</li></ul>
+<div class="note"><strong>Arrangement ideas.</strong> (1) Build 4 snapshots as verse/chorus variants and let cycle up run them every 16 beats. (2) Patch a slow LFO or Long Form into RULE CV so the melody's character drifts across a section. (3) Send SEED out to a filter cutoff: it moves in step with the melody's logic. (4) Clock it at 1/8t against GridDrums at 1/16 for a cross-rhythm.</div>
+<p>Not included from the norns version: the ~refrain softcut looper, the Passersby engine, and MIDI/crow/JF/w/syn outputs. Needs a 16-wide grid. Everything (snapshots, cycle mode, menu choices, grid) is saved with the patch.</p>
+
+</main></body></html>
