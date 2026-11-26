@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stella for VCV Rack</title>
+<style>
+:root{--bg:#fff;--fg:#1c1c1e;--mut:#5c5c63;--line:#d9d9de;--acc:#b3261e;--card:#f4f4f6;--code:#ececf0}
+@media (prefers-color-scheme:dark){:root{--bg:#161618;--fg:#e8e8ea;--mut:#a0a0a8;--line:#38383d;--acc:#ff8a80;--card:#212125;--code:#2b2b30}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:820px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:2rem;line-height:1.2;border-bottom:3px solid var(--fg);padding-bottom:.4rem}
+h2{font-size:1.5rem;margin-top:2.4rem;padding:.35rem .7rem;background:var(--card);border-left:5px solid var(--acc)}
+h3{font-size:1.15rem;margin-top:1.8rem;color:var(--acc)}
+nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.6rem 1.2rem;margin:1.2rem 0}
+nav ol,nav ul{margin:.3rem 0;padding-left:1.2rem}
+a{color:var(--acc)}
+.tw{overflow-x:auto;margin:1rem 0}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--card)}
+td:first-child{font-weight:600;white-space:nowrap}
+@media(max-width:560px){td:first-child{white-space:normal}}
+code{background:var(--code);padding:.05em .3em;border-radius:4px;font-size:.92em}
+li{margin:.35rem 0}
+.note{color:var(--mut);font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Stella for VCV Rack</h1>
+<p>Stella is a four-voice sample player by Haer. It lays a folder of one-shots out on a 2D map according to how they sound, so you can pick samples by moving a point around the map, with CV, by hand, or by letting it drift.</p>
+<nav><strong>Contents</strong><ol><li><a href="#how">How it works</a></li><li><a href="#load">Loading samples</a></li><li><a href="#panel">The panel</a></li><li><a href="#use">Using it</a></li><li><a href="#patches">Patch ideas</a></li><li><a href="#notes">Notes</a></li></ol></nav>
+
+<h2 id="how">How it works</h2>
+<p>When you load a folder, Stella listens to every WAV and AIFF in it (up to 1000 files, subfolders included, each trimmed to 2 seconds) and places each one as a dot on the map. Each of the four voices has a point on the map. A trigger plays the sample nearest that point. With probability CHANCE, it plays another sample inside the voice's SPREAD ring instead, with closer samples more likely.</p>
+<p>Dots are coloured from warm (heavy, low) through white to cool (bright, noisy).</p>
+
+<h2 id="load">Loading samples</h2>
+<ul>
+<li>Press <strong>LOAD</strong> to choose a folder, or drop one or more folders (or files, which bring their folder) onto the module.</li>
+<li>Hold <strong>Shift</strong> while dropping to add to the current map instead of replacing it.</li>
+<li>The right-click menu has: Load folder (replace), Add folder, Remove folder (when several are loaded), Re-scan folders, Include subfolders, and Even out sample levels (normalise).</li>
+<li>The map's header strip shows analysis progress, then the folder name and sample count. Folders are saved with the patch.</li>
+</ul>
+
+<h2 id="panel">The panel</h2>
+<h3>The map</h3>
+<p>Click or drag on the map to move the nearest voice's point. Hovering over a dot shows the sample's name. Each voice's ring shows its SPREAD, and the last sample it played is circled and flashes on a trigger.</p>
+<h3>Global controls</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td>AXIS</td><td>AUTO arranges the map by overall similarity of the sounds. FIXED puts brightness on X and length on Y. The map eases between the two layouts.</td></tr><tr><td>LOAD</td><td>Choose a folder (see above).</td></tr><tr><td>DRIFT + CV</td><td>Makes all four points wander slowly. CV: ±5 V = ±50%.</td></tr><tr><td>GRAVITY</td><td>Pulls a point towards each sample it plays.</td></tr><tr><td>MIX out</td><td>Sum of all voices that don't have their own output patched.</td></tr></table></div>
+<h3>Per voice (four of each, colour-coded)</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td>TRIG</td><td>Trigger input (1 V threshold). Plays a sample. A new trigger fades the previous sound out over 5 ms rather than cutting it.</td></tr><tr><td>X, Y</td><td>The voice's point on the map. Knobs plus CV; ±5 V covers the whole map. Starting points differ per voice.</td></tr><tr><td>SPREAD</td><td>Size of the ring around the point (default 25%).</td></tr><tr><td>CHANCE + CV</td><td>Chance that a sample inside the ring plays instead of the nearest one (default 0%). CV: ±5 V = ±50%.</td></tr><tr><td>OUT</td><td>The voice's own output. Patching it takes the voice out of MIX.</td></tr></table></div>
+<p class="note">Output level: samples are scaled so a full-scale sample reaches 5 V.</p>
+
+<h2 id="use">Using it</h2>
+<ol>
+<li>Drop a folder of one-shots (drums, hits, textures) onto Stella and wait for analysis to finish.</li>
+<li>Patch a clock or sequencer gate into a voice's TRIG, and take MIX or the voice's OUT to your mixer.</li>
+<li>Move the voice's point on the map to choose a region of similar-sounding samples.</li>
+<li>Raise CHANCE and SPREAD to let neighbouring samples sneak in. Use AXIS FIXED when you want X to mean brightness and Y length.</li>
+</ol>
+
+<h2 id="patches">Patch ideas</h2>
+<ul>
+<li><strong>Four-part kit.</strong> Place the four voices in different corners of a drum folder, one per trigger lane, each with its own OUT to its own mixer channel.</li>
+<li><strong>Wandering hats.</strong> One voice on a hat region with CHANCE up and a little DRIFT, triggered by a fast clock.</li>
+<li><strong>Sequenced map.</strong> A sequencer or random source into X and Y CV so each hit lands on a different part of the map.</li>
+<li><strong>Gravity.</strong> Raise GRAVITY so a voice gradually migrates across the map as it plays; DRIFT's spring pulls it back towards its knob position.</li>
+</ul>
+
+<h2 id="notes">Notes</h2>
+<ul>
+<li>Plugin brand Haer, MIT licence. Source: <a href="https://github.com/hardyfinn/Stella">github.com/hardyfinn/Stella</a>.</li>
+<li>Reading and analysing samples happens on a background thread, so loading doesn't block audio.</li>
+</ul>
+
+</main>
+</body>
+</html>

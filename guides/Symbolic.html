@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Symbolic for VCV Rack</title>
+<style>
+:root{--bg:#fff;--fg:#1c1c1e;--mut:#5c5c63;--line:#d9d9de;--acc:#b3261e;--card:#f4f4f6;--code:#ececf0}
+@media (prefers-color-scheme:dark){:root{--bg:#161618;--fg:#e8e8ea;--mut:#a0a0a8;--line:#38383d;--acc:#ff8a80;--card:#212125;--code:#2b2b30}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:820px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:2rem;line-height:1.2;border-bottom:3px solid var(--fg);padding-bottom:.4rem}
+h2{font-size:1.5rem;margin-top:2.4rem;padding:.35rem .7rem;background:var(--card);border-left:5px solid var(--acc)}
+h3{font-size:1.15rem;margin-top:1.8rem;color:var(--acc)}
+nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.6rem 1.2rem;margin:1.2rem 0}
+nav ol,nav ul{margin:.3rem 0;padding-left:1.2rem}
+a{color:var(--acc)}
+.tw{overflow-x:auto;margin:1rem 0}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--card)}
+td:first-child{font-weight:600;white-space:nowrap}
+@media(max-width:560px){td:first-child{white-space:normal}}
+code{background:var(--code);padding:.05em .3em;border-radius:4px;font-size:.92em}
+li{margin:.35rem 0}
+.note{color:var(--mut);font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Symbolic for VCV Rack</h1>
+<p>Symbolic is an acoustic cymbal (and hi-hat) for VCV Rack 2, by Haer. It is not a sample and not an 808-style square-wave cymbal: it models a bronze plate ringing at 228 frequencies, how the stick hits it, and the shimmer that blooms after a hard hit. It includes a hi-hat pedal and stereo output.</p>
+<nav><strong>Contents</strong><ol><li><a href="#how">How it works</a></li><li><a href="#quick">Quick start</a></li><li><a href="#panel">The panel</a></li><li><a href="#presets">Starting points</a></li><li><a href="#recipes">Recipes</a></li><li><a href="#notes">Notes</a></li></ol></nav>
+
+<h2 id="how">How it works</h2>
+<p>A cymbal rings at hundreds of unrelated pitches at once. Symbolic has 228 of them: a few low ones for body and slow wobble, a crowd of high ones for sizzle, and 12 bell tones for the dome. The stick decides which ring and how bright the hit is, by where you hit (bell, bow, edge) and what with (hard tip or soft mallet).</p>
+<p>When a cymbal is hit hard, the big low vibrations pass their energy up to the high tones over the first moments. That is the hiss that blooms just after a crash. Soft hits barely do it, so a gently played ride pings and a hard one washes. Symbolic does the same. Hits overlap like on a real cymbal: a new hit adds to the ringing instead of restarting it.</p>
+
+<h2 id="quick">Quick start</h2>
+<ol>
+<li>Patch a gate into TRIG and OUT L (and OUT R for stereo) to your mixer. Press HIT to audition.</li>
+<li>Right-click the module for starting points: <em>Ride, 20"</em>, <em>Crash, 16"</em> and <em>Hi-hat, 14"</em>.</li>
+<li>Patch a velocity or accent CV (0–10 V) into VEL. Harder hits are brighter and wash more. Unpatched, every trigger is 7.5 V.</li>
+</ol>
+
+<h2 id="panel">The panel</h2>
+<h3>Plate</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td>SIZE + CV</td><td>Diameter, 8" to 24" (default 18"). Bigger is lower, darker and rings longer. CV: ±5 V covers the full range.</td></tr><tr><td>WEIGHT</td><td>Thin to heavy. Thin cymbals are low, quick and washy; heavy ones are higher, ring longer and ping more.</td></tr><tr><td>BELL</td><td>Size of the dome. Matters most when POSITION is near the bell.</td></tr><tr><td>WOBBLE</td><td>The slow beating of the low tones, like an imperfectly round cymbal. 0 is a perfect disc.</td></tr><tr><td>TRASH</td><td>Turns it into a china: pitch bends down as the hit dies, beating gets fast and the wash gets gritty.</td></tr><tr><td>CAST</td><td>Sixteen individual cymbals with the same settings, each with its own pattern of tones. Shown as "Cymbal no. N".</td></tr></table></div>
+<h3>Strike and ring</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td>POSITION + CV</td><td>Where the stick lands: bell, bow (middle) or edge. The hover text names the zone. CV is read at each hit (±5 V = full range).</td></tr><tr><td>STICK + CV</td><td>Hard tip (left) to soft mallet (right): brighter and sharper to darker and rounder. CV is read at each hit.</td></tr><tr><td>DECAY + CV</td><td>How long it rings, from a short tick to over 30 seconds.</td></tr><tr><td>DAMP</td><td>How fast high tones die compared with low ones. Left: bright sizzling tail. Right: dark tail.</td></tr><tr><td>SHIMMER + CV</td><td>How much energy moves up into the high wash after hard hits. Low is pingy; high is an explosive wash.</td></tr><tr><td>BUILD</td><td>How slowly the wash blooms: fast is an immediate hiss, slow lets the hit come first.</td></tr></table></div>
+<h3>Hi-hat and output</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td>TUNE</td><td>Shifts every tone up or down, ±24 semitones. V/OCT input adds to it.</td></tr><tr><td>PEDAL + CV</td><td>Hi-hat pedal. Open (left) rings freely; half-way the plates rattle (sizzle); closed (right) is a tight "tsst". CV (0–10 V) adds to the knob.</td></tr><tr><td>CHICK</td><td>Level of the foot chick when the pedal closes past 80%.</td></tr><tr><td>WIDTH</td><td>Stereo width: the two outputs are like two microphones at different spots.</td></tr><tr><td>LEVEL</td><td>Output level.</td></tr><tr><td>HIT</td><td>Button that plays a hit at 7.5 V velocity; its light shows the cymbal ringing.</td></tr></table></div>
+<h3>Jacks</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td>V/OCT</td><td>Tunes every tone, 1 V per octave.</td></tr><tr><td>TRIG</td><td>Trigger input; plays a hit.</td></tr><tr><td>VEL</td><td>Velocity, 0–10 V, read at each trigger. Unpatched = 7.5 V.</td></tr><tr><td>CHOKE</td><td>A hand grabbing the cymbal. A trigger grabs it for 150 ms; a held gate keeps it held.</td></tr><tr><td>SIZE, POSITION, STICK, DECAY, SHIMMER, PEDAL</td><td>CV inputs, as described above.</td></tr><tr><td>OUT L / OUT R</td><td>Stereo output. With OUT R unpatched, OUT L carries a mono mix.</td></tr></table></div>
+
+<h2 id="presets">Starting points (right-click)</h2>
+<div class="tw"><table><tr><th>Preset</th><th>Main settings</th></tr><tr><td>Ride, 20"</td><td>Size 20, weight 70%, bell 60%, position 50% (bow), stick 8%, decay 60%, shimmer 30%.</td></tr><tr><td>Crash, 16"</td><td>Size 16, weight 35%, position 95% (edge), stick 20%, shimmer 75%, build 45%.</td></tr><tr><td>Hi-hat, 14"</td><td>Size 14, weight 60%, position 75%, decay 45%, build 10%, pedal fully closed. Play it with PEDAL.</td></tr></table></div>
+
+<h2 id="recipes">Recipes</h2>
+<ul>
+<li><strong>Hi-hat, one module.</strong> Choose the Hi-hat start, then turn PEDAL fully left (open). Hat triggers to TRIG, a closed gate to the PEDAL jack (10 V = closed): low gate is open, high gives the foot chick and cuts the ring. Velocity into VEL for accents. Or a slow 0–7 V LFO into PEDAL for a foot that opens and closes over bars.</li>
+<li><strong>Ride pattern.</strong> Ride start, triggers with velocity high on beats and lower on skips, STICK low. A slow random voltage into POSITION CV makes the stick wander on the bow.</li>
+<li><strong>Crash with hand choke.</strong> Crash start, trigger on bar 1, and a gate into CHOKE to grab it before a drop.</li>
+<li><strong>Self-mutating cymbal.</strong> A fast clock into TRIG, slow unrelated random voltages into POSITION, STICK and SHIMMER CVs and a random velocity into VEL. Because hits overlap, the wash keeps reshaping itself.</li>
+<li><strong>Tuned metal.</strong> WOBBLE 0, DECAY high, DAMP right, SHIMMER low, POSITION near the bell. Sequence V/OCT for inharmonic bell tones, and change CAST for a different instrument.</li>
+</ul>
+
+<h2 id="notes">Notes</h2>
+<ul>
+<li>Different from an 808-style cymbal, which copies the TR-808 circuit; Symbolic models a real plate.</li>
+<li>Plugin brand Haer, MIT licence. Source: <a href="https://github.com/hardyfinn/Symbolic">github.com/hardyfinn/Symbolic</a>. See the comments at the top of <code>src/SymbolicEngine.hpp</code> for how the sound is made.</li>
+</ul>
+
+</main>
+</body>
+</html>

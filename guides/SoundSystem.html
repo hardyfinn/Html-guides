@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sound System for VCV Rack</title>
+<style>
+:root{--bg:#fff;--fg:#1c1c1e;--mut:#5c5c63;--line:#d9d9de;--acc:#b3261e;--card:#f4f4f6;--code:#ececf0}
+@media (prefers-color-scheme:dark){:root{--bg:#161618;--fg:#e8e8ea;--mut:#a0a0a8;--line:#38383d;--acc:#ff8a80;--card:#212125;--code:#2b2b30}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:820px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:2rem;line-height:1.2;border-bottom:3px solid var(--fg);padding-bottom:.4rem}
+h2{font-size:1.5rem;margin-top:2.4rem;padding:.35rem .7rem;background:var(--card);border-left:5px solid var(--acc)}
+h3{font-size:1.15rem;margin-top:1.8rem;color:var(--acc)}
+nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.6rem 1.2rem;margin:1.2rem 0}
+nav ol,nav ul{margin:.3rem 0;padding-left:1.2rem}
+a{color:var(--acc)}
+.tw{overflow-x:auto;margin:1rem 0}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--card)}
+td:first-child{font-weight:600;white-space:nowrap}
+@media(max-width:560px){td:first-child{white-space:normal}}
+code{background:var(--code);padding:.05em .3em;border-radius:4px;font-size:.92em}
+li{margin:.35rem 0}
+.note{color:var(--mut);font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Sound System for VCV Rack</h1>
+<p>Sound System is a 20 HP effect module by Haer. It makes whatever you feed it sound like it is coming out of a big physical sound system in a real place: the weight of scoop bins, the honk of horns, amps being pushed, the room around you, and how far you are from the stack. It has stereo in and out. Mono in is fine, because the right input is normalled to the left.</p>
+<nav><strong>Contents</strong><ol><li><a href="#how">How it works</a></li><li><a href="#panel">The panel</a></li><li><a href="#systems">The 8 systems</a></li><li><a href="#use">Using it</a></li><li><a href="#patches">Patch ideas</a></li><li><a href="#notes">Notes</a></li></ol></nav>
+
+<h2 id="how">How it works</h2>
+<p>SYSTEM picks one of eight rigs, each a sound system in a particular place. The other knobs then shape it. The screen shows the rig's name and a one-line description, how many metres you are from the stack, the room's reverb time, and a little speaker stack whose cones move with the music.</p>
+<p class="note">Changing SYSTEM glides between rigs rather than jumping (about a third of a second, per the README).</p>
+
+<h2 id="panel">The panel</h2>
+<h3>Knobs</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td>SYSTEM (1–8)</td><td>Picks the rig and the place. Has CV.</td></tr><tr><td>PUSH</td><td>How hard the rig is driven: louder-feeling bass and highs, the amp limiter clamping, valve grit, drivers starting to strain. Has CV.</td></tr><tr><td>DISTANCE</td><td>From right in front of the stack (more sub, mostly direct sound) to the back of the place (less top, more room). The screen shows metres. Has CV.</td></tr><tr><td>WEIGHT</td><td>The sub bins and bass. Also adds harmonics of the sub so you feel it on small speakers, and lets the sub push the rest of the music about. Has CV.</td></tr><tr><td>ROOM</td><td>How much of the space you hear: reflections, tail, room boom, echo. Has CV.</td></tr><tr><td>TOPS</td><td>Horns and tweeters.</td></tr><tr><td>CROWD</td><td>A full room: bodies soak up the reverb and the top end.</td></tr><tr><td>MIX</td><td>Dry to sound system. Fully clockwise is all sound system (default).</td></tr></table></div>
+<h3>Buttons, jacks and lights</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td>DOOR button</td><td>For rig 8, THROUGH THE WALL: opens and shuts the door. The light shows the door is open.</td></tr><tr><td>DOOR gate in</td><td>A high gate (1 V or more) flips the door from whatever the button says. Gate high with the button off = open; gate high with the button on = shut.</td></tr><tr><td>CV inputs</td><td>SYSTEM, PUSH, DISTANCE, WEIGHT, ROOM. For the four knob CVs, 10 V = the full knob range, added to the knob. SYSTEM CV: 0–10 V steps through all 8 rigs. TOPS, CROWD and MIX have no CV.</td></tr><tr><td>IN L / IN R</td><td>Left (or mono) in, and right in. Right is normalled to left when unpatched.</td></tr><tr><td>OUT L / OUT R</td><td>Stereo outputs.</td></tr></table></div>
+<p class="note">The door state is saved with the patch.</p>
+
+<h2 id="systems">The 8 systems</h2>
+<div class="tw"><table><tr><th>System</th><th>Character</th></tr><tr><td>1 DUB HALL</td><td>A sound system in a hall. Huge scoop bins around 45 Hz, valve-warm amps, honky mid horns, a dark hall, things rattling. Mono.</td></tr><tr><td>2 TECHNO CLUB</td><td>Clean, punchy modern stacks in a tall concrete room. Tight sub, clear tops, long bright tail.</td></tr><tr><td>3 WAREHOUSE</td><td>A rented rig pushed too hard in brick and steel. Boomy room, long muddy tail, heavy limiting.</td></tr><tr><td>4 BASEMENT</td><td>Low ceiling, bodies, a rig too big for the room. Short tail, strong low boom.</td></tr><tr><td>5 KINGSTON STREET</td><td>Open-air street dance. Very deep scoop, piercing tweeters, no tail, slap echo off the buildings, zinc fences buzzing. Mono.</td></tr><tr><td>6 DISCO LOFT</td><td>Warm audiophile horns and a wooden floor. Tight bass, gentle on the amps.</td></tr><tr><td>7 FESTIVAL</td><td>Line arrays in a field. 15 to 160 m away, delay towers, air taking the top off, wind moving it around.</td></tr><tr><td>8 THROUGH THE WALL</td><td>The techno club heard from the toilets. Muffled boom, the door rattling, a small tiled room around you. Use DOOR to open it.</td></tr></table></div>
+
+<h2 id="use">Using it</h2>
+<ol>
+<li>Put it on a stereo or mono signal, or on the whole mix at the end of a patch.</li>
+<li>Choose a SYSTEM, leave MIX fully up, and set PUSH around noon.</li>
+<li>Use DISTANCE and ROOM to place yourself, WEIGHT and TOPS to balance the low and high end, and CROWD to deaden the room.</li>
+<li>To keep some of the original sound, bring MIX down.</li>
+</ol>
+
+<h2 id="patches">Patch ideas</h2>
+<ul>
+<li><strong>Walk to the bar.</strong> Put it on the whole mix, PUSH at noon, and slowly turn DISTANCE during a breakdown.</li>
+<li><strong>Door burst.</strong> Gate DOOR from a sequencer on the last bar of a phrase, with SYSTEM on 8. The full club bursts in, then the door shuts again.</li>
+<li><strong>Drifting set.</strong> A slow LFO into SYSTEM CV drifts from dub hall to warehouse and beyond.</li>
+<li><strong>Kick and bass only.</strong> Run just the kick and bass through DUB HALL with WEIGHT high, and keep the hats dry (MIX on a second copy).</li>
+</ul>
+
+<h2 id="notes">Notes</h2>
+<ul>
+<li>Plugin: Sound System, version 2.0.0, brand Haer, MIT licence. Tags: Effect, Reverb, Equalizer, Distortion.</li>
+<li>Source: <a href="https://github.com/hardyfinn/SoundSystem">github.com/hardyfinn/SoundSystem</a>.</li>
+</ul>
+
+</main>
+</body>
+</html>
