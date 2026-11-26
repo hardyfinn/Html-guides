@@ -1,0 +1,174 @@
+<title>Footwork Drum Programming</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: single readable column, sticky-free; step grids scroll sideways inside their own box */
+:root{--bg:#f6f5f8;--fg:#1c1b22;--muted:#5d5b6a;--line:#d9d6e2;--panel:#ffffff;--accent:#c2216b;--accent2:#2a6f97;--cell:#ebe8f1;--cell-b:#dcd7e8;--on:#c2216b;--ongh:#e9a4c3;--code:#ecebf2;
+--head:'Space Grotesk',system-ui,sans-serif;--body:'Inter',system-ui,-apple-system,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15141b;--fg:#e9e7f1;--muted:#a19eb3;--line:#33303f;--panel:#1d1c26;--accent:#ff5fa2;--accent2:#6cb4df;--cell:#272532;--cell-b:#322f40;--on:#ff5fa2;--ongh:#7a3a58;--code:#26242f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15141b;--fg:#e9e7f1;--muted:#a19eb3;--line:#33303f;--panel:#1d1c26;--accent:#ff5fa2;--accent2:#6cb4df;--cell:#272532;--cell-b:#322f40;--on:#ff5fa2;--ongh:#7a3a58;--code:#26242f;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.65;padding-block:2rem 4rem;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:760px;margin:0 auto;min-width:0}
+h1,h2,h3{font-family:var(--head);line-height:1.2;text-wrap:balance}
+h1{font-size:clamp(2rem,7vw,3rem);margin:0 0 .5rem}
+h2{font-size:1.5rem;margin:2.8rem 0 .6rem;padding-top:.4rem;border-top:1px solid var(--line)}
+h3{font-size:1.1rem;margin:1.6rem 0 .3rem;color:var(--accent2)}
+.sub{color:var(--muted);font-size:1.05rem;margin:0 0 1.5rem}
+a{color:var(--accent2)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:1rem 1.25rem}
+nav.toc strong{font-family:var(--head)}
+nav.toc ol{margin:.5rem 0 0;padding-left:1.3rem;columns:2 14rem;column-gap:2rem}
+nav.toc li{margin:.15rem 0}
+ul,ol{padding-left:1.3rem}
+li{margin:.25rem 0}
+.tip{background:var(--code);border-radius:8px;padding:.7rem 1rem;margin:1rem 0}
+.tip b{font-family:var(--head)}
+.gridwrap{overflow-x:auto;margin:1rem 0 .3rem;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+table.seq{border-collapse:separate;border-spacing:2px;margin:6px;font-size:.8rem}
+table.seq caption{caption-side:top;text-align:left;font-weight:600;padding:.4rem .4rem .2rem;font-size:.85rem;white-space:normal;min-width:20rem}
+table.seq th{font-weight:600;color:var(--muted);padding:2px 4px;text-align:center}
+table.seq th[scope=row]{text-align:left;white-space:nowrap;color:var(--fg);padding-right:.6rem}
+table.seq td{width:1.7rem;min-width:1.7rem;height:1.7rem;text-align:center;background:var(--cell);border-radius:4px;color:transparent}
+table.seq td.b{background:var(--cell-b)}
+table.seq td.on{background:var(--on);color:#fff}
+table.seq td.gh{background:var(--ongh);color:var(--fg)}
+.legend{font-size:.85rem;color:var(--muted);margin:.2rem 0 1rem}
+.k.on{color:var(--on)}.k.gh{color:var(--ongh);font-weight:700}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:.45rem .5rem;text-align:left;vertical-align:top}
+.scroll{overflow-x:auto}
+code{background:var(--code);padding:.05em .35em;border-radius:4px;font-size:.9em}
+footer{margin-top:3rem;color:var(--muted);font-size:.85rem}
+</style>
+<main>
+<h1>Footwork Drum Programming</h1>
+<p class="sub">How to build Chicago footwork and juke drum patterns at about 160 BPM, with 16-step grids you can copy into any sequencer.</p>
+
+<nav class="toc" aria-label="Contents"><strong>Contents</strong><ol>
+<li><a href="#tempo">Tempo and feel</a></li>
+<li><a href="#grid">The 3-3-2 grid</a></li>
+<li><a href="#kicks">Kick patterns</a></li>
+<li><a href="#snares">Snares, claps and rolls</a></li>
+<li><a href="#hats">Hats and percussion</a></li>
+<li><a href="#sounds">Classic sounds</a></li>
+<li><a href="#swing">Swing and ghost notes</a></li>
+<li><a href="#fills">Fills and stutters</a></li>
+<li><a href="#patterns">Example patterns</a></li>
+<li><a href="#vcv">Programming it in VCV Rack</a></li>
+<li><a href="#arrange">Arrangement tips</a></li>
+<li><a href="#mistakes">Common mistakes</a></li>
+</ol></nav>
+
+<h2 id="tempo">Tempo and feel</h2>
+<p>Footwork sits at roughly <strong>155–165 BPM</strong>, and 160 is the standard starting point. The dancers footwork to the fast count, while the track often feels like a slow 80 BPM groove underneath. Both readings are valid, and the best patterns let you hear either.</p>
+<div class="scroll"><table class="t">
+<tr><th>Feel</th><th>What it means at 160</th><th>Typical hits</th></tr>
+<tr><td>Half-time (80 BPM)</td><td>Clap or snare lands once per two beats, so the track feels spacious and heavy.</td><td>Clap on step 9 only</td></tr>
+<tr><td>Double-time (160 BPM)</td><td>Claps and hats run at the full pace, so the track feels frantic.</td><td>Clap on steps 5 and 13</td></tr>
+</table></div>
+<p>Most tracks mix them: a half-time backbone with double-time hats, rolls and chops running over it. At 160 BPM a 16th-note step lasts about 94 ms, which is why programming accurately and keeping hits sparse both matter.</p>
+
+<h2 id="grid">The 3-3-2 grid</h2>
+<p>Work on a 16-step bar of 16th notes. Instead of splitting it into four groups of four, think of it as <strong>3 + 3 + 2 + 3 + 3 + 2</strong>. Accents land on steps 1, 4, 7, 9, 12 and 15. Against a steady quarter-note pulse on 1, 5, 9 and 13, those accents drift in and out of alignment, and that tension is the footwork feel.</p>
+<div class="gridwrap"><table class="seq"><caption>The same 16 steps felt two ways: quarter pulse against 3-3-2</caption><thead><tr><th></th><th class="g0 b">1</th><th class="g0">2</th><th class="g0">3</th><th class="g0">4</th><th class="g1 b">5</th><th class="g1">6</th><th class="g1">7</th><th class="g1">8</th><th class="g2 b">9</th><th class="g2">10</th><th class="g2">11</th><th class="g2">12</th><th class="g3 b">13</th><th class="g3">14</th><th class="g3">15</th><th class="g3">16</th></tr></thead><tbody><tr><th scope="row">3-3-2 accents</th><td class="b on">●</td><td class=""></td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class="on">●</td><td class=""></td><td class="b on">●</td><td class=""></td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class="on">●</td><td class=""></td></tr><tr><th scope="row">Quarter pulse</th><td class="b on">●</td><td class=""></td><td class=""></td><td class=""></td><td class="b on">●</td><td class=""></td><td class=""></td><td class=""></td><td class="b on">●</td><td class=""></td><td class=""></td><td class=""></td><td class="b on">●</td><td class=""></td><td class=""></td><td class=""></td></tr></tbody></table></div><p class="legend"><span class="k on">●</span> hit <span class="k gh">·</span> ghost (soft, about 30–50% velocity)</p>
+<p>The shaded columns mark each beat. Notice that the 3-3-2 accents hit the beat only on steps 1 and 9. The rest fall in between, so they sound like they are pushing against the clap.</p>
+
+<h2 id="kicks">Kick patterns</h2>
+<ul>
+<li><strong>Start with 3-3-2:</strong> steps 1, 4, 7, 9, 12, 15. This is the signature pattern and the safest one.</li>
+<li><strong>Thin it out:</strong> drop steps 12 and 15 for a heavier, half-time feel.</li>
+<li><strong>Move one hit:</strong> shift a single kick by a step (for example 12 to 11) to create variation without breaking the pulse.</li>
+<li><strong>Keep step 1 on the downbeat</strong> in most bars so dancers and listeners can find where the bar starts.</li>
+<li>Kicks are long, boomy 808s, so leave a gap after each one. Dense kicks turn to mush.</li>
+</ul>
+
+<h2 id="snares">Snares, claps and rolls</h2>
+<ul>
+<li><strong>Half-time:</strong> one clap on step 9.</li>
+<li><strong>Double-time:</strong> claps on steps 5 and 13. A snare layered under the clap adds snap.</li>
+<li><strong>Offbeat snare hits</strong> on steps such as 8 or 16 add the "stumbling" feel. Keep them quieter than the main clap.</li>
+<li><strong>Rolls</strong> are fast snare or clap repeats, usually 16ths at the end of a bar or phrase. Build velocity upward through the roll so it feels like it is accelerating.</li>
+</ul>
+
+<h2 id="hats">Hats and percussion</h2>
+<ul>
+<li><strong>Closed hat:</strong> 8th notes (odd steps) as a base. Add 16ths for energy, and lower the velocity of the in-between hits.</li>
+<li><strong>Open hat:</strong> sparingly, on steps 8 or 16, to open up the end of a half-bar. Choke it with the next closed hat.</li>
+<li><strong>Cowbell and woodblock:</strong> place them on 3-3-2 steps (4, 10) so they reinforce the polyrhythm.</li>
+<li><strong>Shakers and rim clicks:</strong> keep them quiet and fill the gaps between hats.</li>
+</ul>
+
+<h2 id="sounds">Classic sounds</h2>
+<div class="scroll"><table class="t">
+<tr><th>Sound</th><th>Role</th><th>Tip</th></tr>
+<tr><td>808 kick</td><td>Low-end anchor</td><td>Short decay for dense patterns, longer for sparse. Tune it to the key of the track.</td></tr>
+<tr><td>Toms (808-style)</td><td>Fills and accents</td><td>Pitch them down in steps across a fill. Do not leave them at the same pitch.</td></tr>
+<tr><td>Cowbell</td><td>Top-line hook</td><td>Use one clean sample and keep it dry.</td></tr>
+<tr><td>Clap / snare</td><td>Backbone</td><td>Layer a clap over a short snare for body.</td></tr>
+<tr><td>Vocal chops</td><td>Melodic hook</td><td>Short stabs and cut-up phrases, often on off-beats. Sample a few words and loop one syllable.</td></tr>
+<tr><td>Hats</td><td>Drive</td><td>Bright and short, with the in-between hits quieter.</td></tr>
+</table></div>
+
+<h2 id="swing">Swing and ghost notes</h2>
+<p>Footwork is mostly <strong>straight and robotic</strong> on the grid. The groove comes from placement, not swing, so keep global swing low or off. Where you want looseness, add it by hand:</p>
+<ul>
+<li><strong>Ghost notes</strong> are very quiet extra hits (30–50% velocity) on snare, hat or percussion, placed just before or after a main hit.</li>
+<li>Try a light swing of around 52–55% on hats only, leaving kicks and claps straight.</li>
+<li>Vary velocities by hand. Identical velocities across a bar sound mechanical in a bad way.</li>
+</ul>
+
+<h2 id="fills">Fills and stutters</h2>
+<ul>
+<li>Fill the <strong>last half bar of a 4 or 8-bar phrase</strong>, and leave the other bars alone.</li>
+<li>Drop the kick during the fill to create space, then bring it back on step 1 of the next bar.</li>
+<li>Run a snare or clap roll into the bar line, with rising velocity.</li>
+<li>Stutter a vocal chop by retriggering it on four consecutive 16ths. Pitch it up or down a step each time for extra movement.</li>
+<li>Use toms for a descending run: for example steps 13, 14, 15 and 16 at falling pitches.</li>
+</ul>
+
+<h2 id="patterns">Example patterns</h2>
+<p>Each grid is one bar of 16 steps at 160 BPM. Treat them as starting points and change one or two hits at a time.</p>
+<h3>1. Basic</h3>
+<div class="gridwrap"><table class="seq"><caption>Basic: kick on the 3-3-2 pulse, clap on 5 and 13</caption><thead><tr><th></th><th class="g0 b">1</th><th class="g0">2</th><th class="g0">3</th><th class="g0">4</th><th class="g1 b">5</th><th class="g1">6</th><th class="g1">7</th><th class="g1">8</th><th class="g2 b">9</th><th class="g2">10</th><th class="g2">11</th><th class="g2">12</th><th class="g3 b">13</th><th class="g3">14</th><th class="g3">15</th><th class="g3">16</th></tr></thead><tbody><tr><th scope="row">Kick</th><td class="b on">●</td><td class=""></td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class="on">●</td><td class=""></td><td class="b on">●</td><td class=""></td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class="on">●</td><td class=""></td></tr><tr><th scope="row">Clap</th><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b on">●</td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b on">●</td><td class=""></td><td class=""></td><td class=""></td></tr><tr><th scope="row">Closed hat</th><td class="b on">●</td><td class=""></td><td class="on">●</td><td class=""></td><td class="b on">●</td><td class=""></td><td class="on">●</td><td class=""></td><td class="b on">●</td><td class=""></td><td class="on">●</td><td class=""></td><td class="b on">●</td><td class=""></td><td class="on">●</td><td class=""></td></tr><tr><th scope="row">Cowbell</th><td class="b"></td><td class=""></td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class="on">●</td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class="gh">·</td></tr></tbody></table></div><p class="legend"><span class="k on">●</span> hit <span class="k gh">·</span> ghost (soft, about 30–50% velocity)</p>
+<h3>2. Intermediate</h3>
+<div class="gridwrap"><table class="seq"><caption>Intermediate: syncopated kick, ghost snares, tom and a chop answering the clap</caption><thead><tr><th></th><th class="g0 b">1</th><th class="g0">2</th><th class="g0">3</th><th class="g0">4</th><th class="g1 b">5</th><th class="g1">6</th><th class="g1">7</th><th class="g1">8</th><th class="g2 b">9</th><th class="g2">10</th><th class="g2">11</th><th class="g2">12</th><th class="g3 b">13</th><th class="g3">14</th><th class="g3">15</th><th class="g3">16</th></tr></thead><tbody><tr><th scope="row">Kick</th><td class="b on">●</td><td class=""></td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class="on">●</td><td class=""></td><td class="b"></td><td class="gh">·</td><td class="on">●</td><td class="on">●</td><td class="b"></td><td class=""></td><td class="on">●</td><td class=""></td></tr><tr><th scope="row">Clap / snare</th><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b on">●</td><td class=""></td><td class=""></td><td class="gh">·</td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b on">●</td><td class=""></td><td class=""></td><td class="gh">·</td></tr><tr><th scope="row">Closed hat</th><td class="b on">●</td><td class="gh">·</td><td class="on">●</td><td class="on">●</td><td class="b on">●</td><td class="gh">·</td><td class="on">●</td><td class=""></td><td class="b on">●</td><td class="gh">·</td><td class="on">●</td><td class="on">●</td><td class="b on">●</td><td class="gh">·</td><td class="on">●</td><td class=""></td></tr><tr><th scope="row">Open hat</th><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class="on">●</td></tr><tr><th scope="row">Tom</th><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class="on">●</td><td class=""></td><td class=""></td></tr><tr><th scope="row">Cowbell</th><td class="b"></td><td class=""></td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class="on">●</td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><th scope="row">Vocal chop</th><td class="b"></td><td class=""></td><td class="on">●</td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class="on">●</td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td></tr></tbody></table></div><p class="legend"><span class="k on">●</span> hit <span class="k gh">·</span> ghost (soft, about 30–50% velocity)</p>
+<h3>3. Roll / fill</h3>
+<div class="gridwrap"><table class="seq"><caption>Roll / fill (last bar of a phrase): kick drops out, snare roll builds into step 16</caption><thead><tr><th></th><th class="g0 b">1</th><th class="g0">2</th><th class="g0">3</th><th class="g0">4</th><th class="g1 b">5</th><th class="g1">6</th><th class="g1">7</th><th class="g1">8</th><th class="g2 b">9</th><th class="g2">10</th><th class="g2">11</th><th class="g2">12</th><th class="g3 b">13</th><th class="g3">14</th><th class="g3">15</th><th class="g3">16</th></tr></thead><tbody><tr><th scope="row">Kick</th><td class="b on">●</td><td class=""></td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class="on">●</td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><th scope="row">Snare roll</th><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b on">●</td><td class="gh">·</td><td class="on">●</td><td class="gh">·</td><td class="b on">●</td><td class="on">●</td><td class="on">●</td><td class="on">●</td></tr><tr><th scope="row">Tom</th><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class="on">●</td><td class=""></td><td class="on">●</td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><th scope="row">Hat (16ths)</th><td class="b on">●</td><td class="on">●</td><td class="on">●</td><td class="on">●</td><td class="b on">●</td><td class="on">●</td><td class="on">●</td><td class="on">●</td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><th scope="row">Vocal stutter</th><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b"></td><td class=""></td><td class=""></td><td class=""></td><td class="b on">●</td><td class="on">●</td><td class="on">●</td><td class="on">●</td></tr></tbody></table></div><p class="legend"><span class="k on">●</span> hit <span class="k gh">·</span> ghost (soft, about 30–50% velocity)</p>
+<div class="tip"><b>Use them together.</b> Play the basic or intermediate bar for three or seven bars, then drop in the roll bar to close the phrase.</div>
+
+<h2 id="vcv">Programming it in VCV Rack</h2>
+<p>Any 16-step gate sequencer works. The setup is the same in every module.</p>
+<ol>
+<li><strong>Clock:</strong> set a clock module to <strong>160 BPM</strong> and take a <strong>16th-note output</strong> (4 times the beat clock, which is 640 pulses per minute). Some clocks have a ratio or multiplier setting for this.</li>
+<li><strong>Sequencer length:</strong> set the sequencer to <strong>16 steps</strong> and wire the 16th clock into its clock input. Wire the clock's reset into the sequencer reset so every bar starts on step 1.</li>
+<li><strong>One gate row per voice:</strong> use one 16-step gate row or one sequencer instance per drum voice (kick, clap, hat, perc). Wire each gate output to that drum module's trigger input.</li>
+<li><strong>Enter the hits:</strong> copy the steps from the grids above. A lit step is a gate.</li>
+<li><strong>Velocity and ghosts:</strong> if the sequencer has per-step values or probability, use low values on the ghost-note steps and feed them to the drum module's level or velocity input. If it does not, use a separate quieter hat or snare voice for ghosts.</li>
+<li><strong>Fills:</strong> run a second sequencer holding the roll pattern, and use a sequential switch or a counter that selects it on bar 4 or 8. Alternatively, mute rows by hand using a mute or gate-mixer module.</li>
+<li><strong>Chokes:</strong> send the closed-hat gate to the open hat's choke input, if the drum module has one.</li>
+</ol>
+<div class="tip"><b>Check by ear.</b> Solo kick and clap first. The kick pulse should feel like it is pushing against the clap before you add anything else.</div>
+
+<h2 id="arrange">Arrangement tips</h2>
+<ul>
+<li>Footwork tracks are loop-based and typically <strong>repeat in 4-bar and 8-bar phrases</strong>. Change one element every 4 bars.</li>
+<li>Open with just hats and one chop, then bring in the kick and clap.</li>
+<li>Strip drums out completely for a bar before a drop. Silence emphasizes the next kick.</li>
+<li>Keep the sub-bass and kick from fighting: duck the bass on kick hits, or give it its own steps.</li>
+<li>Build variation using the vocal chop and top percussion, and leave the kick and clap pattern consistent for dancers.</li>
+</ul>
+
+<h2 id="mistakes">Common mistakes</h2>
+<ul>
+<li><strong>Too many kicks.</strong> The 808 tail smears. Space them out or shorten the decay.</li>
+<li><strong>Making it swing like house or hip-hop.</strong> Keep the grid tight.</li>
+<li><strong>Constant rolls.</strong> Rolls lose impact when they happen every bar. Save them for phrase ends.</li>
+<li><strong>Flat velocity.</strong> Vary hat and ghost levels.</li>
+<li><strong>Losing step 1.</strong> If nothing marks the downbeat, the bar feels lost.</li>
+<li><strong>Clap on every beat.</strong> That turns it into a straight four-on-the-floor feel. Choose half-time or double-time and stay with it.</li>
+<li><strong>Same pitch toms.</strong> Descending or ascending pitch makes a fill feel intentional.</li>
+</ul>
+
+<footer>Patterns are starting points, not strict rules. Footwork thrives on bending them.</footer>
+</main>
