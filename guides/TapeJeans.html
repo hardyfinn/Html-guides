@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TapeJeans</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}
+</style></head><body><main>
+<h1>TapeJeans</h1>
+<p class="sub">A tape and microsound study module for VCV Rack 2</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#words">The words</a></li><li><a href="#display">The display</a></li><li><a href="#knobs">Knobs</a></li><li><a href="#buttons">Buttons</a></li><li><a href="#jacks">Jacks</a></li><li><a href="#menu">Right-click menu</a></li><li><a href="#tour">Ten-minute tour</a></li><li><a href="#patches">Patch ideas</a></li><li><a href="#diff">Differences from the hardware</a></li></ul></nav>
+<h2 id="idea">The idea</h2>
+<p>TapeJeans is a module for learning the Make Noise Morphagene by seeing it. It records a <strong>reel</strong>, cuts it into <strong>splices</strong>, and plays them back as <strong>genes</strong>, with the same controls as the hardware. Each of the hardware's button combinations gets its own labelled button, and a display shows what is going on.</p>
+<div class="note">It is an independent study module, not made by or connected with Make Noise.</div>
+<h2 id="words">The words</h2>
+<div class="tw"><table><tr><th>Word</th><th>Meaning</th></tr>
+<tr><td><strong>Reel</strong></td><td>The whole recording, up to 2.9 minutes (2:54). On the hardware, one <code>mgX.wav</code> file on the SD card.</td></tr>
+<tr><td><strong>Splice</strong></td><td>A section of the reel between two markers. Up to 300 per reel.</td></tr>
+<tr><td><strong>Gene</strong></td><td>The bit of the splice that actually plays. Gene Size sets how long it is, and Slide sets where it starts. Morph sets how genes repeat and overlap.</td></tr></table></div>
+<h2 id="display">The display</h2>
+<ul>
+<li><strong>Top line:</strong> the splice that is playing and its length. <strong>NEXT</strong> (cyan) shows a splice waiting to take over at the end of the current gene. On the right: the record state, the reel length, or a short message after each button press.</li>
+<li><strong>Whole reel strip:</strong> every splice. The current one is orange, the next has a cyan outline, white lines are playheads, and a red line is the record head.</li>
+<li><strong>Splice zoom:</strong> just the current splice. The yellow box is the gene window (Slide moves it, Gene Size resizes it). White lines are the playing genes, up to four at once.</li>
+<li><strong>Bottom line:</strong> what the hardware's coloured lights would tell you. Vari-Speed's dot is red when stopped, green at original speed, blue at +1 octave and peach at -1 octave. Morph's dot is amber at 1/1, red for gaps or overlap, and blue in time stretch. It also shows the gene length and what the clock is doing.</li></ul>
+<h2 id="knobs">Knobs</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th><th>CV</th></tr>
+<tr><td><strong>S.O.S.</strong></td><td>What you hear and what recording writes: CCW = only the input, CW = only the reel. In between, new sound layers over the old (sound on sound).</td><td>0-8 V scales the knob (normalled to 8 V)</td></tr>
+<tr><td><strong>Gene Size</strong></td><td>CCW = the whole splice plays. Turning CW shrinks the window down to about 2 ms.</td><td>0-8 V, with <strong>amt</strong> attenuverter</td></tr>
+<tr><td><strong>Vari-Speed</strong></td><td>Noon = stopped. CW = forward, CCW = reverse. The <code>x1</code> marks (about 2:30 and 9:30) are original speed. Full CW = +12 semitones, near noon = -26 semitones.</td><td>+-4 V sweeps the knob, with <strong>amt</strong></td></tr>
+<tr><td><strong>Morph</strong></td><td>CCW = silent gaps between genes. The <code>1/1</code> mark = genes join up seamlessly. Further CW = 2, 3, then 4 genes overlap. From about 1:00 they pan across the stereo field. Past the yellow mark (about 2:30), pitch layers appear.</td><td>0-5 V</td></tr>
+<tr><td><strong>Slide</strong></td><td>Moves the gene window through the splice, straight away.</td><td>0-8 V, with <strong>amt</strong></td></tr>
+<tr><td><strong>Organize</strong></td><td>Picks the next splice. Splices are spread evenly across the knob, whatever their length. The change happens at the end of the current gene.</td><td>0-5 V</td></tr></table></div>
+<h2 id="buttons">Buttons</h2>
+<p>Each button, and the hardware press it stands for:</p>
+<div class="tw"><table><tr><th>Button</th><th>Does</th><th>On the hardware</th></tr>
+<tr><td><strong>REC</strong></td><td>Record into the current splice. Recording keeps going round the splice until you press again (Time Lag Accumulation). S.O.S. sets how much old sound is kept.</td><td>press REC</td></tr>
+<tr><td><strong>REC NEW</strong></td><td>Record a new splice at the end of the reel. It plays as soon as you stop.</td><td>hold REC, tap SPLICE</td></tr>
+<tr><td><strong>SPLICE</strong></td><td>Put a marker where the playhead is now. While recording a new splice, the marker goes at the record head.</td><td>press SPLICE</td></tr>
+<tr><td><strong>NEXT</strong></td><td>Go to the next splice, at the end of the current gene.</td><td>press SHIFT</td></tr>
+<tr><td><strong>DEL MARK</strong></td><td>Remove the marker at the end of this splice, joining it with the next.</td><td>hold SHIFT, tap SPLICE</td></tr>
+<tr><td><strong>DEL AUDIO</strong></td><td>Erase this splice's audio from the reel.</td><td>hold SHIFT, tap REC</td></tr>
+<tr><td><strong>CLR MARKS</strong> (hold 1 s)</td><td>Remove every marker and keep the audio.</td><td>hold SHIFT + SPLICE for 3 s</td></tr>
+<tr><td><strong>CLR REEL</strong> (hold 1 s)</td><td>Erase the whole reel.</td><td>hold SHIFT + REC for 3 s</td></tr>
+<tr><td><strong>GAIN</strong></td><td>Input gain: -3 dB, 0 dB (modular level), +6 dB, +12 dB. The light above it is green for good level and red for too hot.</td><td>hold REC, tap SHIFT (steps blue, green, orange, purple)</td></tr></table></div>
+<p>If a clock is patched, REC and REC NEW wait for the next clock to start and stop, and their light flashes while waiting. That matches the hardware.</p>
+<h2 id="jacks">Jacks</h2>
+<div class="tw"><table><tr><th>Jack</th><th>What it does</th></tr>
+<tr><td><strong>IN L / IN R</strong></td><td>Audio in. L alone feeds both sides.</td></tr>
+<tr><td><strong>CLK</strong></td><td>Each clock jumps to the next gene (<strong>gene shift</strong>). With Morph past 2 genes, the clock instead sets how fast you travel through the splice, while Vari-Speed only changes pitch (<strong>time stretch</strong>). Clocks also start and stop recording.</td></tr>
+<tr><td><strong>PLAY</strong></td><td>Normalled high (it loops). A rising edge restarts from the Slide point. Low = stop at the end of the gene.</td></tr>
+<tr><td><strong>REC / SPLICE / SHIFT</strong></td><td>Gates that do the same as the buttons.</td></tr>
+<tr><td><strong>OUT L / OUT R</strong></td><td>The S.O.S. mix of input and reel.</td></tr>
+<tr><td><strong>EOSG</strong></td><td>A 10 ms, 10 V gate at the end of each gene or splice.</td></tr>
+<tr><td><strong>CV OUT</strong></td><td>0-8 V envelope follower of the output (or a ramp over each gene, from the menu).</td></tr></table></div>
+<h2 id="menu">Right-click menu</h2>
+<ul>
+<li><strong>Load reel (.wav)</strong> and <strong>Save reel as .wav</strong>. Files are saved as 48 kHz 32-bit float stereo, with splices as WAV cue markers, which is the hardware's format. Name a file <code>mg1.wav</code> to <code>mg9.wav</code> and put it in the SD card's root to try it on the hardware. The README says this has not been tested with a real card, so keep a backup of your card. Any WAV file loads, at any sample rate.</li>
+<li><strong>Keep the reel with the patch</strong> (on by default): the reel is saved inside the patch.</li>
+<li><strong>Options</strong>: the same settings as the hardware's <code>options.txt</code> file, with its option names in brackets: vari-speed mode (<code>vsop</code>), recording source (<code>inop</code>), organize timing (<code>omod</code>), smooth gene window (<code>gnsm</code>), PLAY mode (<code>pmod</code>), clock mode (<code>ckop</code>), CV output (<code>cvop</code>), Morph pitch layers (<code>mcr1</code>-<code>mcr3</code>), and what the REC gate does (<code>rsop</code>).</li></ul>
+<h2 id="tour">Ten-minute tour</h2>
+<p>Then try the same on the hardware.</p>
+<ol>
+<li>Patch an oscillator or drum loop into <strong>IN L</strong> and set <strong>S.O.S.</strong> fully CCW. Press <strong>REC NEW</strong>, wait a few seconds, then press it again. The new splice plays. Turn S.O.S. CW to hear it.</li>
+<li>Press <strong>SPLICE</strong> a few times while it plays to chop it up. Turn <strong>Organize</strong> and watch the cyan NEXT outline. It only moves when the current gene ends.</li>
+<li>Turn <strong>Gene Size</strong> up. The yellow box shrinks and the sound starts to stutter. Move <strong>Slide</strong> to scan the box through the splice.</li>
+<li>Turn <strong>Morph</strong> past <code>1/1</code> and watch the playheads multiply. Past the yellow mark, the pitch layers come in.</li>
+<li>Patch a clock into <strong>CLK</strong>. With Morph low, each clock jumps to the next gene. Turn Morph past <code>x2</code> and the display says <em>time stretch</em>: now Vari-Speed only changes the pitch.</li>
+<li>Set S.O.S. to noon and press <strong>REC</strong> while playing into it. Each pass layers on top of the last and slowly fades.</li></ol>
+<h2 id="patches">Patch ideas</h2>
+<ul>
+<li><strong>Clock from Live</strong>, through the disting NT, into CLK. Genes lock to tempo, so microsound stays in the groove.</li>
+<li><strong>EOSG into DROID</strong>: count genes to drive logic, such as flipping a Marbles mode every 8 genes or advancing a pattern.</li>
+<li><strong>Marbles or Random8 stepped voltage into Organize</strong> to jump between splices. <strong>K-Accumulator or a slow Pam's ramp into Slide</strong> to scan.</li>
+<li><strong>Arrangement:</strong> record a Hapax chord pad into four splices, one per section, and move Organize per section instead of looping one sound.</li></ul>
+<h2 id="diff">Differences from the hardware</h2>
+<p>Guesses where the manual gives no numbers, and simplifications:</p>
+<ul>
+<li>The shortest gene is 2 ms.</li>
+<li>Morph's landmarks are fixed knob positions: <code>1/1</code> at 9:00, panning from about 1:00, and pitch layers from about 2:30.</li>
+<li>At Gene Size CCW, a gene lasts one pass of the splice at the current speed.</li>
+<li>No phase-modulation input (<code>pmin</code>), and no multiple reels or Reel Mode. Use Load and Save instead.</li>
+<li>The reel uses about 67 MB of memory per module, because a full 2.9-minute reel is allocated up front.</li></ul>
+<div class="note">Source: the TapeJeans README. Licence MIT.</div>
+</main></body></html>

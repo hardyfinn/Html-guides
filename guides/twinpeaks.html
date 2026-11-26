@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TwinPeaks</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}
+</style></head><body><main>
+<h1>TwinPeaks</h1>
+<p class="sub">A twin-peak resonant filter for VCV Rack, by Haer</p>
+<nav><strong>Contents</strong><ul><li><a href="#how">How it works</a></li><li><a href="#controls">Controls</a></li><li><a href="#jacks">Jacks</a></li><li><a href="#screen">The screen</a></li><li><a href="#recipes">Patch ideas</a></li><li><a href="#spots">Sweet spots</a></li></ul></nav>
+<p>TwinPeaks is a twin-peak resonant filter after Rob Hordijk's Twin Peak filter, the filter idea behind the Benjolin and the Blippoo Box. It is part of the Haer plugins, original code (MIT), with the twin-peak idea credited to Rob Hordijk.</p>
+<h2 id="how">How it works</h2>
+<p><code>IN → DRIVE → two resonant low-pass filters → HIGH minus LOW → TWIN</code></p>
+<p>The same sound goes into two resonant low-pass filters, one tuned higher than the other. TwinPeaks subtracts the low one from the high one. Below the low filter's cutoff both let the sound through, so it cancels out. Above the high filter's cutoff both have cut it, so it is gone. What is left is the band in between, with a <strong>resonant peak at each edge</strong>.</p>
+<p>That gives a vowel-like, talking quality that one filter can't, because there are two formants you can move together (FREQ) or pull apart (SPREAD).</p>
+<p>Push RES past about 93% and both peaks <strong>whistle on their own</strong>: TwinPeaks becomes two sine oscillators a SPREAD apart. DRIVE pushes the sound into a soft clipper before the filters, and the resonance squashes rather than blows up.</p>
+<h2 id="controls">Controls</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>FREQ</strong></td><td>Where the peaks sit, 20 Hz to 20 kHz. Moves both together.</td></tr>
+<tr><td><strong>SPREAD</strong></td><td>How far apart the peaks are: close (2 semitones) to 5 octaves. Close = one narrow nasal band; wide = a thin top and bottom with a hollow middle.</td></tr>
+<tr><td><strong>PEAKS switch</strong></td><td>ABOVE (down): the low peak sits on FREQ and SPREAD pushes the high peak up. AROUND (up): the peaks open out either side of FREQ, so SPREAD sweeps keep the centre steady.</td></tr>
+<tr><td><strong>RES</strong></td><td>Height of both peaks. Noon is gentle, 3 o'clock is vocal, from about 93% they self-oscillate.</td></tr>
+<tr><td><strong>DRIVE</strong></td><td>Input level into the soft clipper. Fully left is clean and quiet, fully right is heavily squashed.</td></tr>
+<tr><td><strong>BALANCE</strong></td><td>Level of each peak in TWIN. Left favours the LOW peak, right the HIGH peak; noon is equal.</td></tr>
+<tr><td><strong>FM amount</strong></td><td>Attenuverter for the FM jack. Modulates both peaks (1 V/oct at full amount, either direction). Audio rate is fine.</td></tr>
+<tr><td><strong>SPREAD amount</strong></td><td>Amount and direction of the SPREAD CV (10 V = 5 octaves at full).</td></tr></table></div>
+<p>Right-click menu: <strong>Clean resonance</strong> lets the peaks get much louder before they squash: cleaner whistles, less grit. Watch levels.</p>
+<h2 id="jacks">Jacks</h2>
+<div class="tw"><table><tr><th>Jack</th><th>What it does</th></tr>
+<tr><td><strong>V/OCT</strong></td><td>Moves both peaks, 1 V/oct. With RES up, it plays the two whistles in tune.</td></tr>
+<tr><td><strong>FM</strong></td><td>Through the FM amount knob, both peaks.</td></tr>
+<tr><td><strong>SPREAD, RES, DRIVE, BAL</strong></td><td>CV for those knobs (RES and DRIVE: 10 V = full; BAL: +-5 V = full; SPREAD goes through its amount knob).</td></tr>
+<tr><td><strong>FM HI</strong></td><td>Moves only the high peak, 1 V/oct, no knob. The Hordijk-style cross-patch point.</td></tr>
+<tr><td><strong>IN</strong></td><td>Audio in. All jacks are polyphonic.</td></tr>
+<tr><td><strong>TWIN</strong></td><td>The two-peak output (high minus low). The main one.</td></tr>
+<tr><td><strong>LOW / HIGH</strong></td><td>Each resonant low-pass on its own, for a normal filter or for cross-patching.</td></tr></table></div>
+<h2 id="screen">The screen</h2>
+<p>A small display draws the shape of the TWIN response from 20 Hz to 20 kHz live. The amber tick is the low peak, the red tick the high peak.</p>
+<h2 id="recipes">Patch ideas</h2>
+<h3>1. Talking acid bass</h3>
+<p>Saw from your bass voice into IN. FREQ 10 o'clock, SPREAD 11 o'clock, PEAKS ABOVE, RES 2 o'clock, DRIVE noon. Your accent envelope into FM with the amount at 2 o'clock. Each accent opens both formants together, so the line "says" something instead of just getting brighter. Variation: send the envelope to SPREAD instead, so the vowel changes shape rather than pitch.</p>
+<h3>2. Detroit pad that breathes</h3>
+<p>Chords into a poly saw, into IN (polyphonic). PEAKS AROUND, FREQ 1 o'clock, RES noon. A slow LFO into SPREAD, SPREAD amount 10 o'clock. With AROUND, the centre stays put while the band breathes wider and narrower, so the chord gets hollow and full over the section.</p>
+<h3>3. Two-tone whistle voice (no input needed)</h3>
+<p>RES fully right, nothing in IN (a short trigger into IN kicks it if it is silent). Sequencer pitch into V/OCT. SPREAD sets the interval: fully left = two semitones (a rough, beating pair), about 8 o'clock = a fifth, 9 o'clock = an octave, noon = two and a half octaves. Fine-tune by ear. Run a VCA after TWIN with your envelope. Variation: random CV into SPREAD per step for a two-note chime whose interval mutates.</p>
+<h3>4. Hordijk cross-patch</h3>
+<p>Noise or a drum loop into IN, RES 3 o'clock. Patch <strong>LOW out into FM HI</strong>. The low filter's output now wobbles the high peak at audio rate, which changes what comes out, which changes the wobble. Small changes to FREQ and DRIVE flip it between purr, growl and squeal. Add HIGH into FM with a little amount for a fully self-patched loop, Benjolin-style. Record a long take and edit the best bits.</p>
+<h3>5. Hats and percussion into vowels</h3>
+<p>A hat loop into IN, FREQ 2 o'clock, SPREAD 9 o'clock, RES 3 o'clock, BALANCE right. Stepped random CV into FM. Each hit lands on a different pair of resonances, so a static hat pattern gets a pitched, talking variation.</p>
+<h2 id="spots">Sweet spots</h2>
+<ul>
+<li>Bass: FREQ 9-11 o'clock, SPREAD 10-noon, DRIVE noon. TWIN removes the very lowest end, so blend in LOW (or the dry bass) under it if the sub goes missing.</li>
+<li>Vowels: SPREAD about 1.5-2.5 octaves, RES 2-3 o'clock. Move FREQ slowly.</li>
+<li>Very close SPREAD with low RES cancels a lot of the sound. That is by design; turn up DRIVE or RES to bring it back.</li></ul>
+<div class="note">Source: the TwinPeaks README, docs/make_guide.py and src/TwinPeaks.cpp (version 2.0.0). Licence MIT.</div>
+</main></body></html>
