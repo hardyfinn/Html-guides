@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Morphader (VCV Rack)</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace;padding:1px 5px;font-size:.9em}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Morphader</h1>
+<p class="sub">Stereo audio crossfader for VCV Rack with fourteen ways to get from A to B. Version 2.0.0, MIT licence.</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#panel">Panel</a></li><li><a href="#modes">The 14 modes</a></li><li><a href="#go">GLIDE and GO</a></li><li><a href="#ideas">Patch ideas</a></li><li><a href="#notes">Notes</a></li></ul></nav>
+
+<h2 id="idea">The idea</h2>
+<p>An ordinary crossfader only changes the level of two signals. Morphader changes <em>how</em> A turns into B. <strong>FADE</strong> moves from A to B, <strong>MODE</strong> picks the method, and <strong>CHARACTER</strong> shapes it. Every mode follows one rule: FADE fully at A is exactly A, FADE fully at B is exactly B, and the middle is where the mode does its work.</p>
+
+<h2 id="panel">Panel</h2>
+<h3>Knobs and buttons</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>FADE</strong> (big knob)</td><td>Where you are between A and B (0 to 100%).</td></tr>
+<tr><td><strong>MODE</strong></td><td>Picks one of the 14 modes. Changing mode does a short 4 ms dip so it never clicks.</td></tr>
+<tr><td><strong>CHARACTER</strong></td><td>Shapes the current mode. The screen shows what it is controlling (rate, resonance, decay and so on).</td></tr>
+<tr><td><strong>GLIDE</strong></td><td>How long a full A-to-B trip takes, from instant to 10 s.</td></tr>
+<tr><td><strong>FADE CV</strong> trim</td><td>Attenuverter (-100% to +100%) for the FADE CV input. Fully right passes the CV as is, fully left inverts it.</td></tr>
+<tr><td><strong>CHARACTER CV</strong> trim</td><td>The same, for the CHARACTER CV input.</td></tr>
+<tr><td><strong>GO</strong> button</td><td>Flips to the other side over the glide time. Its light is on while flipped.</td></tr>
+<tr><td><strong>A</strong> / <strong>B</strong> lights</td><td>How much of each side you are hearing.</td></tr></table></div>
+<h3>Jacks</h3>
+<div class="tw"><table><tr><th>Jack</th><th>Function</th></tr>
+<tr><td>A L, A R</td><td>Stereo source A. A R is normalled to A L, so a mono source in A L works.</td></tr>
+<tr><td>B L, B R</td><td>Stereo source B, normalled the same way.</td></tr>
+<tr><td>FADE CV</td><td>0 to 10 V moves FADE across its whole range, through the FADE CV trim. It is added to the FADE knob.</td></tr>
+<tr><td>MODE CV</td><td>0 to 10 V steps through all 14 modes. It is added to the MODE knob.</td></tr>
+<tr><td>CHARACTER CV</td><td>10 V is the full range, through the CHARACTER CV trim.</td></tr>
+<tr><td>GLIDE CV</td><td>10 V is the full glide range. It is added to the GLIDE knob.</td></tr>
+<tr><td>GO</td><td>A trigger flips A and B, the same as the GO button.</td></tr>
+<tr><td>OUT L, OUT R</td><td>Stereo out. Some modes (dub throw, reverb wash) add stereo width even from a mono source. Loud peaks above 8 V are softly limited.</td></tr></table></div>
+<h3>Screen</h3>
+<p>The top line shows the mode number and name on the left and a readout of what CHARACTER is doing on the right. Below it is an A ---o--- B bar showing where the fade really is (after glide), and the glide time at the bottom ("no glide", "glide 250 ms" or "glide 3.2 s").</p>
+
+<h2 id="modes">The 14 modes</h2>
+<div class="tw"><table><tr><th>#</th><th>Mode</th><th>On the way from A to B</th><th>CHARACTER</th></tr>
+<tr><td>1</td><td>Filter swap</td><td>A's low-pass closes while B's high-pass opens</td><td>resonance</td></tr>
+<tr><td>2</td><td>Gate chop</td><td>Fast switching. The time share on B follows FADE (50/50 in the middle)</td><td>rate, 0.5 Hz to 2 kHz</td></tr>
+<tr><td>3</td><td>Ring</td><td>A x B ring modulation peaks in the middle</td><td>width of the ring zone</td></tr>
+<tr><td>4</td><td>Vocoder</td><td>A, then A speaking with B's spectrum, then B speaking with A's, then B</td><td>envelope release</td></tr>
+<tr><td>5</td><td>Spectral</td><td>8 bands. B takes them over from the bottom up</td><td>overlap between bands</td></tr>
+<tr><td>6</td><td>Tape stop</td><td>A slows down and drops in pitch, B spins up</td><td>how far the pitch drops</td></tr>
+<tr><td>7</td><td>Crush</td><td>A crushes into grit, B resolves out of it</td><td>bits to sample rate</td></tr>
+<tr><td>8</td><td>Dub throw</td><td>A is thrown into a delay and trails off as B arrives</td><td>echo time</td></tr>
+<tr><td>9</td><td>Reverb wash</td><td>A drowns in reverb, B emerges dry</td><td>decay</td></tr>
+<tr><td>10</td><td>Grain shuffle</td><td>Random grains. The odds of B rise with FADE</td><td>grain length</td></tr>
+<tr><td>11</td><td>Freeze</td><td>A freezes into a loop that fades while B comes in live</td><td>loop length</td></tr>
+<tr><td>12</td><td>Env swap</td><td>B's dynamics take over A, then B's sound takes over</td><td>envelope release</td></tr>
+<tr><td>13</td><td>Fold</td><td>A wavefolds into noise, B unfolds into clean</td><td>fold amount</td></tr>
+<tr><td>14</td><td>Equal power</td><td>The classic crossfade, for reference</td><td>linear, equal power, wide, cut</td></tr></table></div>
+<p>A few details from the module's own guide:</p>
+<ul>
+<li><strong>Filter swap</strong>: the two filters meet at about 700 Hz in the middle.</li>
+<li><strong>Gate chop</strong>: slow rates give stutter edits. Above about 100 Hz it becomes a timbre, like a pulse-width mix.</li>
+<li><strong>Tape stop</strong>: CHARACTER sets a drop of 1 to 4 octaves.</li>
+<li><strong>Dub throw</strong>: echo time runs from 60 ms to 1 s. <strong>Reverb wash</strong>: decay runs from 0.6 to 12 s.</li>
+<li><strong>Grain shuffle</strong>: grains run from 5 to 400 ms. Near the middle the grains also jump back in time.</li>
+<li><strong>Freeze</strong>: the moment FADE leaves A, A freezes into a loop of 30 ms to 1 s.</li></ul>
+
+<h2 id="go">GLIDE and GO</h2>
+<p>FADE moves at a steady speed, so even a sudden CV jump becomes a smooth sweep. With GLIDE at zero there is only a tiny 2 ms smoothing. The glide range is 10 ms to 10 s for the full trip.</p>
+<p>GO (button or trigger) flips which side FADE points at. With FADE at A, press GO and it travels to B over the glide time. Press again and it travels back. The flipped state is saved with the patch. The right-click menu has a <strong>GO flipped</strong> option that sets it directly.</p>
+
+<h2 id="ideas">Patch ideas</h2>
+<ol>
+<li><strong>Planned section changes.</strong> Put the current loop in A and the next section in B. Send a clock divider into GO so it fires every 16 or 32 bars. Set GLIDE to 2 to 8 s and pick a mode for each change: Tape stop for drops, Reverb wash for breakdowns, Spectral for builds. For variety, patch a stepped random CV into MODE, or a slow LFO into GLIDE CV.</li>
+<li><strong>Self-mutating texture.</strong> Put two related voices in A and B. Send a slow smooth random (about 0.1 Hz) into FADE CV and another into CHARACTER CV, with Grain shuffle or Vocoder selected. The patch keeps drifting between states.</li>
+<li><strong>A sound source.</strong> Gate chop with CHARACTER above 100 Hz, and two oscillators a fifth apart in A and B. FADE then sets a pulse-width-like blend, so an envelope on FADE gives plucky timbre changes. Ring mode with FADE at the centre works as a ring modulator with a dry/wet control.</li></ol>
+
+<h2 id="notes">Notes</h2>
+<ul>
+<li>The module's own guide says it was not yet tested inside Rack at version 2.0.0, so report anything odd.</li>
+<li>Source: <a href="https://github.com/hardyfinn/Morphader">github.com/hardyfinn/Morphader</a>. <code>make test</code> runs offline engine checks and writes a demo WAV.</li></ul>
+</main></body></html>

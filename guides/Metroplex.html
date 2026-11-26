@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Metroplex (VCV Rack)</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace;padding:1px 5px;font-size:.9em}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Metroplex</h1>
+<p class="sub">16-stage pulse-count sequencer for VCV Rack 2, by Haer. Version 2.1.0, GPL-3.0-or-later.</p>
+<nav><strong>Contents</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#first">First patch</a></li><li><a href="#stage">Stage controls</a></li><li><a href="#display">The display and its menus</a></li><li><a href="#mutate">Mutate</a></li><li><a href="#snap">Snapshots</a></li><li><a href="#slides">Slides</a></li><li><a href="#ctrl">CTRL knobs</a></li><li><a href="#jacks">Jacks</a></li><li><a href="#ideas">Patch ideas</a></li></ul></nav>
+
+<h2 id="overview">Overview</h2>
+<p>Each of the 16 stages has a pitch slider and a pulse count, and the stages share one sequence. Around that sit Mutate (a seeded, reversible way to vary the pattern), 8 snapshots, slides (including Acid), skips, scale quantising, a menu display, and four CTRL knobs that can be pointed at almost any setting.</p>
+<div class="note">The way it works follows the Intellijel Metropolix, but Metroplex is an independent module written from scratch. It is not made by or connected with Intellijel.</div>
+
+<h2 id="first">First patch</h2>
+<ol>
+<li>Add Metroplex, a VCO, an ADSR envelope and a VCA.</li>
+<li><strong>PITCH</strong> to the VCO's V/Oct. <strong>GATE</strong> to the ADSR's gate. VCO to the VCA input, ADSR to the VCA CV, VCA to your audio out.</li>
+<li>Leave <strong>CLOCK</strong> unpatched. Metroplex then runs on its own clock at 120 BPM, with 4 pulses per beat (each pulse is a 16th note).</li>
+<li>Move a few sliders. Set stage 4's <strong>PULSES</strong> to 3 and its <strong>GATE</strong> to multi (yellow) and it plays three 16ths in a row. Set stage 8 to hold (blue) with 4 pulses for a long note.</li></ol>
+<p>To sync with Live, patch a 16th-note clock into <strong>CLOCK</strong> and Live's transport reset into <strong>RESET</strong>.</p>
+
+<h2 id="stage">Stage controls (one column per stage)</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>PITCH</strong> slider</td><td>The stage's note. The slider covers the Slider range (1 to 4 octaves) and always lands on a note in the chosen scale. Hover to see the note name.</td></tr>
+<tr><td><strong>PULSES</strong> (1 to 8)</td><td>How many clock pulses the stage lasts.</td></tr>
+<tr><td><strong>GATE</strong> button</td><td>Click to cycle the gate type: dark red = Rest (no gate), green = Single (one gate on the first pulse), yellow = Multi (a gate on every pulse), blue = Hold (one long gate across all the stage's pulses).</td></tr>
+<tr><td><strong>SLIDE</strong> button</td><td>Glide into this stage's note. The Slide page sets how.</td></tr>
+<tr><td><strong>MUT</strong> button</td><td>Lit means Mutate may change this stage. Off means the stage is locked and always plays as set.</td></tr>
+<tr><td><strong>SKIP</strong> button (red)</td><td>The stage is left out completely, as if it wasn't there. If every stage is skipped, the sequence keeps time in silence.</td></tr></table></div>
+<p><strong>PULSES (all stages)</strong>, the small knob at the top right, sets every stage's pulse count at once. It overwrites all 16 PULSES knobs, which you can then change one by one again.</p>
+<p>The slider's light shows the playing stage. Stages outside the playing window (Start stage and Length) are dimmer.</p>
+
+<h2 id="display">The display and its menus</h2>
+<p>Six page buttons choose what the display shows: <strong>HOME</strong>, <strong>CLOCK</strong>, <strong>SEQ</strong>, <strong>SCALE</strong>, <strong>SLIDE</strong> and <strong>MUTATE</strong>. Each CTRL knob has its own <strong>menu</strong> button too.</p>
+<ul>
+<li><strong>Change the highlighted row:</strong> drag the DATA encoder up or down, or scroll over it. Hold Shift for steps of 10 (handy for tempo).</li>
+<li><strong>Next row:</strong> click the encoder or press the page button again. You can also click a row on the display, or drag on it.</li>
+<li><strong>On HOME,</strong> turning the encoder flips through the pages.</li>
+<li><strong>Right-click the display</strong> for a menu of everything on that page. The module's own right-click menu has every page.</li>
+<li>A cyan <strong>C1</strong> or <strong>C2</strong> badge on a row means that CTRL knob is setting it right now. You can't change it from the menu until the knob is unassigned.</li></ul>
+<div class="tw"><table><tr><th>Page</th><th>Rows</th></tr>
+<tr><td>HOME</td><td>16 bars showing each note's height. Cyan = playing now, outline = rest, dark = skipped or outside the window, cyan tick = changed by Mutate. The title shows the snapshot (and the one waiting) and the Mutate amount. The bottom shows key and scale, start-end and play order, and the current stage and note.</td></tr>
+<tr><td>CLOCK</td><td>Tempo (20 to 300 BPM, internal clock only), Clock div (/1 to /16, also divides an external clock), Gate length (1 to 99% of a pulse)</td></tr>
+<tr><td>SEQ</td><td>Start stage (1 to 16), Length (1 to 16; the window wraps, so start 14 with length 4 plays 14, 15, 16, 1), Snapshot switch (Now or End of cycle), Play order: Forward, Reverse, Pendulum (no repeats at the ends), Ping-pong (repeats the end stages), Converge (1, 16, 2, 15...), Diverge (inside out), Random, Brownian (a random walk that mostly moves forward)</td></tr>
+<tr><td>SCALE</td><td>Scale (18, from Chromatic to Fifths), Root, Slider range (1 to 4 octaves), Octave (-3 to +3)</td></tr>
+<tr><td>SLIDE</td><td>Slide type and Slide amount</td></tr>
+<tr><td>MUTATE</td><td>What Mutate may change: Pitch (off, or up to +-12 scale degrees), Rhythm, Slides, Skips. The footer shows the seed.</td></tr>
+<tr><td>CTRL 1-4</td><td>The knob's Destination, a line of help, and a gauge of where the knob (plus its CV) sits</td></tr></table></div>
+
+<h2 id="mutate">Mutate</h2>
+<p>Mutate varies the pattern without losing it. The <strong>MUTATE</strong> knob goes from 0 (exactly as programmed) to fully mutated. Each step up changes a few more stages: a note moves by some scale degrees, a pulse count or gate type changes, and (if allowed on the MUTATE page) slides and skips flip. Turn the knob back and the changes undo in reverse order, so 0 is always your original pattern.</p>
+<p>The changes come from a <strong>seed</strong>. The same seed and knob position always give the same result. The yellow <strong>SEED</strong> button, or a trigger at the <strong>SEED</strong> jack, picks a new seed. Stages with MUT off are never changed. Put a CTRL knob on Mutate amount to sweep it with CV.</p>
+
+<h2 id="snap">Snapshots</h2>
+<p>There are 8 snapshots. Each keeps the 16 stages (pitch, pulses, gate, slide, MUT, skip), Start stage, Length, Play order and the Mutate seed. Scale, tempo and the CTRL knobs stay the same across snapshots.</p>
+<ul>
+<li><strong>Save:</strong> press SAVE (red, it blinks), then a number button. Press SAVE again to cancel.</li>
+<li><strong>Recall:</strong> press a number button. With Snapshot switch on End of cycle (the default) it waits for the current pass to finish. Now switches at once.</li>
+<li><strong>SNAP jack:</strong> 0 to 7 V picks snapshot 1 to 8 (1 V each). A CTRL knob set to Snapshot does the same.</li>
+<li>Right-click the module to clear all snapshots.</li></ul>
+
+<h2 id="slides">Slides</h2>
+<p>Turn on SLIDE on a stage to glide into its note from the one before.</p>
+<ul>
+<li><strong>Tempo:</strong> the glide takes the same time whatever the interval. Slide amount is that time as a share of one pulse (100% = a full pulse).</li>
+<li><strong>Analog:</strong> the glide moves at a fixed speed, so big jumps take longer, like a slew limiter. 100% = 2 seconds per octave, 25% = half a second per octave.</li>
+<li><strong>Acid:</strong> 303 style. A stage with SLIDE on glides out of itself into the next stage that plays, at the Analog speed. Its gate is held across all its pulses and tied into the next note with no gap, so an envelope doesn't retrigger, even if the stage's GATE is set to rest.</li></ul>
+
+<h2 id="ctrl">CTRL knobs</h2>
+<p>Each of the four CTRL knobs can be pointed at a setting with its <strong>menu</strong> button and the DATA encoder, or by right-clicking the knob. Each has a CV jack along the bottom and a <strong>CV amt</strong> attenuverter under the knob: fully right, +-5 V moves the knob across its whole range; noon means the CV does nothing; left inverts it. New modules start with CTRL 1 on Gate length, CTRL 2 on Slide amount, and CTRL 3 and 4 unassigned.</p>
+<ul>
+<li><strong>Direct:</strong> the knob is the setting: Tempo, Clock div, Gate length, Start stage, Length, Play order, Scale, Slider range, Slide amount, Mutate pitch and Mutate rhythm.</li>
+<li><strong>Offset:</strong> noon does nothing, left subtracts, right adds. Pitch pre (+-12 semitones, then back into the scale), Pitch post (+-12 semitones after the scale, a plain transpose), Octave (+-2), Pulse count (+-7 pulses on every stage).</li>
+<li><strong>Mutate amount:</strong> noon does nothing, left takes from the MUTATE knob, right adds to it.</li>
+<li><strong>Snapshot:</strong> the knob's travel is split into 8, picking snapshots 1 to 8.</li></ul>
+<p>If two knobs set the same direct setting, the higher-numbered CTRL wins. Two offsets on the same destination add together.</p>
+
+<h2 id="jacks">Jacks</h2>
+<div class="tw"><table><tr><th>Jack</th><th>Function</th></tr>
+<tr><td>CLOCK in</td><td>One pulse per rising edge. Unpatched = internal clock.</td></tr>
+<tr><td>RESET in</td><td>Back to the start stage on the next clock.</td></tr>
+<tr><td>RUN in</td><td>A trigger toggles run/stop (the RUN button does the same).</td></tr>
+<tr><td>TRANSP in</td><td>1 V/oct transpose, added before the scale, so notes stay in key.</td></tr>
+<tr><td>SEED in</td><td>A trigger picks a new Mutate seed.</td></tr>
+<tr><td>SNAP in</td><td>0 to 7 V picks snapshot 1 to 8.</td></tr>
+<tr><td>CTRL 1-4 in</td><td>CV for the four CTRL knobs, scaled by each one's CV amt.</td></tr>
+<tr><td>CLK out</td><td>The clock after division.</td></tr>
+<tr><td>EOC out</td><td>A trigger each time the sequence starts a new cycle.</td></tr>
+<tr><td>GATE out</td><td>10 V gates.</td></tr>
+<tr><td>PITCH out</td><td>1 V/oct, 0 V = C4.</td></tr></table></div>
+
+<h2 id="ideas">Patch ideas</h2>
+<ol>
+<li><strong>Evolving line.</strong> Program a riff, turn MUT off on the stages that hold it together (say 1, 5, 9, 13) and set CTRL 1 to Mutate amount. A slow LFO into CTRL 1's CV makes the line drift away and come back. Press SEED for fresh variations and SAVE one you like.</li>
+<li><strong>Arrangement from knobs.</strong> CTRL 1 on Length, CTRL 2 on Pulse count, CTRL 3 on Start stage. Start at length 4 for an intro, open to 16 for the main part, then add pulses for a stretched breakdown. Record the moves as automation to replay the arrangement.</li>
+<li><strong>Acid-style bass.</strong> Slide type Acid, amount 30%. Mostly Single gates, slides on two or three stages, and one or two SKIPs to shorten the bar. Pitch pre on CTRL 2 shifts the riff through the scale for the next section.</li>
+<li><strong>Converging chords.</strong> Play order Converge on 8 stages, sent to a polyphonic or chord voice. The outside-in order gives a call-and-response shape from a plain riff.</li></ol>
+<p>Source and releases: <a href="https://github.com/hardyfinn/metroplex">github.com/hardyfinn/metroplex</a>. The sequencer engine and menu logic contain no VCV code, so they have standalone tests (<code>test/engine_test.cpp</code>).</p>
+</main></body></html>

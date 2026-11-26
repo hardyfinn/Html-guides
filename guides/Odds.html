@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Odds (VCV Rack)</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2em;padding-top:.4em;border-top:1px solid var(--line)}
+.sub{color:var(--mut);margin-top:0}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace;padding:1px 5px;font-size:.9em}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Odds</h1>
+<p class="sub">A collection of small, odd VCV Rack modules by Haer. Version 2.0.0, MIT licence. It currently holds one module: Minimal Nation.</p>
+
+<h2>Minimal Nation</h2>
+<p>One big knob, one input, one output. The signal passes straight through, on every polyphony channel, and the knob does nothing. It is there to look at.</p>
+<div class="note">The knob is a real parameter (0 to 10, default 5, named "Nothing") and it is saved with the patch, but nothing in the code reads it. Turning it has no effect on the sound.</div>
+
+<h2>Panel</h2>
+<p>12 HP, white panel. The knob uses Haer's knob design 241: a fixed shaded ball inside a black ring, with a black bar and a red dot that turn with the knob (about 300 degrees of travel).</p>
+<div class="tw"><table><tr><th>Item</th><th>What it is</th></tr>
+<tr><td>Big knob</td><td>Does nothing. Range 0 to 10, default 5.</td></tr>
+<tr><td><strong>In</strong> jack</td><td>Any signal, mono or polyphonic.</td></tr>
+<tr><td><strong>Out</strong> jack</td><td>An exact copy of the input, with the same number of channels.</td></tr></table></div>
+<p>When the module is bypassed, the input is wired to the output as well, so it is transparent either way.</p>
+
+<h2>Using it</h2>
+<ul>
+<li>Patch a cable into <strong>In</strong> and take <strong>Out</strong> to the next module. Nothing about the signal changes.</li>
+<li>It works for audio, CV and gates, since the voltage is copied untouched.</li>
+<li>Because there is no processing, it adds no sound and no noise.</li></ul>
+
+<h2>Patch ideas</h2>
+<ul>
+<li><strong>A signal tidier:</strong> use it as a visible junction in a patch, with one cable in and one out, where the knob gives your eye something to rest on.</li>
+<li><strong>A decoy knob:</strong> leave it in a rack as a placebo control. Turn it while someone watches the sound not change.</li>
+<li><strong>A polyphony check:</strong> put it in a poly cable run to confirm that all the channels come through unchanged (it keeps every channel).</li></ul>
+
+<h2>Building</h2>
+<p>Every push builds the plugin for Apple Silicon Macs in GitHub Actions. Pushes to <code>main</code> publish to the "latest" release and branch pushes to "preview". Source: <a href="https://github.com/hardyfinn/Odds">github.com/hardyfinn/Odds</a>.</p>
+</main></body></html>

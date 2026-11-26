@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Randrum (VCV Rack)</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace;padding:1px 5px;font-size:.9em}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Randrum</h1>
+<p class="sub">A VCV Rack 2 drum sample player that rolls dice on every hit.</p>
+<nav><strong>Contents</strong><ul><li><a href="#start">Getting sound out</a></li><li><a href="#dice">How the dice work</a></li><li><a href="#patterns">Patterns: memory, morph and ratchets</a></li><li><a href="#controls">Controls</a></li><li><a href="#jacks">Jacks</a></li><li><a href="#screen">The screen</a></li><li><a href="#menu">Right-click menu</a></li><li><a href="#files">Sample files</a></li><li><a href="#ideas">Patch ideas</a></li></ul></nav>
+<p>Load a folder of WAV or AIFF files and send it triggers. Each hit picks a sample and a pitch, decay, start point, level, pan and direction, inside ranges you set with the knobs. <strong>LOOP</strong> and <strong>MUTATE</strong> turn those dice rolls into a pattern that repeats and slowly rewrites itself, so a random part can sit still long enough to groove and then drift somewhere new.</p>
+
+<h2 id="start">Getting sound out</h2>
+<ol>
+<li>Right-click the module and choose <strong>Load folder...</strong>, or drag a folder (or any sample inside it) from Finder onto the screen. Subfolders are included, so you can drop a whole sample library.</li>
+<li>Patch a clock or gate sequencer into <strong>TRIG</strong>, and <strong>OUT L</strong> into your mixer.</li>
+<li>Turn <strong>SPREAD</strong> down to narrow which samples it picks from, and use <strong>SAMPLE</strong> to move that window through the folder.</li></ol>
+<p>One Randrum plays one part. Use one for hats, another for perc, another for kicks, each with its own folder.</p>
+
+<h2 id="dice">How the dice work</h2>
+<p>Every trigger uses a set of eight dice: which sample, pitch, decay, start, level, pan, reverse, and whether the hit plays at all. The knobs decide how far each die may push things. Dice and knobs are kept apart, so turning a <strong>RND</strong> knob rescales the same rolls rather than rolling new ones. A locked pattern stays the same pattern while you make it wilder or tamer.</p>
+<ul>
+<li><strong>LOOP</strong> (small knob under MUTATE): 1 to 16 hits. The dice for each hit are kept in a ring of that length, so the pattern repeats. Fully counter-clockwise is <strong>free</strong>: new dice every hit.</li>
+<li><strong>MUTATE</strong>: on every hit, the chance that each die is rolled again. At zero the loop is locked. Around 5 to 15% it changes a little each time round. Fully clockwise is pure noise.</li>
+<li><strong>VARIETY</strong>: how many different samples the loop uses, from 1 up to <strong>all</strong> (fully clockwise, the default). At 3, an 8-step loop uses three sounds, each repeated, and a repeat never lands next to itself (around the loop end too), so you get <code>A B A C B C A B</code> rather than <code>A A B B</code>. Which sounds and in what order are part of the dice, so MUTATE changes them slowly and REROLL picks new ones. It works in <strong>rnd</strong> pick mode. With LOOP on free, each hit picks one of the VARIETY sounds, never the same twice in a row.</li>
+<li><strong>REROLL</strong> (button or gate): roll the whole loop again in one go.</li>
+<li><strong>RESET</strong>: the next hit is the first of the loop. Patch the bar or pattern reset here to keep the loop lined up with your other parts.</li></ul>
+
+<h2 id="patterns">Patterns: MEMORY, morph and ratchets</h2>
+<p>The column on the right (added in version 2.3, which made the module 28 HP wide):</p>
+<ul>
+<li><strong>A, B, C, D:</strong> four pattern memories. Press <strong>SAVE</strong> (it lights), then a letter, to store the loop's dice there. A dim light means the slot holds a pattern; a bright one is the pattern the loop came from. The screen shows <code>LOOP A</code>, or <code>LOOP A~</code> once MUTATE has changed it.</li>
+<li><strong>jump / morph</strong> switch, for what pressing a letter does:
+<ul><li><strong>jump:</strong> the loop switches to that pattern at the start of the next loop, so it stays in time. The letter blinks and the screen says <code>B next</code> until then. Right-click &gt; <em>JUMP changes pattern straight away</em> switches immediately.</li>
+<li><strong>morph:</strong> the letter becomes a target. MUTATE now copies the target's dice instead of rolling new ones, so the loop drifts toward the target one die at a time, at a speed set by MUTATE. The screen shows the progress (<code>&gt; B 63%</code>). Press the letter again to go back to random mutation.</li></ul></li>
+<li><strong>PAT CV:</strong> 0 to 10 V picks A, B, C or D (2.5 V each). Use it to sequence song sections from Ableton or a slow stepped CV.</li>
+<li><strong>RATCHET</strong> (plus CV): the chance that a step plays a roll of 2, 3 or 4 quick repeats instead of one hit. Repeats are spaced evenly across the time to the next trigger, each a little quieter. Which steps roll is part of the dice, so rolls repeat with the loop. They show as a yellow ring around the step and <code>x3</code> on the second line. Every repeat also fires <strong>HIT</strong>.</li></ul>
+<p>Saved patterns are kept in the patch. They hold the dice, not the knob settings, so a pattern can still be made tamer or wilder with the RND knobs.</p>
+
+<h2 id="controls">Controls</h2>
+<div class="tw"><table><tr><th>Block</th><th>Big knob</th><th>Small knob</th><th>CV jack</th></tr>
+<tr><td><strong>SAMPLE</strong></td><td>Middle of the pick window, first to last file</td><td><strong>SPREAD</strong>: how many files the dice can pick from. CCW = only the SAMPLE file, CW = the whole folder</td><td>0 to 10 V sweeps the folder</td></tr>
+<tr><td><strong>PITCH</strong></td><td>+-2 octaves</td><td><strong>RND</strong>: up to +-12 semitones per hit</td><td>V/OCT</td></tr>
+<tr><td><strong>DECAY</strong></td><td>10 ms to 4 s. Fully CW = the whole sample with no envelope</td><td><strong>RND</strong>: up to 8x shorter or longer per hit</td><td>0 to 10 V</td></tr>
+<tr><td><strong>START</strong></td><td>Start point, up to 95% into the sample</td><td><strong>RND</strong>: up to half the sample later per hit</td><td>0 to 10 V</td></tr>
+<tr><td><strong>CHANCE</strong></td><td>Chance that a trigger plays</td><td><strong>REV</strong>: chance a hit plays backwards</td><td>+-10 V</td></tr>
+<tr><td><strong>LEVEL</strong></td><td>Silent to +6 dB (about 2 o'clock is 0 dB)</td><td><strong>RND</strong>: up to 24 dB quieter per hit</td><td><strong>VEL</strong> 0 to 10 V (unpatched = full)</td></tr>
+<tr><td><strong>PAN</strong></td><td>Left to right</td><td><strong>RND</strong>: random pan width</td><td>+-5 V</td></tr>
+<tr><td><strong>MUTATE</strong></td><td>See above</td><td><strong>LOOP</strong>: see above</td><td>+-10 V</td></tr></table></div>
+<ul>
+<li><strong>PICK:</strong> <em>rnd</em> picks anywhere in the window. <em>walk</em> moves one file up or down (or stays) each hit, bouncing off the window edges. <em>cycle</em> steps through the window in order (round robin).</li>
+<li><strong>choke / overlap:</strong> overlap lets tails ring on under new hits (up to 12 at once). Choke cuts the last hit, like an open hat closed by the next one.</li></ul>
+
+<h2 id="jacks">Jacks</h2>
+<div class="tw"><table><tr><th>Jack</th><th>Function</th></tr>
+<tr><td>TRIG</td><td>Each rising edge is one hit</td></tr>
+<tr><td>RESET</td><td>The next hit is step 1 of the loop</td></tr>
+<tr><td>REROLL</td><td>Roll the whole loop again</td></tr>
+<tr><td>OUT L / OUT R</td><td>Audio, 5 V peak. With nothing in OUT R, OUT L is the mono mix</td></tr>
+<tr><td>ENV</td><td>The newest hit's envelope, 0 to 10 V. Use it to sidechain or open a filter</td></tr>
+<tr><td>HIT</td><td>A trigger every time a hit plays</td></tr>
+<tr><td>SKIP</td><td>A trigger every time CHANCE says no</td></tr>
+<tr><td>IDX</td><td>Which file played, 0 to 10 V across the folder</td></tr></table></div>
+
+<h2 id="screen">The screen</h2>
+<ul>
+<li><strong>Top line:</strong> folder name and file count, then the PICK mode.</li>
+<li><strong>Second line:</strong> the file that just played (orange, or purple when skipped), then its pitch, decay, level, pan and REV.</li>
+<li><strong>Waveform:</strong> the last file. The orange line is the start point, the yellow curve is the decay, white lines are playheads.</li>
+<li><strong>Strip:</strong> one cell per file. Teal cells are the SPREAD window; orange is the one that played.</li>
+<li><strong>LOOP ring:</strong> one dot per step. Filled dots will play at the current CHANCE, hollow ones will be skipped, bigger dots are louder. Orange is the step that just played. The sound for each step is shown as a letter around the ring.</li></ul>
+
+<h2 id="menu">Right-click menu</h2>
+<ul>
+<li>Include subfolders (on by default).</li>
+<li>Load folder..., Next folder, Previous folder, Folders next to this one (handy when kits sit side by side in one parent folder).</li>
+<li>Reload folder, after adding files.</li>
+<li>Random pitch in whole semitones, which makes PITCH RND melodic.</li>
+<li>Re-roll the whole loop.</li>
+<li>JUMP changes pattern straight away.</li></ul>
+
+<h2 id="files">Sample files</h2>
+<ul>
+<li>The folder path and the loop's dice are saved with the patch. The samples are not copied into it, so keep the folder where it is.</li>
+<li>Up to 1024 WAV or AIFF files per folder, counting subfolders (8, 16, 24 or 32-bit PCM, or 32 or 64-bit float, any sample rate, mono or stereo), up to 30 seconds each. Files are ordered by path, so subfolders stay together.</li>
+<li>If a folder won't load, the screen says why. "macOS blocks Rack" means Rack needs permission for that location: System Settings &gt; Privacy &amp; Security &gt; Files and Folders (or Full Disk Access) &gt; VCV Rack 2. Rack's <code>log.txt</code> lists every file that couldn't be read.</li></ul>
+
+<h2 id="ideas">Patch ideas</h2>
+<ol>
+<li><strong>A groove that drifts.</strong> Set LOOP to 8, MUTATE to about 10%, VARIETY to 3. Save the loop to A when it sounds good, and let the rest wander.</li>
+<li><strong>Sections from a CV.</strong> Save four patterns to A to D, then feed a slow stepped CV into PAT CV (0 to 10 V, 2.5 V each) to switch song sections.</li>
+<li><strong>Morph between two beats.</strong> Save two patterns, set the switch to morph, press a letter and raise MUTATE slowly. The loop drifts toward the target one die at a time.</li>
+<li><strong>Call and response.</strong> Patch the SKIP output of one Randrum into the TRIG of another: the second plays when the first doesn't.</li>
+<li><strong>Sidechain.</strong> Use ENV from a kick Randrum to duck a pad or open a filter on every hit.</li>
+<li><strong>Hat rolls.</strong> Raise RATCHET on a hat part, so some steps roll 2 to 4 quick repeats that repeat with the loop.</li></ol>
+<p>Source and releases: <a href="https://github.com/hardyfinn/RanDrum">github.com/hardyfinn/RanDrum</a>. The dice, loop and voices are in <code>src/DrumEngine.hpp</code> with no Rack code, so the engine has standalone tests.</p>
+</main></body></html>
