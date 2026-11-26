@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Long Form + Mixxa</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}
+</style></head><body><main>
+<h1>Long Form + Mixxa</h1>
+<p class="sub">Arrangement conductor and performance mixer for VCV Rack, by Haer</p>
+<nav><strong>Contents</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#first">First patch</a></li><li><a href="#lf">Long Form</a></li><li><a href="#mx">Mixxa</a></li><li><a href="#link">LINK cable</a></li><li><a href="#ideas">Patch ideas</a></li></ul></nav>
+<h2 id="overview">Overview</h2>
+<p>Two VCV Rack 2 modules by Haer for playing a whole track instead of a loop, joined by one poly cable (<strong>LINK</strong>).</p>
+<ul>
+<li><strong>Long Form</strong> (52 HP) is an arrangement conductor. You draw a song form on an 8 &times; 8 grid (sections down, lanes across) and it tells everything else when to come in, drop out and build. <strong>STEER</strong> picks the energy you want next, and <strong>DRIFT</strong> lets the form rewrite itself a little after each section.</li>
+<li><strong>Mixxa</strong> (58 HP) is an 8-channel performance mixer. Every mute, solo, scene change and random roll lands on the <strong>next beat</strong>. It also has kick ducking and a one-knob glue compressor.</li></ul>
+<h2 id="first">First patch</h2>
+<ol>
+<li>Clock (16th notes) into Long Form <strong>CLOCK</strong>, and the clock's reset into <strong>RESET</strong>.</li>
+<li>Long Form <strong>LINK</strong> &rarr; Mixxa <strong>LINK</strong>.</li>
+<li>Your parts into Mixxa: kick on 1, then bass, hats, clap, perc, chords, lead and texture on 2 to 8.</li>
+<li>Mixxa <strong>OUT L / R</strong> to your audio interface.</li>
+<li>Press play. The default form (Intro 16, Groove 32, Build 8, Peak 32, Break 16, Drop 8, Peak 2 32, Outro 16 bars) runs about 6 minutes at 130 BPM, bringing parts in and out.</li></ol>
+<p>Starting values: DUCK about 60% on bass and chords, RELEASE 160 ms, GLUE at 9 o'clock.</p>
+<h2 id="lf">Long Form</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td>Grid cells</td><td>Click to switch a lane on or off in that section. Orange = plays.</td></tr><tr><td>CUE (left column)</td><td>Cue that section: it starts on the next 4-bar line (menu: 1, 2, 4 or 8). Click again to cancel.</td></tr><tr><td>LEN</td><td>Section length: Off, 1, 2, 4, 8, 12, 16, 24, 32, 48 or 64 bars. Off skips the row.</td></tr><tr><td>ENERGY</td><td>0 to 10, sent out as 1 V per step.</td></tr><tr><td>STEER + CV</td><td>The energy you want next. Used when FOLLOW lets Long Form choose.</td></tr><tr><td>FOLLOW + CV</td><td>100% plays the rows in order. Lower lets it pick any row, weighted by how close its energy is to STEER.</td></tr><tr><td>DRIFT + CV</td><td>Chance that, when a section ends, one small edit is made for next time: a lane in or out, length halved or doubled (4 to 64 bars), two neighbouring sections swapped, or energy &plusmn;1.</td></tr><tr><td>HOLD (button and gate)</td><td>Repeat this section.</td></tr><tr><td>NEXT (button and trigger)</td><td>Move on at the next bar line.</td></tr><tr><td>LOCK</td><td>No drift edits.</td></tr><tr><td>RESTORE</td><td>Undo every drift edit (your drawn form comes back).</td></tr><tr><td>GLIDE</td><td>Energy output slides over 0 to 8 bars.</td></tr><tr><td>FILL LEN</td><td>How long the FILL gate is: &frac12;, 1, 2 or 4 bars.</td></tr><tr><td>RUN</td><td>Counts only while high (unpatched: always).</td></tr><tr><td>CUE input</td><td>0 to 8 V picks a row (1 V each).</td></tr></table></div>
+<p><strong>Outputs:</strong> L1 to L8 lane gates; ACT (poly 8, 10 V = play; channels 1 to 6 match Francois Markovian's A to F); ENERGY; RAMP (0 to 10 V over each section); FILL; CHANGE; BAR; PHRASE (every 4 bars; menu 2 to 16); END; LINK.</p>
+<p>Drift-edited cells show a small amber dot, and the cell flashes as the edit happens. The display shows the form as blocks (width = length, brightness = energy), the playhead, the cued section in cyan, and the last drift edit. Drift is seeded and saved with the patch, so a patch replays the same drift; right-click for a new seed.</p>
+<p><strong>Right-click:</strong> clock rate (16ths, 24 PPQN, 8ths, quarters), cue grid, phrase length, loop or stop at the end, section and lane names, new drift seed, clear the grid.</p>
+<h2 id="mx">Mixxa</h2>
+<h3>Next-beat mutes and solos</h3>
+<p>Press MUTE and it blinks orange: the change is armed. On the next beat it happens. Press again before the beat to cancel. SOLO works the same way. Each mute fades over 4 ms (menu: 2 to 20 ms). Right-click <strong>Mute timing</strong> for next beat (default), next 16th or immediate. With no clock at all, mutes act at once.</p>
+<p>MUTE colours: blinking orange = armed, red = muted, amber = you have overridden Long Form (it hands the channel back at the next section change, unless <strong>Manual mutes stay</strong> is on).</p>
+<h3>Scenes A to D</h3>
+<p>Hold a scene button for 1 second to store the current mutes. Tap to recall on the next beat. SCENE CV: 0 to 4 V picks A to D.</p>
+<h3>Random mutes</h3>
+<p>DICE or a trigger at TRIG mutes COUNT random channels on the next beat and unmutes the rest. Only channels with an input count, and channels Long Form has muted are left alone. COUNT CV adds -5 to +5 V &rarr; 0 to 8. BACK returns to the mutes from before the last roll. The <strong>KICK IN/OUT</strong> switch decides whether channel 1 can be picked (default IN); right-click to leave out any of channels 2 to 8. "Always a new set" (on by default) re-rolls if a roll would repeat the current set.</p>
+<h3>Kick ducking</h3>
+<p>KICK takes a trigger or the kick's audio; unpatched, channel 1's audio is used. Each channel's DUCK sets the depth (channel 1 never ducks). RELEASE: 40 to 400 ms. SHAPE: gate-like, pump (noon), smooth swell.</p>
+<h3>Master</h3>
+<p>GLUE is a 2:1 bus compressor (10 ms attack, 150 ms release, soft knee) with up to about 4 dB of gain reduction and automatic make-up. MASTER is the output level (0 dB at about 1 o'clock, +6 dB at full). STEMS is poly 16: channels 1 to 8 left, 9 to 16 right, post-fader and post-mute.</p>
+<h3>Inputs</h3>
+<p>CLOCK (16ths; ignored when LINK is patched), ACT (poly 8: 10 V = play, quantised to the beat), LINK.</p>
+<h2 id="link">LINK cable</h2>
+<div class="tw"><table><tr><th>Channel</th><th>Carries</th></tr><tr><td>1 to 8</td><td>Lane gates (10 V = play)</td></tr><tr><td>9</td><td>Beat trigger</td></tr><tr><td>10</td><td>Section change trigger</td></tr><tr><td>11</td><td>Energy (0 to 10 V, with glide)</td></tr><tr><td>12</td><td>Reset trigger</td></tr><tr><td>13</td><td>16th-note trigger (for Mixxa's "next 16th" timing)</td></tr><tr><td>14</td><td>Section number: 0 V = row 1 to 7 V = row 8 (for The Changes, which keeps a chord loop per section)</td></tr></table></div>
+<h2 id="ideas">Patch ideas</h2>
+<ul>
+<li><strong>Hands-off arrangement:</strong> the first patch above. Long Form's lane gates drive Mixxa's mutes through LINK, so parts come and go on their own.</li>
+<li><strong>Let the form evolve:</strong> raise DRIFT a little and lower FOLLOW below 100%. Use LOCK to freeze it when you like it, RESTORE to go back to your drawn form.</li>
+<li><strong>Drive other modules:</strong> ENERGY or RAMP into filter cutoffs or reverb sends for builds; FILL and CHANGE for fills and section transitions; ACT into Francois Markovian.</li>
+<li><strong>Drop beats by hand:</strong> mute and solo on Mixxa land on the beat. Store breakdown mutes in a scene and recall it with one tap, or use random mutes with BACK to undo.</li>
+<li><strong>Sections for other sequencers:</strong> a Kleener LOAD fired from Long Form's CHANGE or PHRASE output moves a pattern on at each section.</li></ul>
+<div class="note">Source: the LongForm-Mixxa README and plugin.json (version 2.3.0). Licence MIT. Mixxa's random mutes are modelled on Tiny Tricks' Random Mute x8, written from scratch.</div>
+</main></body></html>

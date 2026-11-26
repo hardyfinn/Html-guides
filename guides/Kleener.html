@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kleener</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}
+</style></head><body><main>
+<h1>Kleener</h1>
+<p class="sub">16-bit loop sequencer for VCV Rack, by Haer</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#controls">Controls</a></li><li><a href="#menu">Right-click menu</a></li><li><a href="#patches">Patch ideas</a></li><li><a href="#start">Starting points</a></li></ul></nav>
+<p>Kleener is a 16-bit loop sequencer for VCV Rack, inspired by the Klee sequencer (original design and code). It is one 30 HP module by Haer, plugin version 2.0.0, for Rack 2.</p>
+<h2 id="idea">The idea</h2>
+<p>Sixteen on/off <strong>bits</strong> sit in a loop that turns one step on every clock. Eight <strong>pitch-weight sliders</strong> look at the first eight bits of the loop. Every slider whose bit is on adds its amount to the pitch. As the loop turns, a different set of bits sits under the sliders, so one short pattern of on/off switches becomes a whole melody.</p>
+<p>Each step also has a <strong>bus switch</strong> (1, 2 or 3) that sends its gate to one of three gate outputs, so one pattern can play a kick, a hat and a stab at once.</p>
+<h2 id="controls">Controls</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr><tr><td><strong>BIT 1-16</strong> (white buttons)</td><td>The pattern. Lit = on. By default a press changes the loop straight away.</td></tr><tr><td>Amber light under each bit</td><td>What is in the loop right now (mutation can make it differ from the buttons).</td></tr><tr><td>White dot under each bus switch</td><td>The playhead.</td></tr><tr><td><strong>BUS switch</strong> per step</td><td>Down = gate on BUS 1, middle = BUS 2, up = BUS 3.</td></tr><tr><td><strong>+1 ... +8 sliders</strong></td><td>Pitch weight of bit 1-8 of the loop window. Full slider = 12 semitones at RANGE 100%. Tick marks are semitones.</td></tr><tr><td><strong>LENGTH</strong> + CV</td><td>Loop length, 2-16 steps. +1 V = +1.5 steps.</td></tr><tr><td><strong>MUTATE</strong> + CV</td><td>Chance that a bit flips as it leaves the playhead. Fully left = locked loop. A little = slowly evolving. Fully right = the loop inverts every pass. +1 V = +10%.</td></tr><tr><td><strong>RANGE</strong> + CV</td><td>Scales all sliders together, 0-200%. Turn down for small intervals, up for leaps. +1 V = +10%.</td></tr><tr><td><strong>GLIDE</strong></td><td>Slide between notes on both pitch outputs (up to about half a second).</td></tr><tr><td><strong>SCALE</strong></td><td>Quantiser, root C: OFF, CHROMatic, MINOR, DORIAN, PHRYGian, minor PENTAtonic. The light shows which one is on.</td></tr><tr><td><strong>LOAD</strong> (button and jack)</td><td>Copies the bit buttons into the loop, undoing any mutation.</td></tr><tr><td><strong>CLOCK</strong></td><td>Each rising edge moves the loop one step.</td></tr><tr><td><strong>RESET</strong></td><td>Back to step 1 on the next clock, and loads the buttons.</td></tr><tr><td><strong>FLIP</strong></td><td>A trigger here makes the next bit flip for sure.</td></tr><tr><td><strong>PITCH A</strong></td><td>V/OCT from bits 1-8 of the loop window.</td></tr><tr><td><strong>PITCH B</strong></td><td>V/OCT from bits 9-16 (the far half of the loop): a related second line.</td></tr><tr><td><strong>BUS GATES 1, 2, 3</strong></td><td>Gate while the clock is high, on steps whose bit is on and whose bus switch points there.</td></tr><tr><td><strong>ANY</strong></td><td>Gate on every step whose bit is on.</td></tr></table></div>
+<h2 id="menu">Right-click menu</h2>
+<ul>
+<li><strong>Pitch B reads</strong>: the next 8 bits (default) or the switched-off bits, which makes B the "opposite" of A.</li>
+<li><strong>Tie gates</strong>: hold a bus gate across neighbouring steps on the same bus, for legato lines.</li>
+<li><strong>Switches change the loop straight away</strong>: turn off for the classic way, where the buttons are only read on LOAD/RESET. Then you can set up the next pattern while the old one plays and drop it in with LOAD.</li>
+<li><strong>RESET also loads the switches</strong>.</li>
+<li><strong>Copy the loop onto the switches</strong>: keep a mutation you like.</li>
+<li><strong>Random switches</strong>, <strong>Random bus switches</strong>.</li></ul>
+<h2 id="patches">Patch ideas</h2>
+<h3>1. Detroit bassline with a pulse</h3>
+<p>Clock from your master clock at 16ths. PITCH A to a bass oscillator V/OCT, BUS 1 to its envelope. Set SCALE MINOR, RANGE about 40%, LENGTH 16, MUTATE fully left. Put bus switches to 1 on the steps you want the bass to speak. Turn LENGTH to 12 or 7 against a 16-step drum loop for a rolling, never-quite-repeating feel.</p>
+<h3>2. Three drums from one pattern</h3>
+<p>BUS 1 to a kick, BUS 2 to a snare or clap, BUS 3 to a hat, ANY to an accent or a filter envelope. Every step whose bit is on plays one of the three. Nudge MUTATE to about 5-10% and the groove slowly rewrites itself while keeping its shape. Press LOAD to snap back to the original.</p>
+<h3>3. Self-mutation</h3>
+<p>Patch a slow random or a Marbles-style trigger stream into FLIP, and an LFO into MUTATE CV. Put PITCH A through GLIDE into an FM voice and PITCH B into a second voice an octave up. With "Switches change the loop straight away" off, set a new pattern on the buttons and fire LOAD from a Long Form or bar counter every 8 bars, so the piece moves between sections on its own.</p>
+<h3>4. Melody and countermelody</h3>
+<p>Set Pitch B to "switched-off bits". A plays whenever B rests and the other way round. Send A to a lead and B to a pad, both clocked by ANY.</p>
+<h2 id="start">Starting points</h2>
+<ul>
+<li>Sliders: try 3, 7, 2, 5, 12, 10, 5, 0 semitones (the defaults). Sums land on chord tones when SCALE is MINOR.</li>
+<li>Want octaves only: set one slider to full and the rest to 0, RANGE 100%.</li>
+<li>For acid lines: RANGE 60-80%, GLIDE about 20%, Tie gates on.</li></ul>
+<div class="note">Source: the Kleener README and plugin.json. Licence MIT.</div>
+</main></body></html>
