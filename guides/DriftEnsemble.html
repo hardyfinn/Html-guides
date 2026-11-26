@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Drift Ensemble</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Drift Ensemble</h1>
+<p class="sub">VCV Rack 2 module by Haer: one steady 16th-note clock in, six human-feel players out</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#panel">Controls</a></li><li><a href="#menu">Right-click menu</a></li><li><a href="#safe">Sequencer-safe timing</a></li><li><a href="#ideas">Patch ideas</a></li></ul></nav>
+<p>Each of six "players" drifts against the clock the way human musicians do, following the 1/f timing model from Hennig et al., "The Nature and Perception of Fluctuations in Human Musical Rhythms", PLoS ONE 6(10): e26457 (2011).</p>
+<h2 id="idea">The idea</h2>
+<p>Patch a steady 16th-note clock (from Live, CV Tools, a clock module) into Clock. Each player's output is that clock with human-style timing: slightly early or late, with slow wandering. Players can hit <em>before</em> the clock, because the module predicts the next tick from the measured tempo, so there is no added latency.</p>
+<h2 id="panel">Controls</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td>Clock (in)</td><td>Steady 16th-note clock.</td></tr>
+<tr><td>Reset (in)</td><td>Pulls every player's drift back to zero (it then grows again). Marks the downbeat for Swing, Anchor and Push.</td></tr>
+<tr><td>Display</td><td>Each player's last hit: left of centre = early, right = late (edge = 50 ms). Player 1 shows pink in Leader mode.</td></tr>
+<tr><td>Spread (per player)</td><td>How far the player wanders: 0 to 50 ms, noon = 15 ms, default 0.</td></tr>
+<tr><td>Lean (per player)</td><td>Fixed push or lay-back, −35 ms (early) to +35 ms (late). Drift wobbles around it.</td></tr>
+<tr><td>Swing (per player)</td><td>50 % (straight) to 75 %, added to the master Swing; the total is capped at 75 %.</td></tr>
+<tr><td>Out (per player)</td><td>The player's clock: a trigger, or a half-step gate (right-click menu).</td></tr>
+<tr><td>Together + CV</td><td>Band mode: 0 % = players drift independently, 100 % = the band drifts as one. Leader mode: how closely players 2 to 6 follow player 1.</td></tr>
+<tr><td>Leader (button)</td><td>Switches Together to Leader mode; player 1 leads (its light turns pink). Followers react to the leader's previous hit by default.</td></tr>
+<tr><td>Spread ± + CV</td><td>Master offset added to every player's Spread, −20 to +20 ms. Each player stays within 0 to 50 ms.</td></tr>
+<tr><td>Seed</td><td>0 = new drift every time. 1 to 32 = Reset (or the first clock) replays exactly the same drift.</td></tr>
+<tr><td>Feel + CV</td><td>Colour of the drift for the whole band (beta 0 to 2): jitter, nervous, human (noon), loose, wander.</td></tr>
+<tr><td>Anchor</td><td>0 to 100 %: how much drift and Lean shrink on each bar's first 16th, so the band lands together on the "one".</td></tr>
+<tr><td>Swing + CV</td><td>Master swing: delays every second 16th, 50 % (straight) to 75 %.</td></tr>
+<tr><td>Push</td><td>0 to 30 ms: everyone rushes gradually through the last bar of each phrase.</td></tr>
+<tr><td>Energy + CV</td><td>Scales all drift, 0 to 100 %. Lean, Swing and Push are unaffected.</td></tr>
+<tr><td>Freeze (button + gate)</td><td>Holds every player's current offset until released.</td></tr></table></div>
+<p>CV inputs: 10 V sweeps the whole knob range.</p>
+<h2 id="menu">Right-click menu</h2>
+<ul><li>Greyscale panel</li><li>Output shape (trigger or half-step gate)</li><li>Leader reacts to previous hit</li><li>Bar length: 12, 16, 24 or 32 steps (default 16)</li><li>Phrase length for Push: 2, 4, 8 or 16 bars (default 8)</li><li>Loosen up after Reset: off, or ramp Energy up over 8, 16, 32 or 64 bars</li></ul>
+<h2 id="safe">Sequencer-safe timing</h2>
+<p>Every player outputs exactly one pulse per input clock, in order, through clock stops, restarts and Reset. A player running early may play its next pulse just before the clock stops; it then skips that pulse when the clock restarts, so counts always line up. You can clock sequencers and drum voices from the player outputs without them losing their place.</p>
+<h2 id="ideas">Patch ideas</h2>
+<ul>
+<li><strong>Loose drum kit:</strong> one player per drum voice (kick, snare, hats...) from a stiff 16th clock. Raise Spread a little per player and set Together around the middle.</li>
+<li><strong>Tight band:</strong> Together at 100 % and Anchor up, so the band drifts as one and lands together on the downbeat.</li>
+<li><strong>Drummer leading:</strong> press Leader, put the kick on player 1 and raise Together so the others follow it.</li>
+<li><strong>Behind the beat:</strong> positive Lean on the snare player, a little negative Lean on the hats.</li>
+<li><strong>Repeatable take:</strong> set Seed to 1 to 32 so Reset replays the same drift every pass. Seed 0 gives a new feel each time.</li>
+<li><strong>Build the feel in:</strong> use "Loosen up after Reset" in the menu so Energy ramps up over several bars after each Reset.</li></ul>
+</main></body></html>

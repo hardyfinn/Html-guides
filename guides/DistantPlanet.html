@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DistantPlanet</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>DistantPlanet</h1>
+<p class="sub">VCV Rack 2 multimode filter by Haer: three audio inputs, one 12 dB filter, one output (8 HP)</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">How it works</a></li><li><a href="#panel">Panel</a></li><li><a href="#patches">Patch ideas</a></li><li><a href="#notes">Notes</a></li></ul></nav>
+<p>A Steiner-Parker style filter in the spirit of the Tiptop Audio Forbidden Planet. Most multimode filters have one input and several outputs. This one is the other way round: LP, BP and HP are three ways into the same 2-pole, 12 dB filter, and <strong>the input you patch sets the mode</strong>.</p>
+<h2 id="idea">How it works</h2>
+<pre>LP IN + BP IN + HP IN  →  one 12 dB filter  →  VOLUME  →  OUT</pre>
+<ul>
+<li>A sound into <strong>LP</strong> is low-passed, into <strong>BP</strong> band-passed, into <strong>HP</strong> high-passed.</li>
+<li>Patch two or three inputs at once and they are filtered together. The same sound into LP and HP gives a <strong>notch</strong>. All three at low RESO gives a flat response, and the filter only shows once you raise RESO.</li>
+<li>Different sounds in different inputs (say bass into LP, hats into HP) share one resonance and one sweep, so they move as one voice.</li>
+<li>Raising FREQUENCY removes more of the HP input and lets more of the LP input through, so an HP sweep feels backwards. That is normal.</li>
+<li><strong>RESO</strong> self-oscillates as a sine from about 80 %. Near 100 % it gets wild and unstable. Loud inputs tame the resonance, as on the hardware, so turn the source down for more ring.</li>
+</ul>
+<h2 id="panel">Panel</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td>FREQUENCY</td><td>Cutoff, 20 Hz to 20 kHz (large knob, top).</td></tr>
+<tr><td>RESO</td><td>Resonance (default 40 %). Self-oscillation from about 80 %, wild near 100 %.</td></tr>
+<tr><td>VOLUME</td><td>Output level. Noon = unity.</td></tr>
+<tr><td>1V/OCT (in)</td><td>Frequency CV at full strength, calibrated so the self-oscillation plays in tune.</td></tr>
+<tr><td>CV (in) + AMT</td><td>A second frequency CV through the AMT attenuator (trimpot). At full AMT it is 1 V/oct.</td></tr>
+<tr><td>LP / BP / HP (in)</td><td>Audio inputs into the low-pass, band-pass and high-pass parts of the filter. Use any combination.</td></tr>
+<tr><td>OUT</td><td>The single output.</td></tr></table></div>
+<p>Layout, top to bottom: FREQUENCY; RESO and VOLUME; 1V/OCT, CV and AMT; LP, BP and HP inputs; OUT.</p>
+<p><strong>Polyphony:</strong> everything is polyphonic, and OUT has as many channels as your busiest input. <strong>Stereo:</strong> merge L and R into a 2-channel cable, patch it in, and split OUT.</p>
+<h2 id="patches">Patch ideas</h2>
+<ul>
+<li><strong>Moving notch:</strong> the same chord into LP and HP (use a Mult), RESO about 50 %, a slow LFO into CV with AMT raised. The notch sweeps through the sound.</li>
+<li><strong>One filter, two parts:</strong> bass into LP, hats or noise into HP, an envelope from the bass into CV. Both parts share the resonance.</li>
+<li><strong>Sine voice:</strong> nothing patched in, RESO around 82 to 85 %, pitch from a sequencer into 1V/OCT, then a VCA with an envelope after OUT.</li>
+<li><strong>Unstable drone:</strong> RESO 95 to 100 %, a very slow random CV into CV with a small AMT, a quiet drum loop into HP to push the oscillation around.</li>
+<li><strong>Thin acid line:</strong> a saw bass into BP with RESO around 70 % and an accent envelope on CV.</li></ul>
+<h2 id="notes">Notes</h2>
+<ul><li>Original code under the MIT licence; not affiliated with Tiptop Audio. Part of the Haer plugins.</li>
+<li>Build: <code>make dist RACK_DIR=path/to/Rack-SDK</code>. Engine checks without Rack: <code>make test</code>.</li></ul>
+</main></body></html>

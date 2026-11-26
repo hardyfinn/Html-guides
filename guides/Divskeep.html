@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Divskip</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Divskip</h1>
+<p class="sub">VCV Rack 2 module by Haer, 32 HP (repo name: Divskeep): four channels that split a clock between two outputs</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#channel">Each channel</a></li><li><a href="#modes">The ten modes</a></li><li><a href="#chain">Chain</a></li><li><a href="#global">Global controls</a></li><li><a href="#ideas">Patch ideas</a></li></ul></nav>
+<p>Each channel takes a clock (or any triggers) and splits it between two outputs, <strong>A</strong> (the hits that play) and <strong>B</strong> (the hits that are skipped). Inspired by the DivSkip Eurorack module by DivKid and Making Sound Machines; this is an independent VCV version with its own panel, drum patterns and extra modes.</p>
+<h2 id="idea">The idea</h2>
+<p>Every mode answers one question for each incoming clock: does it go to A, to B, to both, or to neither? Patch a 16th-note clock into channel 1. Empty INs on channels 2 to 4 use the channel above, so one clock drives all four.</p>
+<h2 id="channel">Each channel</h2>
+<div class="tw"><table><tr><th>Part</th><th>What it does</th></tr>
+<tr><td>IN</td><td>Clock or triggers. An empty IN uses the channel above.</td></tr>
+<tr><td>MODE (jack)</td><td>Moves the mode on: each +1 V is one mode further, wrapping round. Good for a sequencer.</td></tr>
+<tr><td>CV + AMOUNT</td><td>The mode's main setting. CV is ±5 V and is added to the knob (the knob spans 0 to 5 V). The light ring shows the steps: A in the mode's colour, B cyan, playhead white.</td></tr>
+<tr><td>CV + SHAPE</td><td>The mode's second setting. Each mode remembers its own SHAPE position; double-click resets it to that mode's default. Dimmed in modes that don't use it.</td></tr>
+<tr><td>Display</td><td>Mode, AMOUNT and SHAPE in words. <strong>Click</strong> = next mode, <strong>Shift-click</strong> = previous, <strong>Ctrl/Cmd-click</strong> = new seed for this channel, <strong>right-click</strong> = mode list and Chain.</td></tr>
+<tr><td>SEED (jack)</td><td>A trigger gives this channel a new seed (COIN, TURING, RANDOM, STICKY).</td></tr>
+<tr><td>MUTE</td><td>Silences A and B. The channel keeps counting.</td></tr>
+<tr><td>A / B</td><td>The two outputs, 10 V.</td></tr></table></div>
+<h2 id="modes">The ten modes</h2>
+<div class="tw"><table><tr><th>#</th><th>Mode</th><th>AMOUNT</th><th>SHAPE (default)</th></tr>
+<tr><td>1</td><td><strong>COIN</strong></td><td>Each hit goes to A or B at random. Left = always A, noon = 50/50, right = always B.</td><td>Loop: off, 4, 8, 16, 32 steps (16). Looped, the same tosses repeat; AMOUNT still tips them.</td></tr>
+<tr><td>2</td><td><strong>DIVIDE</strong></td><td>Clock divider on A and B, lengths add up to 16. Noon = /8 and /8, left = /1 and /15, right = /15 and /1.</td><td>Rotate both by 0 to 15 steps (0).</td></tr>
+<tr><td>3</td><td><strong>TURING</strong></td><td>A looping random pattern (set steps to A, unset to B). Left half: loop length 1 to 16, locked. Right half: 16 steps, increasingly likely to change. Full left = always A.</td><td>Mask: a second random loop of 0 (off) to 8 steps. Where it is off, A and B are both silent (0).</td></tr>
+<tr><td>4</td><td><strong>SPLIT</strong></td><td>Euclid split: A plays 3 hits over its part of 16, B plays 3 over the rest. Noon = 3:3:2 on both.</td><td>Not used.</td></tr>
+<tr><td>5</td><td><strong>EUCLID</strong></td><td>Loop length, 1 to 16 steps. A plays the hits, B the gaps.</td><td>Number of hits (3).</td></tr>
+<tr><td>6</td><td><strong>RAMP</strong></td><td>Each clock becomes a run of hits (alternating A, B) that speed up (left), speed up then slow (noon) or slow down (right). In gate mode: a gate on A, then one on B, with the length set exponentially.</td><td>Number of hits, 1 to 16 (16).</td></tr>
+<tr><td>7</td><td><strong>RATCHET</strong></td><td>Each clock becomes a burst: A gets <em>n</em>, B gets 16 − <em>n</em> evenly spaced hits. In gate mode: A/B gate lengths in fine, even steps.</td><td>Divide the clock first: off, /2, /4, /8 (off).</td></tr>
+<tr><td>8</td><td><strong>PATTERN</strong></td><td>24 four-bar drum patterns per channel, from a 16th-note clock. Ch 1 kick/snare, ch 2 closed/open hat, ch 3 low/high perc, ch 4 ride/accents.</td><td>Not used.</td></tr>
+<tr><td>9</td><td><strong>RANDOM</strong></td><td>How many of the steps hit; the hits sit in random places. Turning it adds or removes one hit at a time.</td><td>Number of steps, 1 to 32 (16).</td></tr>
+<tr><td>10</td><td><strong>STICKY</strong></td><td>Sticky coin: how likely each hit is to go to the same output as the last. Left = swaps every hit, noon = coin toss, right = long runs.</td><td>Loop: off, 4, 8, 16, 32 steps (off).</td></tr></table></div>
+<p>RAMP and RATCHET fit their hits into the time between your last two clocks.</p>
+<h2 id="chain">Chain</h2>
+<p>Right-click a channel's display (or the module) and tick <strong>Chain to channel above</strong>. Chained channels play one after another as one long loop: channel 1 plays its loop once, then channel 2, and so on, then back to channel 1. Each channel keeps its own mode and setting, so a chain can be 16 RANDOM steps then a TURING loop of 7. A loop is 16 clocks, or the TURING / EUCLID / RANDOM length, or the COIN / STICKY loop length when one is set.</p>
+<ul><li>The whole chain runs on the top channel's clock.</li><li>The top channel's A and B send the whole chain. Each other channel's A and B send only its own turn.</li><li>A display linked by a bar on its left is chained; it dims while waiting its turn.</li></ul>
+<h2 id="global">Global controls</h2>
+<ul>
+<li><strong>OUTPUTS:</strong> <em>trig</em> sends 5 ms triggers. <em>gate</em> holds each output high until the next clock, so two A steps in a row give one long gate.</li>
+<li><strong>MUTE SET:</strong> two sets of mutes, M1 (cyan) and M2 (orange). Flip the switch to jump between two mute scenes.</li>
+<li><strong>NEW SEED</strong> button and jack: a new seed for every channel in COIN, TURING, RANDOM or STICKY. Seeds are saved with the patch.</li>
+<li><strong>Gate gap</strong> (right-click the module): in gate mode, gates end 2 ms before the next clock, so two A steps in a row are two gates.</li>
+<li><strong>RESET:</strong> all channels back to step 1. A channel also returns to step 1 after 3 seconds without a clock.</li></ul>
+<h2 id="ideas">Patch ideas</h2>
+<ul>
+<li><strong>Kick and hat from one clock:</strong> channel 1 in DIVIDE, A to a kick and B to a hat. Turn AMOUNT to change the division of each.</li>
+<li><strong>Drum kit in four channels:</strong> set all four channels to PATTERN with a 16th clock and use the kit layout (kick/snare, hats, perc, ride/accents). Patch RESET so bar 1 lands where you want.</li>
+<li><strong>Evolving percussion:</strong> TURING just right of noon on one channel, then turn it left of noon to lock a pattern you like.</li>
+<li><strong>Fills:</strong> a slow clock into RAMP or RATCHET for rolls, switched in with a mute set on the last bar of a phrase.</li>
+<li><strong>Longer phrases:</strong> chain a DIVIDE channel, a RANDOM channel and a TURING channel and play the whole chain from the top channel's A and B.</li>
+<li><strong>Mode changes in time:</strong> a sequencer into a MODE jack to jump to another mode on chosen bars.</li></ul>
+</main></body></html>
