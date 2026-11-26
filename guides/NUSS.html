@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eightfold for VCV Rack</title>
+<style>
+:root{--bg:#fff;--fg:#1c1c20;--mut:#666;--acc:#2b5d8a;--line:#ddd;--code:#f3f3f5}
+@media (prefers-color-scheme:dark){:root{--bg:#16161a;--fg:#e8e8ec;--mut:#9a9aa2;--acc:#8ab8e0;--line:#33333a;--code:#222228}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:820px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:2rem;margin:.2em 0}
+h2{margin-top:2.2em;border-bottom:2px solid var(--acc);padding-bottom:.2em}
+h3{margin-top:1.8em;color:var(--acc)}
+a{color:var(--acc)}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--code)}
+td:first-child{white-space:nowrap;font-weight:600}
+code{background:var(--code);padding:1px 5px;border-radius:3px}
+nav{background:var(--code);padding:12px 18px;border-radius:6px;margin:1.5em 0}
+nav ul{margin:.3em 0;padding-left:1.2em;columns:2;column-gap:2em}
+nav li{break-inside:avoid}
+.lead{color:var(--mut);font-size:1.1rem}
+.note{border-left:4px solid var(--acc);background:var(--code);padding:8px 14px;margin:1em 0}
+footer{margin-top:3em;color:var(--mut);font-size:.85rem}
+@media (max-width:560px){nav ul{columns:1}}
+</style>
+</head>
+<body>
+<main>
+<h1>Eightfold for VCV Rack: manual</h1>
+<p class="lead">Eightfold is three 8-channel modulation modules for VCV Rack 2.</p>
+<div class="tblwrap"><table>
+<tr><th>Module</th><th>What it does</th><th>Inspired by</th></tr>
+<tr><td>EFG Function Generator (22 HP)</td><td>Eight rise/fall functions, each with an oscillation enveloped by its function. One gate fires them through four span modes</td><td>Make Noise PoliMATHS</td></tr>
+<tr><td>ETS Time Smear (12 HP)</td><td>One CV in, eight copies out. Each copy plays back a shared buffer at its own speed and phase</td><td>Make Noise MultiMod</td></tr>
+<tr><td>EGX Gesture Extractor (10 HP)</td><td>Turns the motion of a CV, or a Channel Index signal, into eight channel gates, odd/even gates and a change pulse</td><td>Make Noise GTE</td></tr>
+</table></div>
+
+<p class="note">These are independent behavioural re-imaginings, written from the public manuals of modules that Make Noise currently makes and sells. They are not affiliated with or endorsed by Make Noise, they don’t use Make Noise’s names or artwork, and they are not circuit models. Where a manual leaves a number out, Eightfold uses an estimate; the list is at the end of this manual.</p>
+<p class="note">The original PDF opens with a picture of the three panels (see docs/images/panels.png in the NUSS repo); it is not reproduced here.</p>
+<nav><strong>Contents</strong><ul><li><a href="#shared">Ideas shared by all three</a></li><li><a href="#efg">EFG Function Generator</a></li><li><a href="#ets">ETS Time Smear</a></li><li><a href="#egx">EGX Gesture Extractor</a></li><li><a href="#recipes">Patch recipes</a></li><li><a href="#estimates">Estimates</a></li></ul></nav>
+<h2 id="shared">Ideas shared by all three</h2>
+<p>Eight channels. Every module has eight numbered outputs, each with its own light, plus a POLY output that carries all eight on one polyphonic cable. POLY is the easy way to drive an 8-voice poly VCA, low pass gate or oscillator.</p>
+<p>Channel Index. The three modules talk to each other with a single voltage that names a channel: 0.5 V per channel (channel 1 = 0.5 V, channel 8 = 4 V, 0 V = none). Every module has an INDEX output. EFG and EGX can also receive it:</p>
+<ul><li>EFG: set SPAN to the centre and its ATTEN fully clockwise, then patch an index into SPAN CV. The MODE light goes bright white. Each new index fires that channel.</li><li>EGX: set SPAN fully anticlockwise, ATTEN and SPACE fully clockwise. The INDEX light comes on. Each new index lights that channel’s gate.</li></ul>
+<p>When several channels start at the same moment, the index is sent as a quick flam: each channel for 5 ms in turn, lowest first, with the last one staying on. Re-sending the same channel drops the output to 0 V for 1 ms first, so the receiver sees a new event. If you need the Make Noise MultiMod’s printed 1 V-per-channel scale, each module’s right-click menu has a “Channel Index scale” option.</p>
+<p>Gates are read on a rising edge above 2 V. Buttons keep their state in the patch.</p>
+<h2 id="efg">EFG Function Generator</h2>
+<h3>What happens</h3>
+<p>Each of the eight channels is a function generator: when it is activated it rises from where it is to full, then falls back to zero. The CURVE knob bends both segments. Mixed into the function is an oscillation (a variable-shape wave) whose size follows the function, so it can be anything from a plain envelope to a tremolo burst to an enveloped audio-rate tone. STRENGTH scales the result to ±9 V.</p>
+<p>What decides which channels an ACTIVATE gate fires is SPAN and the span mode, set with the MODE button.</p>
+<h3>Span modes (MODE button)</h3>
+<div class="tblwrap"><table>
+<tr><th>Light</th><th>Mode</th><th>ACTIVATE gate does</th><th>SPAN knob sets</th><th>RESET</th></tr>
+<tr><td>White</td><td>Index</td><td>Fires the channel SPAN points at</td><td>Which channel: centre is none, right of centre 1 to 8, left of centre 8 down to 1</td><td>Re-fires the selected channel</td></tr>
+<tr><td>Yellow</td><td>Round</td><td>Fires the next channel in turn</td><td>Step size 1 to 7; left of centre steps backwards</td><td>Next gate fires channel 1</td></tr>
+<tr><td>Cyan</td><td>Parallel</td><td>Every channel counts gates and fires on its own division</td><td>How far apart the divisions are; at full right channel 1 fires every gate and channel 8 every 16th. Left of centre mirrors</td><td>All counters restart: next gate fires every channel</td></tr>
+<tr><td>Magenta</td><td>Binary</td><td>A counter steps on each gate; each channel follows one bit of it</td><td>The channel that fires every gate; neighbours fire half as often, the next ones in runs of two, four and so on</td><td>Counter back to zero</td></tr>
+</table></div>
+<p>In Index mode with nothing in ACTIVATE, simply turning SPAN fires each channel as the cursor reaches it.</p>
+<h3>Controls</h3>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>SPAN, ATTEN, SPAN CV</td><td>See above. ATTEN scales SPAN CV (5 V = the knob’s full travel)</td></tr>
+<tr><td>RISE / FALL</td><td>Rise and fall times, 0.5 ms to about 33 s on the knob, up to about 20 minutes with CV</td></tr>
+<tr><td>RATE</td><td>Oscillation speed: 4 s per cycle to about 40 Hz, or 2 Hz to 2 kHz in Bipolar</td></tr>
+<tr><td>OSC</td><td>How much oscillation is mixed in. Fully anticlockwise is a plain function; fully clockwise is the oscillation at full size inside the function</td></tr>
+<tr><td>STRENGTH</td><td>Output level and polarity, −9 V to +9 V. Centre is silent</td></tr>
+<tr><td>CURVE</td><td>Log (fast start) at left, linear at centre, exponential (slow start) at right. Affects all channels at once</td></tr>
+<tr><td>SHAPE</td><td>Oscillation wave: falling saw, triangle at centre, rising ramp. SHAPE CV beyond the knob’s range blends into noise</td></tr>
+<tr><td>SPREAD</td><td>Weights the attenuverters by channel, see below</td></tr>
+<tr><td>CYCLE</td><td>Keeps channels running by themselves</td></tr>
+<tr><td>CYCLE TYPE</td><td>All (purple): every channel re-fires itself at the end of its fall. Follow the leader (pink): the end of one channel’s fall fires the channel to its right (8 wraps to 1); the chain has to be started by an activation</td></tr>
+<tr><td>CYCLE IN</td><td>A high gate turns cycling on while the CYCLE button is off</td></tr>
+<tr><td>ACCUM</td><td>While patched, activations are held (orange light) and all fire together on the next ACCUM gate</td></tr>
+<tr><td>BIPOLAR</td><td>Oscillation around 0 V at a higher rate range, for vibrato, FM or audio</td></tr>
+<tr><td>SUBMIX</td><td>Each patched output carries its own channel plus every unpatched channel to its left. Overloads fold back (unipolar) or soft clip (bipolar). POLY always carries the eight separate channels</td></tr>
+</table></div>
+<h3>Spread and per-channel CV</h3>
+<p>Rise, Fall, Osc and Strength each have an attenuverter and a CV input, and they work in one of two ways:</p>
+<ul><li><strong>CV input empty: Spread.</strong> SPREAD sets a weight for each channel: turned right, channel 8 gets the most and channel 1 none; turned left, the reverse. Each attenuverter then adds its own amount times that weight. With SPREAD at centre the attenuverters do nothing. SHAPE is spread too, at a fixed depth. One knob can therefore stagger up to five settings across eight channels.</li><li><strong>CV input patched: sampled per channel.</strong> The CV is read at the moment each channel is activated and that channel keeps the value until its next activation (Make Noise calls this “modulation dissemination”). One slow LFO into RISE CV gives every hit its own rise time. RATE CV works this way too, and at full attenuverter it tracks 1 V/oct.</li></ul>
+<h3>Channel lights</h3>
+<p>Green for a positive output, red for negative, brightness by level; orange while held by ACCUM; dim white on the channel the SPAN cursor points at; blue on idle channels showing their Spread weight.</p>
+<h3>Right-click menu</h3>
+<p>Span mode, cycle type, bipolar, submix, Channel Index scale, and “Reset all channels”.</p>
+<h2 id="ets">ETS Time Smear</h2>
+<h3>What happens</h3>
+<p>The input is recorded continuously into a loop whose length is set by TIME (50 ms to 30 s). Eight playback heads read that loop. SPREAD gives each head its own speed, PHASE spaces them apart in time, and the READ shape sets the direction they read in. With SPREAD at centre, PHASE at zero and the Ramp read shape, all eight outputs are exact copies of the input. Raise PHASE and the copies become delayed versions of each other, up to half the loop apart. Turn SPREAD and the heads drift at different speeds, so the copies stretch, compress and jump where a head crosses from old material into new.</p>
+<p>With nothing in IN, ETS runs an internal LFO instead: eight copies of one LFO at the speeds and phases set by SPREAD and PHASE.</p>
+<h3>Controls</h3>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>TIME, TIME CV</td><td>Loop length: 50 ms to 30 s. TIME CV adds to the knob, 0 to 5 V covering the knob’s travel. Longer times give PHASE and SPREAD more depth and make changes take longer to reach the outputs</td></tr>
+<tr><td>PHASE, PHASE CV</td><td>0: all heads together. Full: channel 8 half a loop behind channel 1. With PHASE CV patched the knob scales it; up to 10 V keeps going, negative reverses the order</td></tr>
+<tr><td>SPREAD, ATTEN, SPREAD CV</td><td>Speed per channel. Right: channel 1 up to 8× faster, channel 8 down to 8× slower, middle channels change least. Left mirrors it. CV can push the ends to 24×</td></tr>
+<tr><td>HOLD, HOLD IN</td><td>Stop recording and loop what is there. TIME still stretches or squeezes the loop. HOLD IN holds while its gate is high. On the internal LFO, Hold freezes the outputs</td></tr>
+<tr><td>RESET, RESET IN</td><td>Bring all heads back into line (blue flash)</td></tr>
+<tr><td>READ</td><td>Read shape, see below</td></tr>
+<tr><td>RANGE</td><td>Internal LFO range: 0 to 10 V (green), ±5 V (purple), 0 to 5 V (blue)</td></tr>
+<tr><td>TEMPO</td><td>Clock in: snaps TIME to 1 to 32 clocks, speeds to whole multiples or divisions, and PHASE to sixteenths</td></tr>
+<tr><td>CLK OUT</td><td>A pulse every loop length</td></tr>
+</table></div>
+<h3>Read shapes (READ button)</h3>
+<div class="tblwrap"><table>
+<tr><th>Light</th><th>Shape</th><th>Buffer</th><th>Internal LFO</th></tr>
+<tr><td>Red</td><td>Ramp</td><td>Forward: true copies</td><td>Rising ramp</td></tr>
+<tr><td>Green</td><td>Saw</td><td>Backward: reversed copies</td><td>Falling saw</td></tr>
+<tr><td>Blue</td><td>Triangle</td><td>Forward then back</td><td>Triangle</td></tr>
+<tr><td>Purple</td><td>Sine</td><td>Forward then back, slowing at the turns (wow and flutter)</td><td>Sine</td></tr>
+<tr><td>Pink</td><td>Stairs</td><td>Reads in eight held steps</td><td>Square</td></tr>
+<tr><td>Orange</td><td>Step random</td><td>Each cycle, picks a random spot and holds the value there</td><td>Stepped random</td></tr>
+<tr><td>Yellow</td><td>Ramplets</td><td>Each cycle, jumps to a random spot and plays forward from it</td><td>Smooth random</td></tr>
+</table></div>
+<h3>Lights</h3>
+<p>Channel lights show each head’s speed: aqua near 1×, green faster, blue slower, hot pink faster than 8×, yellow slower than 8×. The CLK light flashes each loop; without TEMPO its colour shows the loop length (red short, then orange, yellow, green long; purple or blue when CV pushes past the knob), with TEMPO it shows the clock ratio (green for 1, 2, 4, 8…, red for multiples of 3, gold for others).</p>
+<p>INDEX sends the channel whose copy is currently highest.</p>
+<h3>Right-click menu</h3>
+<p>Read shape, LFO range, Channel Index scale, “Clear buffer”.</p>
+<h2 id="egx">EGX Gesture Extractor</h2>
+<h3>What happens</h3>
+<p>EGX splits a voltage range into eight bands, one per channel. Whichever band the input sits in, that channel’s gate is high. As the input moves, the gates change, so the motion of any signal becomes rhythm: a slow LFO walks up and down the eight gates, a jittery random hits them all, a still signal gives one steady gate. SPACE sets how many volts it takes to cross all eight bands, from 10 V (fully clockwise) down to 50 mV, so it sets how busy the gates are. Below 0 V or above the range, no gate is high. A little hysteresis keeps a slow or noisy signal from chattering on a band edge.</p>
+<h3>Controls</h3>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>SPAN</td><td>Offset added to the input, ±5 V: moves which band the signal sits in</td></tr>
+<tr><td>ATTEN, SPAN CV</td><td>The signal being watched and its level and polarity</td></tr>
+<tr><td>SPACE, SPACE CV</td><td>Volts needed to sweep all eight channels: 50 mV to 10 V</td></tr>
+<tr><td>CLOCK</td><td>When patched, the gates change only on clock edges</td></tr>
+<tr><td>1 to 8</td><td>One gate high at a time, or none</td></tr>
+<tr><td>ODD / EVEN</td><td>High while the active channel is odd / even</td></tr>
+<tr><td>PULSE</td><td>A 1 ms trigger every time the channel changes: faster motion, more pulses</td></tr>
+<tr><td>POLY, INDEX</td><td>All eight gates on one cable; the active channel as a Channel Index</td></tr>
+</table></div>
+<p>Index mode: SPAN fully anticlockwise with ATTEN and SPACE fully clockwise (INDEX light on) reads SPAN CV as a Channel Index from EFG, ETS or another EGX.</p>
+<h3>Right-click menu</h3>
+<p>Channel Index scale, gate level (10 V or 5 V), and “Pulse when leaving the range”.</p>
+<h2 id="recipes">Patch recipes</h2>
+<p>The NUSS gets its voices from an 8-voice wavetable oscillator and two 4-channel low pass gates. Eightfold doesn’t include those, so these recipes use modules from Rack and the free Library: VCV VCO or WT VCO set to 8 polyphony channels, Bogaudio LLPG or VCV VCA + VCF as the low pass gate, VCV Mix or Bogaudio Mix8, VCV Quantizer, and VCV Split/Merge to get between POLY and single cables.</p>
+<h3>1. Eight-voice plucks from one gate</h3>
+<p>EFG in Round, step 1. Clock into ACTIVATE. EFG POLY → poly VCA/LPG CV. A poly VCO (8 channels, each tuned with a poly constant or quantised random) → LPG audio. RISE short, FALL medium, SPREAD right with FALL ATTEN up so the later channels ring longer.</p>
+<h3>2. Polyrhythmic envelopes</h3>
+<p>EFG in Parallel, a clock into ACTIVATE, SPAN fully right. Outputs 1 to 8 to eight destinations (filter, wavefolder, pan). Every channel moves at its own division; RESET from a bar clock to realign.</p>
+<h3>3. Binary bursts</h3>
+<p>EFG in Binary, OSC at about 0.6, Bipolar off, RATE up. Each hit is a tremolo burst; channels further from SPAN’s channel fire in longer runs, so the texture thins out across the outputs.</p>
+<h3>4. Follow-the-leader drone swell</h3>
+<p>EFG CYCLE on, type Follow the leader, long RISE and FALL, one gate to start it. A swell walks around the eight outputs forever. Patch STRENGTH CV with a high voltage to push channels past full and get steady offsets.</p>
+<h3>5. Eight enveloped oscillators</h3>
+<p>EFG Bipolar on, OSC full, RATE about half, RATE ATTEN full right, a MIDI-CV pitch into RATE CV. Gate into ACTIVATE in Round mode. RISE short, FALL medium. Each note goes to the next channel at its own pitch: an 8-voice enveloped synth from one module.</p>
+<h3>6. Dissemination sequencing</h3>
+<p>EFG in Round, a slow random into STRENGTH CV with ATTEN full. Each channel’s level is set at the moment it is hit and stays until its next turn.</p>
+<h3>7. ETS canons (shift register)</h3>
+<p>ETS: SPREAD centre, PHASE 0, a sequencer’s CV into IN, its clock into TEMPO, TIME fully left. Outputs → VCV Quantizer → eight VCO pitch inputs. Raise PHASE: each voice plays the melody later than the one before.</p>
+<h3>8. Snap focus</h3>
+<p>A clock into ETS TEMPO, SPREAD off centre, an 8th division of that clock into RESET. The copies drift apart and snap back into line on every reset.</p>
+<h3>9. Noise spectrum</h3>
+<p>White noise into ETS IN, TIME short, outputs to a mixer. TIME and SPREAD pitch the copies against each other: gritty, lo-fi drum colours.</p>
+<h3>10. Weighted random gates</h3>
+<p>A pulse wave into ETS IN, READ on Step random. Each output picks random points of the wave: the pulse width sets the chance of a gate.</p>
+<h3>11. Eight related clocks</h3>
+<p>ETS with nothing in IN, READ on Stairs, SPREAD to taste: eight square-wave clocks at multiples and divisions. Add TEMPO to lock them to whole ratios.</p>
+<h3>12. The loudest copy fires the envelope</h3>
+<p>ETS INDEX → EFG SPAN CV, EFG in Index with SPAN centre and ATTEN full right. Whichever ETS copy is highest fires its EFG channel. Also try ETS’s internal LFOs into EFG SPREAD CV.</p>
+<h3>13. Gesture rhythms</h3>
+<p>An ETS copy (or any slow random) into EGX SPAN CV, SPACE about a third. Gates 1 to 8 to drum triggers, PULSE as a clock that speeds up with the motion, ODD and EVEN to two voices for call and response.</p>
+<h3>14. All three</h3>
+<p>ETS internal LFO → EGX SPAN CV → EGX INDEX → EFG SPAN CV (Index receive). One slow LFO’s movement chooses which of eight envelopes fires.</p>
+<h2 id="estimates">Estimates</h2>
+<p>Make Noise’s manuals describe behaviour but leave many numbers out. Eightfold uses these; all live in src/dsp/Constants.hpp, so they can be tuned by ear.</p>
+<div class="tblwrap"><table>
+<tr><th>What</th><th>Value</th></tr>
+<tr><td>EFG rise/fall range</td><td>0.5 ms to about 33 s on the knob, about 20 min with CV</td></tr>
+<tr><td>EFG curve</td><td>power law, exponent 1 to 5; ends of the knob lengthen time by up to 50%</td></tr>
+<tr><td>EFG rate</td><td>0.25 to 40 Hz unipolar, 2 Hz to 2 kHz bipolar</td></tr>
+<tr><td>EFG Parallel divisions</td><td>up to /16 on the knob, /23 with CV (the original’s table wasn’t readable)</td></tr>
+<tr><td>EFG Binary</td><td>channels left of the SPAN channel follow a mirrored counter</td></tr>
+<tr><td>EFG strength past full (submix off)</td><td>crossfades to steady DC by twice full strength</td></tr>
+<tr><td>CV scaling for knobs</td><td>5 V = full knob travel</td></tr>
+<tr><td>Channel Index flam</td><td>5 ms steps, 1 ms gap before a repeated index</td></tr>
+<tr><td>ETS buffer</td><td>16384 slots</td></tr>
+<tr><td>ETS stairs</td><td>8 steps</td></tr>
+<tr><td>ETS index hysteresis</td><td>2 ms</td></tr>
+<tr><td>ETS HOLD IN</td><td>held while the gate is high</td></tr>
+<tr><td>EGX range</td><td>50 mV to 10 V, bands from 0 V, 2% hysteresis</td></tr>
+<tr><td>EGX gates and pulse</td><td>10 V gates, 1 ms pulse</td></tr>
+<tr><td>EGX INDEX out</td><td>added: the original has none</td></tr>
+</table></div>
+
+<footer>Converted from docs/Eightfold-Manual.pdf in the NUSS repository.</footer>
+</main>
+</body>
+</html>
