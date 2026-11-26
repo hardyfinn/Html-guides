@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Seuperclidean for VCV Rack 2</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Seuperclidean</h1>
+<p class="sub">VCV Rack 2 plugin: Euclidean rhythm sequencer with Bias, mutation, fills and logic</p>
+<nav><strong>Contents</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#channel">Per-channel controls</a></li><li><a href="#mutation">Mutation</a></li><li><a href="#density">Density and fills</a></li><li><a href="#logic">Logic outputs</a></li><li><a href="#clock">Clock and reset</a></li><li><a href="#four">Seuperclidean 4</a></li><li><a href="#ideas">Patch ideas</a></li><li><a href="#building">Building</a></li></ul></nav>
+<h2 id="overview">Overview</h2>
+<p>The plugin has two modules. <strong>Seuperclidean</strong> plays six Euclidean rhythms (Toussaint / Bjorklund) at once, one per row. On top of the classic algorithm it adds a <strong>Bias</strong> warp, self-mutation, density and fills, swing and humanise, and logic outputs that combine pairs of channels. <strong>Seuperclidean 4</strong> is the same idea with four voices in columns.</p>
+<p>Each channel has three outputs: <strong>GATE</strong> (the rhythm), <strong>OFF</strong> (every step the rhythm doesn't play) and <strong>ACC</strong> (only the pattern's downbeat hit).</p>
+<h2 id="channel">Per-channel controls (rows 1 to 6)</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>LEN</strong></td><td>Pattern length, 1 to 32 steps.</td></tr>
+<tr><td><strong>FILL</strong></td><td>Number of hits, spread as evenly as possible. E(3,8) = <code>x..x..x.</code></td></tr>
+<tr><td><strong>ROT</strong></td><td>Rotates the whole pattern later by whole steps.</td></tr>
+<tr><td><strong>BIAS</strong></td><td>Warps the bar. 0 = classic Euclidean. Negative crowds the hits early, leaving a gap at the end. Positive pushes them late, rolling into the next downbeat. The first hit always stays on the pattern's downbeat and the number of hits never changes.</td></tr>
+<tr><td><strong>SWG</strong></td><td>Swing, 50% (straight) to 75%. Delays every second 16th.</td></tr>
+<tr><td><strong>HUM</strong></td><td>Humanise: each hit lands randomly 0 to 30 ms late.</td></tr>
+<tr><td><strong>MUT</strong></td><td>Chance that the pattern mutates at the end of each cycle.</td></tr>
+<tr><td><strong>FILL / ROT / BIAS CV</strong></td><td>Fill: 10 V adds a full length of hits. Rot: 10 V = one full turn. Bias: &plusmn;5 V sweeps the whole range.</td></tr>
+<tr><td><strong>GATE</strong> out</td><td>The rhythm.</td></tr>
+<tr><td><strong>OFF</strong> out</td><td>The gaps: every step the rhythm doesn't play.</td></tr>
+<tr><td><strong>ACC</strong> out</td><td>Only the pattern's downbeat hit.</td></tr></table></div>
+<h3>Bias example</h3>
+<p>E(4,16) with different Bias settings:</p>
+<pre>bias -100%  xxx...x.........
+bias  -50%  xx..x....x......
+bias    0   x...x...x...x...
+bias  +50%  x.......x...x.x.
+bias +100%  x...........x.xx</pre>
+<h2 id="mutation">Mutation</h2>
+<p>When a channel's pattern comes round to its first step, it may (MUT &times; MUTATE chance) change one thing: rotation by a step, bias by 25%, one hit more or less, or one step flipped on or off. About a third of mutations move a change back towards the knob settings, so patterns wander around home rather than drifting off for good.</p>
+<p>In the display, <strong>orange</strong> is a normal hit, <strong>cyan</strong> is a hit that mutation added, and <strong>dark brown</strong> is a hit that mutation removed.</p>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>MUTATE</strong> + CV</td><td>Scales every channel's MUT (default 100%).</td></tr>
+<tr><td><strong>LOCK</strong> button / gate</td><td>Freezes the current mutated patterns.</td></tr>
+<tr><td><strong>HOME</strong></td><td>Clears all mutation, back to the knob settings.</td></tr></table></div>
+<p>Mutated patterns are saved with the patch.</p>
+<h2 id="density">Density and fills</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>DENSITY</strong> + CV</td><td>Adds hits to (right) or removes them from (left) every channel at once, as a share of each channel's length. &plusmn;5 V sweeps the whole range.</td></tr>
+<tr><td><strong>FILL</strong> button / gate</td><td>While held, every channel fills up its empty steps by AMT and leans its Bias late, so it rolls into the next bar.</td></tr>
+<tr><td><strong>AMT</strong></td><td>How strong the fill is.</td></tr></table></div>
+<h2 id="logic">Logic outputs</h2>
+<p>Each logic output compares two channels step by step: 1+2, 3+4 and 5+6. Press the button to choose the mode:</p>
+<ul><li><strong>AND</strong>: both channels hit</li><li><strong>OR</strong>: either channel hits</li><li><strong>XOR</strong>: one hits but not both</li><li><strong>A NOT B</strong>: the first channel hits and the second doesn't</li></ul>
+<p>The logic outputs use the first channel's swing.</p>
+<h2 id="clock">Clock and reset</h2>
+<p><strong>CLOCK</strong> takes 16th notes. <strong>RESET</strong> sends every channel back to step 1 on the next clock. Right-click the module to choose trigger (5 ms) or gate (half a step) outputs.</p>
+<h2 id="four">Seuperclidean 4</h2>
+<p>A 28 HP four-voice version in the same plugin. Each voice has its own column under a step ring, with the same controls as a row on the 6-channel module. The ring's centre shows hits/length.</p>
+<ul><li><strong>Four logic outputs:</strong> 1+2, 3+4, and the cross pairs 1+3 and 2+4. Click the mode readout above an output to change it (AND, OR, XOR, ONLY n = the first voice hits and the second doesn't).</li>
+<li><strong>Bottom strip:</strong> CLOCK, RESET, FILL gate, DENS (density) and MUT (mutate) trimpots, and LOCK.</li>
+<li><strong>Right-click menu:</strong> fill amount, Home and the output shape.</li></ul>
+<h2 id="ideas">Patch ideas</h2>
+<p>These follow from the controls above:</p>
+<ul>
+<li><strong>Kick, snare, hat:</strong> clock the module with 16ths, set LEN 16 on three channels with FILL 4, 2 and 9, and send each GATE to a drum voice. Move BIAS slowly to push hits early or late without changing how many there are.</li>
+<li><strong>Hits and gaps:</strong> use a channel's <strong>OFF</strong> output for a second voice (a hat, say) that only plays where the first voice rests.</li>
+<li><strong>Self-evolving groove:</strong> raise MUTATE and let patterns wander. When you like what you hear, press <strong>LOCK</strong>; press <strong>HOME</strong> to return to the knob settings.</li>
+<li><strong>Build-ups:</strong> send a button or gate to <strong>FILL</strong> at the end of a phrase, or a slow envelope to <strong>DENSITY</strong>.</li>
+<li><strong>Accents:</strong> send <strong>ACC</strong> to a VCA or accent input so only each pattern's downbeat is emphasised.</li>
+<li><strong>Logic layers:</strong> use XOR on a pair of channels to get a third rhythm made of the places where they disagree.</li></ul>
+<h2 id="building">Building</h2>
+<p>GitHub Actions builds the Apple Silicon version on every push. Locally, download the Rack SDK and run <code>make dist RACK_DIR=/path/to/Rack-SDK</code>. The panel is drawn by <code>res/make_panel.py</code> (needs <code>pip install fonttools</code>). The rhythm engine (<code>src/EuclidEngine.hpp</code>) has no Rack dependencies, and <code>test/engine_test.cpp</code> checks it offline.</p>
+</main></body></html>

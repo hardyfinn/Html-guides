@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>6 Copains for VCV Rack 2</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>6 Copains</h1>
+<p class="sub">VCV Rack 2: six singing voices with noisy FM, low-pass gates and a built-in Banks note player</p>
+<nav><strong>Contents</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#install">Install</a></li><li><a href="#quick">Quick start</a></li><li><a href="#sound">Sound</a></li><li><a href="#intone">Intone</a></li><li><a href="#range">Range: audio or LFO</a></li><li><a href="#end">End triggers</a></li><li><a href="#scope">Scope</a></li><li><a href="#env">Envelope</a></li><li><a href="#morph">Morph</a></li><li><a href="#pans">Pans</a></li><li><a href="#banks">Banks</a></li><li><a href="#io">Inputs and outputs</a></li><li><a href="#menu">Right-click menu</a></li><li><a href="#presets">nb_monamie's three patches</a></li><li><a href="#ideas">Patch ideas</a></li><li><a href="#nt">Differences from the disting NT version</a></li><li><a href="#credits">Credits and licence</a></li></ul></nav>
+<h2 id="overview">Overview</h2>
+<p>Six singing friends. Each voice is a triangle that bends towards a square or a sine, with noisy FM and its own low-pass gate, in the spirit of Mannequins' Just Friends in synthesis mode. One <strong>MORPH</strong> knob moves the whole sound, and a built-in <strong>Banks</strong> player plays the six voices from banks of six notes.</p>
+<p>It is a port of <a href="https://github.com/markijzerman/6copains">6Copains</a> for the Expert Sleepers disting NT by Mark IJzerman, which in turn ports nb_monamie by sonoCircuit. The synthesis engine is 6Copains' own code, so it sounds the same as the NT version.</p>
+<h2 id="install">Install</h2>
+<ol><li>Download <code>SixCopains-2.2.0-mac-arm64.vcvplugin</code> from the repository's <strong>Releases</strong> page (the "latest" release).</li><li>Put it in <code>Documents/Rack2/plugins-mac-arm64/</code> and restart Rack. Rack unpacks it on start.</li><li>Find it in the module browser under <strong>Haer &gt; 6 Copains</strong>.</li></ol>
+<h2 id="quick">Quick start</h2>
+<h3>Let it play on its own</h3>
+<ol><li>Patch <strong>L</strong> and <strong>R</strong> into Audio (or a mixer).</li><li>Press <strong>PLAY</strong>. The display lights up as the six notes of bank 1 (C major pentatonic) fire at random, every 150 ms.</li><li>Turn <strong>MORPH</strong> slowly. Ramp, curve and FM all move together, so the voices change character while the notes keep coming.</li><li>Turn <strong>BANK</strong> to change the notes, <strong>AMOUNT</strong> for how busy it is, and <strong>RATE</strong> for how fast.</li></ol>
+<h3>Play it from MIDI</h3>
+<ol><li>Add VCV <strong>MIDI-CV</strong>, pick your MIDI input, and set its polyphony to 6 in its right-click menu.</li><li>Patch its <strong>V/OCT</strong> to <strong>V/OCT</strong>, <strong>GATE</strong> to <strong>GATE</strong> and <strong>VEL</strong> to <strong>VEL</strong> on 6 Copains.</li><li>Play chords. Each MIDI-CV channel plays its own voice. In the display those voices show as <strong>cv1</strong>, <strong>cv2</strong> and so on, in teal.</li></ol>
+<h3>Play a chord from one gate</h3>
+<p>Patch a polyphonic V/OCT (for example a chord from a sequencer or a quantizer) and a <em>mono</em> gate. Every V/OCT channel plays on the same gate, as one chord.</p>
+<h2 id="sound">Sound</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>LEVEL</strong></td><td>Drive into each voice's soft clipper. Low is clean, high is warmer and louder.</td></tr>
+<tr><td><strong>RAMP</strong></td><td>The triangle's shape: how much of each cycle is rising. Centre is a symmetrical triangle; the ends are saws. The tooltip shows rise/fall, e.g. 54/46. CV input below.</td></tr>
+<tr><td><strong>CURVE</strong></td><td>Fully left is a square, centre a triangle, fully right a sine. CV input below.</td></tr>
+<tr><td><strong>FM RATIO</strong></td><td>The FM modulator's pitch, as a multiple of the note (0.5 to 2). 1.01 gives a slow beat.</td></tr>
+<tr><td><strong>FM INDEX</strong></td><td>FM depth, with noise that rises sharply near full. <em>Right of centre (all)</em>: every voice gets the same depth. <em>Left (by voice)</em>: depth rises with the voice number, from none on voice 1 to full on voice 6. CV input below.</td></tr>
+<tr><td><strong>PAN DRIFT</strong></td><td>A random pan offset for each new note.</td></tr>
+<tr><td><strong>OCTAVE</strong></td><td>Shifts every note by &minus;3 to +3 octaves (also the Banks outputs).</td></tr></table></div>
+<h2 id="intone">Intone</h2>
+<p><strong>INTONE</strong> (top right, with a CV input below) spreads the six voices apart, as on Just Friends. At centre every voice plays the note it's given. Turn right and voice <em>n</em> plays <em>n</em> times higher: voice 1 as played, voice 2 an octave up, voice 3 an octave and a fifth, and so on up the harmonic series. Turn left for the undertones: voice <em>n</em> plays at 1/<em>n</em>. In between, the spread is partial, so a slow CV into INTONE bends a chord apart and back. It retunes notes that are already sounding, and it applies to everything: CV voices, Banks and LFOs.</p>
+<h2 id="range">Range: audio or LFO</h2>
+<p>The <strong>RANGE</strong> switch (under RETRIG) drops every voice 8 octaves. In <strong>LFO</strong> (up), C4 is about 1 Hz and V/OCT still works at 1 V per octave, so +2 V is about 4 Hz and &minus;3 V is one cycle every 8 seconds. RAMP, CURVE and FM still shape the LFO, and MORPH moves it. Flipping the switch retunes voices that are already playing.</p>
+<ul><li><strong>Free-running:</strong> with nothing in GATE and Banks stopped, the six voices run on their own at the V/OCT rate (about 1 Hz with V/OCT unpatched). Turn <strong>INTONE</strong> right and they spread to 1&times;, 2&times; ... 6&times; that rate; left, to 1&times;, 1/2&times; ... 1/6&times;. A polyphonic V/OCT sets each voice's rate instead. ENV on CYC adds a cycling envelope on top, as tremolo.</li><li><strong>Gated:</strong> with GATE patched, or Banks playing, each voice is an LFO that starts from zero on its gate and is shaped by the envelope. With Banks, that's six randomly retriggered modulation shapes.</li><li>Use the voice outputs <strong>1 to 6</strong> for modulation. In LFO range they swing about &plusmn;4 to 5 V at full velocity. The low-pass gate passes LFOs, but LEVEL and velocity set their depth.</li></ul>
+<h2 id="end">End triggers</h2>
+<p>The <strong>END</strong> output (bottom right) sends a short trigger when a voice's envelope reaches zero: at the end of an AR note, at the end of each ASR or cycle release, and at the bottom of every CYC cycle. It's polyphonic, one channel per voice, so use VCV <strong>Split</strong> to get the six triggers on separate cables. Patch them back into 6 Copains or into other modules to make voices trigger each other (see "A self-playing ring" below). A chain like that keeps itself going and changes speed when you turn TIME or SLOPE.</p>
+<h2 id="scope">Scope</h2>
+<p>The scope draws each voice in its own lane, in the voice's colour, brighter when it's louder. In audio range it shows about 21 ms and holds the wave still. In LFO range it shows the last 2.7 seconds, scrolling.</p>
+<h2 id="env">Envelope</h2>
+<p>Each note goes through a low-pass gate: the envelope opens the filter as well as the level, and velocity scales both, so soft notes are darker as well as quieter.</p>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>ENV</strong> (switch)</td><td><strong>AR</strong> (down): attack then release, whatever the gate length. <strong>ASR</strong> (middle): holds while the gate is high. <strong>CYC</strong> (up): rises and falls over and over while the gate is high.</td></tr>
+<tr><td><strong>SLOPE</strong></td><td>How TIME is split between attack and release. Fully left is a pluck, fully right a swell. CV input below.</td></tr>
+<tr><td><strong>TIME</strong></td><td>Attack plus release, 2.6 ms to 8 s. CV input below.</td></tr>
+<tr><td><strong>RETRIG</strong> (switch)</td><td>What happens when a voice gets a new note. <strong>FADE</strong> (down): the old note fades out in 50 ms. <strong>OVERLAP</strong> (up): the old note rings on, up to 16 notes at once.</td></tr></table></div>
+<h2 id="morph">Morph</h2>
+<p><strong>MORPH</strong> fades in the five <strong>MORPH MOVES</strong> amounts. At 0 they do nothing; fully clockwise they are added in full. So you set two sounds, the knobs on their own and the knobs plus the amounts, and MORPH goes between them. Its CV input takes 0 to 10 V.</p>
+<div class="tw"><table><tr><th>Amount</th><th>Moves</th><th>Default</th></tr>
+<tr><td>RAMP</td><td>Ramp</td><td>+61 %</td></tr><tr><td>CURVE</td><td>Curve</td><td>0</td></tr><tr><td>FM</td><td>FM index</td><td>&minus;51 %</td></tr><tr><td>SLOPE</td><td>Slope</td><td>0</td></tr><tr><td>TIME</td><td>Time, by up to 1 s</td><td>0</td></tr></table></div>
+<p>All CV inputs work the same way: 10 V moves the full width of the knob, so &plusmn;5 V sweeps from the knob's position to either end.</p>
+<h2 id="pans">Pans</h2>
+<p><strong>PAN 1</strong> to <strong>PAN 6</strong> place each voice in the stereo mix. They start alternating left and right and get wider with the voice number, so successive notes fan out.</p>
+<h2 id="banks">Banks</h2>
+<p>A note player after Mark IJzerman's JF Banks. On every clock tick, each of the bank's six notes plays with a chance set by AMOUNT, at a random velocity.</p>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>PLAY</strong></td><td>Start and stop. Stopping releases every note it holds.</td></tr>
+<tr><td><strong>CLOCK</strong></td><td>Patch a clock here and each pulse is one tick. RATE is then ignored, and GATE is a share of the time between pulses.</td></tr>
+<tr><td><strong>CAPTURE</strong></td><td>Stores the notes on the V/OCT input in the current bank. With fewer than six notes, the chord repeats an octave up to fill the bank.</td></tr>
+<tr><td><strong>RATE</strong></td><td>Internal clock, 20 ms to 2 s per tick.</td></tr>
+<tr><td><strong>RAND</strong></td><td>Each internal tick is up to this much early or late.</td></tr>
+<tr><td><strong>AMOUNT</strong></td><td>The chance that each note plays on a tick. CV input below.</td></tr>
+<tr><td><strong>BANK</strong></td><td>Which of the eight banks plays. CV input below: 1.25 V per bank, so 0 to 10 V covers all eight.</td></tr>
+<tr><td><strong>VEL MIN / VEL MAX</strong></td><td>The random velocity range. Velocity sets brightness as well as level.</td></tr>
+<tr><td><strong>GATE</strong></td><td>Note length, as a share of the tick. It matters in ASR and CYC; AR ignores it.</td></tr></table></div>
+<p>Banks plays on the voices that the V/OCT/GATE inputs don't use. With nothing in GATE it has all six; with a 4-channel MIDI-CV it has voices 5 and 6.</p>
+<p><strong>Editing bank notes:</strong> right-click the module and open <strong>Bank 1 notes</strong> to <strong>Bank 8 notes</strong>. Each has six sliders, one per note, plus <strong>Load a scale</strong> and <strong>Transpose</strong> up or down a semitone. The eight starting banks are C major pentatonic, A minor pentatonic, D dorian, F lydian, E phrygian, whole tone, stacked fifths and a high pentatonic. <strong>Reset all banks</strong> puts them back. Banks are saved with the patch.</p>
+<h2 id="io">Inputs and outputs</h2>
+<div class="tw"><table><tr><th>Jack</th><th>Description</th></tr>
+<tr><td><strong>V/OCT</strong></td><td>Polyphonic pitch, 1 V/octave, 0 V = C4. Channel 1 plays voice 1, and so on, up to 6.</td></tr>
+<tr><td><strong>GATE</strong></td><td>Polyphonic gate (above 1 V on, below 0.5 V off). A mono gate is shared by every V/OCT channel.</td></tr>
+<tr><td><strong>VEL</strong></td><td>Polyphonic velocity, 0 to 10 V. Unpatched means full velocity.</td></tr>
+<tr><td><strong>1 to 6</strong></td><td>Each voice on its own, unpanned. A patched voice output leaves the L/R mix (switch this off in the right-click menu). The light shows the voice's envelope.</td></tr>
+<tr><td><strong>L / R</strong></td><td>The stereo mix. With only L patched it's a mono mix.</td></tr>
+<tr><td><strong>Banks V/OCT / GATE</strong></td><td>What the Banks player plays, as 6 channels, to drive other voices too.</td></tr>
+<tr><td><strong>END</strong></td><td>End-of-envelope triggers, 6 channels.</td></tr></table></div>
+<h2 id="menu">Right-click menu</h2>
+<ul><li><strong>Sample &amp; hold pitch on each gate.</strong> Off (default): pitch follows V/OCT while the gate is high, so glides from MIDI-CV work. On: pitch is taken once, when the gate rises.</li><li><strong>Patched voice outputs leave the L/R mix.</strong> On by default.</li><li><strong>Bank notes</strong>, as above.</li></ul>
+<h2 id="presets">nb_monamie's three patches</h2>
+<p>Set these and leave the rest at default (double-click a knob to reset it).</p>
+<div class="tw"><table><tr><th></th><th>default</th><th>soufflet</th><th>ciclette</th></tr>
+<tr><td>RAMP</td><td>54/46</td><td>76/24</td><td>50/50</td></tr>
+<tr><td>CURVE</td><td>sine</td><td>sqr 48 / tri 52</td><td>tri 98 / sin 2</td></tr>
+<tr><td>FM RATIO</td><td>1.01</td><td>0.97</td><td>1.50</td></tr>
+<tr><td>FM INDEX</td><td>0</td><td>0</td><td>by voice 5 %</td></tr>
+<tr><td>PAN DRIFT</td><td>12 %</td><td>48 %</td><td>48 %</td></tr>
+<tr><td>ENV</td><td>AR</td><td>ASR</td><td>CYC</td></tr>
+<tr><td>SLOPE</td><td>3/97</td><td>67/33</td><td>15/85</td></tr>
+<tr><td>TIME</td><td>0.21 s</td><td>1.51 s</td><td>0.26 s</td></tr>
+<tr><td>Morph RAMP</td><td>+61 %</td><td>&minus;24 %</td><td>+72 %</td></tr>
+<tr><td>Morph CURVE</td><td>0</td><td>+59 %</td><td>0</td></tr>
+<tr><td>Morph FM</td><td>&minus;51 %</td><td>+20 %</td><td>&minus;40 %</td></tr></table></div>
+<h2 id="ideas">Patch ideas</h2>
+<ul>
+<li><strong>Six related LFOs.</strong> RANGE on LFO, nothing in GATE, INTONE fully right. Voices 1 to 6 now run at 1&times; to 6&times; the same rate and line up again every second or so. Send them to filter cutoffs or other modulation inputs. Turn FM INDEX left (by voice) and the faster ones get wobbly while voice 1 stays steady.</li>
+<li><strong>A self-playing ring.</strong> ENV on AR. Split the END output and Merge it back into GATE shifted by one voice, so END 1 feeds gate 2, END 2 feeds gate 3, and so on. For gate 1, mix END 6 with a slow clock or a button in a small mixer, so you can kick the ring into life. Give SLOPE and TIME CV from a slow random and the ring speeds up and slows down, and a little INTONE turns it into an arpeggio.</li>
+<li><strong>Self-steering chords.</strong> Patch Banks with a 16th clock. Send a slow random into MORPH, and a slower stepped one into BANK. The notes stay in one bank for a while, then the harmony moves, so a loop changes over minutes without you touching it. Try AMOUNT around 25 %, ENV on CYC, GATE long.</li>
+<li><strong>Detroit stabs.</strong> ENV on AR, SLOPE fully left, TIME around 0.15 s, CURVE a little left of centre, FM INDEX right (all) at 20 %. Play chords from MIDI-CV. Raise MORPH on the breakdown with an envelope.</li>
+<li><strong>Six separate friends.</strong> Patch voice outputs 1 to 6 into different effects (delay on 1, a reverb on 5 and 6), keep the rest in the L/R mix. FM INDEX turned left (by voice) makes the higher voices grittier, so voices 5 and 6 behave like a separate part.</li>
+<li><strong>Banks driving hardware.</strong> Patch Banks V/OCT and GATE into a VCV Split and out through an audio/CV interface to hardware voices, so the hardware plays the same notes as the module.</li></ul>
+<h2 id="nt">How it differs from 6Copains on the disting NT</h2>
+<ul><li><strong>0 V = C4</strong>, as in VCV. The NT version uses 0 V = C3.</li><li><strong>One gate per voice.</strong> The NT has one gate for all CV voices; here a polyphonic GATE cable gives each voice its own, and a mono gate still plays a chord.</li><li><strong>Separate voice outputs</strong> with voice lights, and a display.</li><li><strong>Banks is built in</strong>, with a CLOCK input, CV for AMOUNT and BANK, chord CAPTURE, and polyphonic outputs. On the NT it is a separate Lua script.</li><li>No direct MIDI, sustain or pitch bend: use VCV's MIDI-CV for those.</li><li><strong>RANGE</strong> switch for LFO rates, with free-running voices, an <strong>INTONE</strong> control, <strong>END</strong> triggers and a <strong>scope</strong>. None of these are in the NT version.</li><li>Output level is the NT's default +6 dB: one full-velocity voice peaks around 2.3 V on its own output.</li></ul>
+<h2 id="credits">Credits and licence</h2>
+<ul><li><strong>6Copains</strong> for the disting NT, and the 6Copains Banks / JF Banks note player: Mark IJzerman (GPL-3.0). The synthesis engine in <code>src/CopainsEngine.hpp</code> is his, with the VCV changes marked "VCV:".</li><li><strong>nb_monamie</strong> (monami.e), the norns voice 6Copains ports: sonoCircuit (GPL-3.0).</li><li><strong>Imaginary Friends</strong>, the SuperCollider engine whose waveshaping nb_monamie uses: @synthetivv.</li><li><strong>Just Friends</strong> is a module by Mannequins (Whimsical Raps). 6 Copains is an unofficial approximation and isn't affiliated with them.</li><li>VCV Rack port: Haer.</li></ul>
+<p>Licensed under the GNU General Public License v3.0 or later, as a derivative of 6Copains and nb_monamie. Builds: the GitHub Action builds the Mac (Apple Silicon) plugin on every push; to build by hand run <code>make dist RACK_DIR=path/to/Rack-SDK</code>.</p>
+</main></body></html>

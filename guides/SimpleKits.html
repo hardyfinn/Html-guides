@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SimpleKits for VCV Rack 2</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>SimpleKits</h1>
+<p class="sub">VCV Rack 2 drum and percussion sample players with their sounds built in, plus step sequencers made to drive them. By Haer.</p>
+<div class="note">The samples are not covered by the MIT licence (the 909 pack is for personal use only). Keep the repository and anything built from it private.</div>
+<nav><strong>Contents</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#727">727</a></li><li><a href="#707">707</a></li><li><a href="#909">909</a></li><li><a href="#ritmo">Ritmo</a></li><li><a href="#jack">Jack</a></li><li><a href="#jungleseq">Jungle Seq</a></li><li><a href="#junglesampler">Jungle Sampler</a></li><li><a href="#ideas">Patch ideas</a></li><li><a href="#files">Files and licence</a></li></ul></nav>
+<h2 id="overview">Overview</h2>
+<p>SimpleKits has seven modules:</p>
+<div class="tw"><table><tr><th>Module</th><th>What it is</th></tr>
+<tr><td><strong>727</strong></td><td>15 Latin percussion sounds</td></tr>
+<tr><td><strong>707</strong></td><td>13 drum voices, round-robin recordings</td></tr>
+<tr><td><strong>909</strong></td><td>11 TR-909 voices from a multisampled pack</td></tr>
+<tr><td><strong>Ritmo</strong></td><td>8-track sequencer with 32 Latin rhythms, made to play the 727</td></tr>
+<tr><td><strong>Jack</strong></td><td>12-track sequencer with 32 house and techno grooves, made to play the 909 or 707</td></tr>
+<tr><td><strong>Jungle Seq</strong></td><td>Break re-sequencer, made to play the Jungle Sampler</td></tr>
+<tr><td><strong>Jungle Sampler</strong></td><td>Slices a WAV break that you load</td></tr></table></div>
+<div class="note"><strong>No cables needed:</strong> a sequencer placed directly beside the player it is made for plays it with no cables. Ritmo goes next to a 727, Jack next to a 909 or 707, and Jungle Seq directly left of a Jungle Sampler. Patching a cable into a track's output takes that track off the link.</div>
+<h2 id="727">727</h2>
+<p>Fifteen Latin percussion sounds, in alphabetical order: Agogo hi, Agogo low, Bongo hi, Bongo low, Cabasa, Conga hi mute, Conga low, Conga open, Maracas, Quijada, Star chime, Timbale hi, Timbale low, Whistle long, Whistle short.</p>
+<p>Each sound has:</p>
+<ul><li><strong>TRIG</strong> input: a gate or trigger (rising past about 1 V) plays the sound from the start. A new trigger restarts it.</li><li><strong>LEVEL</strong> knob: 0 to 100%, default 80%. A full-scale sample at 100% is &plusmn;5 V.</li><li>A small light that flashes on each hit.</li><li>Its own numbered <strong>OUT</strong>.</li></ul>
+<p><strong>ACCENT</strong> (top): if the accent input is high (about 1 V or more) when a sound is triggered, that hit plays louder by the amount on the ACCENT knob (0 to +12 dB, default +6 dB). The boost holds for the whole sample, even if the accent input drops on the next step. An accent arriving up to 2 ms after the trigger still counts.</p>
+<p><strong>MIX</strong> (top right) adds up every sound. Plugging a cable into a sound's own OUT takes that sound out of MIX, so you can send, say, the congas to a reverb on their own and keep the rest in the mix.</p>
+<p>Samples play at their original pitch whatever Rack's sample rate is.</p>
+<h2 id="707">707</h2>
+<p>Thirteen drum voices, each with several recordings of the same sound that take turns (round robin), so a run of hits doesn't sound machine-identical: Bass drum (8), Snare (8), Rimshot (4), Cowbell (4), Hand clap (4), Tambourine (4), Closed hat (8), Open hat (8), Ride (4), Crash (4), Low tom (4), Mid tom (2), High tom (2).</p>
+<p>Same controls as the 727 (TRIG, LEVEL, light and OUT per voice, ACCENT, MIX), plus:</p>
+<ul><li><strong>Round robin</strong> (right-click the module): <em>Random</em>, <em>Random, no repeats</em> (default: never the same recording twice in a row) or <em>Sequential</em> (1, 2, 3 ... and round again). One setting for the whole module, saved with the patch.</li><li><strong>Hat choke:</strong> a closed hat cuts off a ringing open hat.</li></ul>
+<p>To add or change recordings, put WAVs in <code>res/707/</code> named like <code>SD_01.wav</code>, <code>SD_02.wav</code> ... (up to 32 per voice).</p>
+<h2 id="909">909</h2>
+<p>Eleven TR-909 voices from a multisampled pack. One column per voice, in front-panel order: Bass drum, Snare drum, Low / Mid / Hi tom, Rimshot, Hand clap, Closed hat, Open hat, Crash, Ride.</p>
+<ul>
+<li><strong>Sound knobs</strong> pick the recording made at the nearest knob position on the real machine, so they step rather than sweep: Bass drum TUNE / ATTACK / DECAY and Snare TUNE / TONE / SNAPPY (5 positions each), toms TUNE / DECAY (11 each), hats DECAY (5), Crash and Ride TUNE (11). A new setting is heard on the next hit.</li>
+<li><strong>Rimshot and Hand clap</strong> have 10 and 8 takes that play round robin (right-click: Random, Random no repeats, Sequential).</li>
+<li><strong>ACCENT:</strong> a high accent input at the trigger makes that hit louder by the amount the real 909's accent does, measured from the pack's 11 accent recordings. The AMOUNT knob is the 909's accent level (0 to 100%).</li>
+<li><strong>Closed hat</strong> chokes the open hat.</li>
+<li><strong>Snare + clap</strong> hit together (within 2 ms) and both going to MIX play the pack's combined recording, which has the phasing of the two sharing one noise source on the real machine.</li></ul>
+<h2 id="ritmo">Ritmo</h2>
+<p>An 8-track step sequencer loaded with 32 Latin rhythms (clave, tumbao, samba, bossa nova, cumbia...), made to play the 727. It has trigger outs per track plus an accent lane, a click-to-edit grid, mutes, swing and pattern CV. Placed right beside a 727 it plays it with no cables.</p>
+<h2 id="jack">Jack</h2>
+<p>A 12-track step sequencer (11 voices plus an accent lane) loaded with 32 classic house and techno grooves, 16 of each, all from before 2000. It is made to play the 909 or the 707: one track per 909 voice. Each clock pulse is one sixteenth, and each pattern is one bar of 16 steps. The tracks are Bass drum, Snare, Low tom, Mid tom, Hi tom, Rim shot, Clap, Closed hat, Open hat, Crash, Ride and Accent.</p>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>CLOCK</strong></td><td>One pulse per sixteenth note.</td></tr>
+<tr><td><strong>RESET</strong></td><td>The next clock plays step 1.</td></tr>
+<tr><td><strong>Pattern knob</strong> + CV</td><td>Chooses one of the 32 patterns. The CV input takes 0 to 10 V across all 32, added to the knob.</td></tr>
+<tr><td><strong>Swing</strong></td><td>50% (straight) to 75%.</td></tr>
+<tr><td><strong>FILL</strong> input</td><td>A trigger makes the next bar a fill. Held high, fills keep playing.</td></tr>
+<tr><td><strong>Display</strong></td><td>Shows the pattern number, name, style and year. Clicking it also arms a fill.</td></tr>
+<tr><td><strong>Step grid</strong></td><td>Click a square to switch a step on or off, drag to paint. Orange = hit, yellow = accent, red = a hit in a fill bar.</td></tr>
+<tr><td><strong>Mute</strong> (per voice)</td><td>Silences that track.</td></tr>
+<tr><td><strong>Random button</strong> (per lane)</td><td>Replaces that lane of the bar on show with a random fill of 2 to 16 hits (6 on average).</td></tr>
+<tr><td><strong>Outputs</strong></td><td>One trigger output per track. The Accent output goes to the 909's ACCENT IN.</td></tr>
+<tr><td><strong>LINK</strong> light</td><td>Lit when Jack is beside a 909 or a 707 and playing it with no cables.</td></tr></table></div>
+<h3>Fills</h3>
+<p>Each pattern has its own fill bar, which can be edited like the main bar. A fill plays at the start of the next bar. Fills are built from the pattern's main bar and change either the second half (steps 9 to 16) or the last beat: snare roll, tom run into a snare pickup, stuttering claps, a break where everything drops out on the last beat, or busy rim shots.</p>
+<h3>Right-click menu</h3>
+<ul><li><strong>Show and edit the fill bar</strong></li><li><strong>Automatic fill:</strong> Off, every 4, 8 or 16 bars</li><li><strong>Crash on the bar after a fill</strong></li><li><strong>Restore this pattern and its fill</strong>, <strong>Clear the bar shown</strong>, <strong>Restore all 32 patterns</strong></li></ul>
+<p>Edited patterns and fills are saved with the patch. The repository's <code>docs/jack-patterns.md</code> lists all 32 patterns. They are one-bar reconstructions written from memory of each record, not checked against published transcriptions, and many of the originals used other drum machines.</p>
+<h2 id="jungleseq">Jungle Seq</h2>
+<p>A break re-sequencer. Each of up to 32 sixteenth-note steps names a slice of the break (1 to 16), or holds the slice before it (<code>-</code>), or is silent (<code>.</code>). Any step can also be reversed, stuttered (2, 3 or 4 retriggers inside the step) or pitched (&minus;12 to +12 semitones). 32 preset chops are built in, including 3+3+2 patterns. Every pattern can be edited and is saved in the patch.</p>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>Pattern</strong> + CV</td><td>Chooses one of 32 patterns (CV: 0 to 10 V across all 32, added to the knob).</td></tr>
+<tr><td><strong>Length</strong></td><td>1 to 32 steps.</td></tr>
+<tr><td><strong>Mutate</strong> + CV</td><td>Swaps slices around. New random changes are rolled each time the pattern loops.</td></tr>
+<tr><td><strong>Stutter</strong></td><td>Amount of random stutters.</td></tr>
+<tr><td><strong>Reverse</strong></td><td>Amount of random reverses.</td></tr>
+<tr><td><strong>Swing</strong></td><td>50% to 75%.</td></tr>
+<tr><td><strong>EDIT</strong></td><td>Turns on editing: click a step, then drag up or down to change its slice. Order is hold, silent, then slice 1 to 16.</td></tr>
+<tr><td><strong>REV</strong></td><td>Reverses the selected step (in edit mode).</td></tr>
+<tr><td><strong>STUT</strong></td><td>Steps the selected step through none, 2, 3, 4 stutters (in edit mode).</td></tr>
+<tr><td><strong>PITCH</strong></td><td>While lit, dragging a step changes its pitch instead of its slice.</td></tr>
+<tr><td><strong>FILL</strong></td><td>Arms a snare-roll fill over the last four steps of the next loop. Also a FILL input (trigger = next loop, held high = every loop).</td></tr>
+<tr><td><strong>SAVE</strong></td><td>Writes what you are hearing (the random changes) into the pattern.</td></tr>
+<tr><td><strong>CLOCK / RESET</strong></td><td>One pulse per sixteenth; reset sends it back to step 1.</td></tr></table></div>
+<p><strong>Outputs:</strong> TRIG (every slice start, stutters included), SLICE CV (slice 1 = 0 V, each slice 0.625 V higher, &minus;1 V = silent step), REV gate, STUT gate, PITCH (1 V/oct), and KICK / SNARE / HAT triggers that fire when a slice containing that drum plays. These come from the linked Jungle Sampler's analysis of the loaded break, or from a typical break layout when nothing is linked.</p>
+<p>Right-click menu: restore this pattern, clear its reverse / stutter / pitch, set it to the straight break, or restore all 32 patterns.</p>
+<h2 id="junglesampler">Jungle Sampler</h2>
+<p>A break slicer. Load your own WAV break (ideally trimmed to one bar) with the <strong>LOAD</strong> button, the right-click menu, or by dropping a file on the module. It is cut into 8, 16 or 32 equal slices. Each trigger plays from the start of a slice and keeps going until the next trigger, like an old hardware sampler.</p>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>Slices</strong></td><td>8, 16 or 32.</td></tr>
+<tr><td><strong>Pitch</strong></td><td>&minus;12 to +12 semitones.</td></tr>
+<tr><td><strong>Crunch</strong></td><td>Lowers sample rate and bit depth for S950 / SP-1200 style grit.</td></tr>
+<tr><td><strong>Decay</strong></td><td>Fully right: slices play on until the next trigger. Turn left for shorter slices.</td></tr>
+<tr><td><strong>Start</strong></td><td>Start offset inside each slice.</td></tr>
+<tr><td><strong>Level</strong></td><td>Output level.</td></tr>
+<tr><td><strong>REPITCH</strong></td><td>Lit: the break speeds up or slows down to fit the tempo, so its pitch follows the tempo (the Akai / jungle sound). Off: it plays at its own speed. Pitch, V/OCT and the sequencer's per-step pitch add on top.</td></tr>
+<tr><td><strong>SEQ LINK</strong> light</td><td>Lit when a Jungle Seq on the left is playing it.</td></tr></table></div>
+<p><strong>Inputs</strong> (patching TRIG switches to cable control): TRIG starts a slice; SLICE picks it (0 to 10 V across the break, below &minus;0.5 V = stop); REV plays it backwards when high at the trigger; V/OCT pitches it; STUTTER rolls it (0 to 10 V: off, 2, 3 or 4 retriggers per trigger interval). <strong>Outputs:</strong> L and R. The display shows the waveform, slice marks and the playing slice.</p>
+<h2 id="ideas">Patch ideas</h2>
+<ul>
+<li><strong>Latin groove:</strong> put a Ritmo directly left or right of a 727, give Ritmo a 16th clock, and turn the pattern knob through the 32 rhythms.</li>
+<li><strong>House or techno drums:</strong> place Jack next to a 909, clock it, send a bar of a fill with a gate on FILL at the end of a phrase, or set Automatic fill to every 8 bars.</li>
+<li><strong>Separate the kick:</strong> plug a cable into the 909's bass drum OUT to take it out of MIX and send it to a compressor.</li>
+<li><strong>Jungle:</strong> load a one-bar break into Jungle Sampler, turn REPITCH on, put a Jungle Seq directly left, clock it, then raise MUTATE and STUTTER slowly. Press SAVE when you like what you hear.</li>
+<li><strong>Drums from a break:</strong> send Jungle Seq's KICK, SNARE and HAT triggers to other drum modules to layer them on the break.</li></ul>
+<h2 id="files">Files and licence</h2>
+<ul><li><code>res/samples/</code>: the WAVs (any mono or stereo PCM WAV works; replace a file with one of the same name to swap a sound)</li><li><code>res/make_panel.py</code> draws <code>res/727.svg</code>; <code>tools/preview.py</code> renders a mock-up PNG</li><li><code>src/SevenTwoSeven.cpp</code> is the module, <code>src/Wav.hpp</code> the WAV reader; <code>make test</code> checks every sample loads (no Rack SDK needed)</li></ul>
+<p>Code: MIT (see <code>LICENSE.txt</code>). Panel fonts (Inter, Climate Crisis) are under the SIL Open Font Licence. <strong>Samples are not covered by the MIT licence</strong>: the WAV files keep their own terms and must not be shared, which is why the repository is private. Builds for Apple Silicon Macs come from GitHub Actions on every push.</p>
+</main></body></html>
