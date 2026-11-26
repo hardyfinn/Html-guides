@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dung Revisions for VCV Rack</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Dung Revisions</h1>
+<p class="sub">VCV Rack module by Haer: a clock divider, two OR buses and a bidirectional 16-step shift register (Rungler style)</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#layout">Panel layout</a></li><li><a href="#controls">Controls</a></li><li><a href="#outputs">Outputs</a></li><li><a href="#display">The display</a></li><li><a href="#menu">Right-click menu</a></li><li><a href="#use">How to use it</a></li><li><a href="#ideas">Patch ideas</a></li></ul></nav>
+<h2 id="idea">The idea</h2>
+<p>Clock pulses go into seven dividers (/2 to /8). Each divider has a 3-way switch that sends it to Bus 1, to Bus 2, or nowhere. Each bus ORs together whatever is sent to it. <strong>Bus 1 also clocks the shift register</strong>, so the divisions you choose decide when the register steps.</p>
+<p>The register has 16 stages and a loop point you can set (2, 3, 4, 5, 6, 7, 8 or 16 steps). At each step, the bit at the loop point either comes back round (the pattern locks and repeats), or is mixed with the Data input (the pattern keeps changing). Chance picks between the two. The register can run forward or in reverse. The outputs read the stages as a gate, a 3-bit CV and an 8-bit CV.</p>
+<h2 id="layout">Panel layout</h2>
+<ul>
+<li><strong>Left column:</strong> seven rows, /8 at the top down to /2. Each row has a 3-way routing switch (up = Bus 1, middle = nowhere, down = Bus 2), a division output jack and a small light that flashes when it fires.</li>
+<li><strong>Top right of the panel:</strong> Bus 1, Bus 2 and Noise outputs, and below them 1-Bit, 3-Bit and 8-Bit outputs. Small lights show Bus 1 (green), Bus 2 (red) and the 1-Bit state.</li>
+<li><strong>Middle:</strong> the Length knob with a ring of lights showing the current length, a Direction button (with its light) and Direction jack, and a Length CV jack.</li>
+<li><strong>Lower middle:</strong> the Write switch (3-way) and the Chance knob.</li>
+<li><strong>Bottom row of jacks:</strong> Clock, Reset, Data and Chance CV.</li>
+<li><strong>Display</strong> (right): shows what is going on inside. See "The display".</li>
+</ul>
+<h2 id="controls">Controls</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td>Clock</td><td>The clock that drives the dividers. Nothing moves until a clock arrives.</td></tr>
+<tr><td>Reset</td><td>Restarts the divisions, so the next clock fires all of them. With the right-click option on, it also clears the register.</td></tr>
+<tr><td>/2 to /8 switches</td><td>Up sends that division to Bus 1, middle sends it nowhere, down sends it to Bus 2. On a new module /4 goes to Bus 1, /3 goes to Bus 2 and the rest are off.</td></tr>
+<tr><td>Bus 1 / Bus 2</td><td>OR of every division sent to that bus. Bus 1 also clocks the register.</td></tr>
+<tr><td>Length (+ jack)</td><td>Loop point: 2, 3, 4, 5, 6, 7, 8 or 16 steps (8 on a new module). The Length jack adds one position per volt.</td></tr>
+<tr><td>Chance (+ jack)</td><td>Clockwise: the bit at the loop point comes back and the pattern locks. Anticlockwise: Data XOR the loop-point bit goes in. In between, a weighted coin toss picks one or the other at each step. The jack adds 10% per volt. It starts fully clockwise.</td></tr>
+<tr><td>Data</td><td>The data bit, high at 0.5 V or more. Used when Chance picks new data. If nothing is patched it reads 0, so turning Chance down changes nothing yet. Patch Noise here, or use the right-click option to read the internal noise.</td></tr>
+<tr><td>Write</td><td>High writes a 1 at the next step, Low writes a 0, the middle does nothing. By default it springs back to the middle after one step.</td></tr>
+<tr><td>Direction button / jack</td><td>Reverses the register. The jack, by default, reverses it while held high (opposite of the button). A right-click option makes each trigger flip the direction instead.</td></tr></table></div>
+<h2 id="outputs">Outputs</h2>
+<div class="tw"><table><tr><th>Output</th><th>What it gives you</th></tr>
+<tr><td>/2 to /8</td><td>A gate each time that division fires.</td></tr>
+<tr><td>Bus 1, Bus 2</td><td>The OR of the divisions routed there.</td></tr>
+<tr><td>Noise</td><td>White noise, -5 to +5 V. Patch it into Data for the classic Rungler mess.</td></tr>
+<tr><td>1-Bit</td><td>Stage 1 of the register as a gate.</td></tr>
+<tr><td>3-Bit</td><td>Stages 1 to 3, 8 levels (0 to 7).</td></tr>
+<tr><td>8-Bit</td><td>Stages 1 to 8, 256 levels (0 to 255).</td></tr></table></div>
+<p>Gates are 10 V by default (5 V from the menu). Hover over any jack to see what it is doing right now: for example how many clocks until a division fires, what the 8-Bit output holds, or which divisions a bus is made of.</p>
+<h2 id="display">The display</h2>
+<ul>
+<li><strong>Shift register:</strong> 16 cells, with the cells inside the loop outlined. The header shows the length and FWD or REV. Brackets above show which stages make the 3-bit and 8-bit values, and a loop line below shows where the new bit comes from.</li>
+<li><strong>NEXT BIT:</strong> says what will enter next: a written bit, the looped bit (locked), data XOR loop, or the percentage split in between.</li>
+<li><strong>8-BIT trace</strong> and <strong>3-BIT bars:</strong> the recent history of the two CV outputs, with their current value and voltage.</li>
+<li><strong>CLOCKS grid:</strong> the last 24 input clocks, one row per division plus Bus 1 and Bus 2. Cells are coloured green or pink when that division fired and went to Bus 1 or Bus 2.</li>
+<li><strong>Footer:</strong> which divisions are ORed into each bus.</li>
+</ul>
+<h2 id="menu">Right-click menu</h2>
+<ul>
+<li><strong>Clear register</strong> and <strong>Random fill</strong>.</li>
+<li><strong>8-Bit range:</strong> 0 to 5 V, 0 to 8 V (default), 0 to 10 V or -5 to +5 V.</li>
+<li><strong>3-Bit range:</strong> the same four, plus one semitone per step (0 to 7/12 V) and one octave per step (0 to 7 V).</li>
+<li><strong>Bit order:</strong> stage 1 is the biggest step (the default), or the smallest.</li>
+<li><strong>Gate level:</strong> 5 V or 10 V.</li>
+<li><strong>Write switch:</strong> springs back after one step, or stays where you put it.</li>
+<li><strong>Data input when unpatched:</strong> reads 0, or reads the internal noise.</li>
+<li><strong>Direction jack:</strong> high = opposite of the button, or each trigger flips direction.</li>
+<li><strong>Reset also clears the register.</strong></li>
+</ul>
+<h2 id="use">How to use it</h2>
+<ol>
+<li>Patch a clock into Clock. Flip /4 up (to Bus 1) so the register steps every fourth clock.</li>
+<li>Patch 3-Bit into a quantiser or oscillator pitch. Use Write to put a few 1s into the register.</li>
+<li>With Chance fully clockwise, the pattern locks into a loop. Set Length to choose how long it is.</li>
+<li>Patch Noise into Data and turn Chance down. New bits now come in, and the pattern mutates. At zero every step is Data XOR the loop-point bit.</li>
+<li>Press Direction to run the register backwards.</li>
+</ol>
+<h2 id="ideas">Patch ideas</h2>
+<ul>
+<li><strong>Rungler-style melody:</strong> Noise into Data, Chance around noon, 3-Bit (set to semitone steps from the menu) into a quantised oscillator, 1-Bit as an accent gate.</li>
+<li><strong>Self-made rhythm:</strong> send /2 and /3 to Bus 1 so the register steps on an irregular pattern, and take Bus 2 (/5, /7) to a drum voice.</li>
+<li><strong>Locked loop you can disturb:</strong> keep Chance fully clockwise and use the Write switch to drop in single bits by hand.</li>
+<li><strong>Back and forth:</strong> a slow clock into the Direction jack with "each trigger flips direction" on, so the sequence reads forward and then backward.</li>
+</ul>
+</main></body></html>
