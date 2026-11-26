@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Serge for VCV Rack</title>
+<style>
+:root{--bg:#fff;--fg:#1c1c20;--mut:#666;--acc:#8a2b2b;--line:#ddd;--code:#f3f3f5}
+@media (prefers-color-scheme:dark){:root{--bg:#16161a;--fg:#e8e8ec;--mut:#9a9aa2;--acc:#e08a8a;--line:#33333a;--code:#222228}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:820px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:2rem;margin:.2em 0}
+h2{margin-top:2.2em;border-bottom:2px solid var(--acc);padding-bottom:.2em}
+h3{margin-top:1.8em;color:var(--acc)}
+a{color:var(--acc)}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--code)}
+td:first-child{white-space:nowrap;font-weight:600}
+code{background:var(--code);padding:1px 5px;border-radius:3px}
+nav{background:var(--code);padding:12px 18px;border-radius:6px;margin:1.5em 0}
+nav ul{margin:.3em 0;padding-left:1.2em;columns:2;column-gap:2em}
+nav li{break-inside:avoid}
+.lead{color:var(--mut);font-size:1.1rem}
+.note{border-left:4px solid var(--acc);background:var(--code);padding:8px 14px;margin:1em 0}
+img,svg{max-width:100%;height:auto}
+figure{margin:1.2em 0}
+figcaption{color:var(--mut);font-size:.9rem}
+.try{border:1px solid var(--line);border-radius:6px;padding:4px 16px;margin:1em 0}
+footer{margin-top:3em;color:var(--mut);font-size:.85rem}
+@media (max-width:560px){nav ul{columns:1}}
+</style>
+</head>
+<body>
+<main>
+<h1>Serge for VCV Rack: manual</h1>
+<p class="lead">A set of Serge modules for VCV Rack, with the levels, jack colours and patching habits of a real Serge system.</p>
+
+<nav><strong>Contents</strong>
+<ul>
+<li><a href="#levels">Read this first: levels and jacks</a></li>
+<li><a href="#modules">The modules</a></li>
+<li><a href="#dsg">DSG</a></li><li><a href="#ssg">SSG</a></li><li><a href="#nto">NTO</a></li><li><a href="#vcm">VCM</a></li>
+<li><a href="#vcfq">VCFQ</a></li><li><a href="#vcfs">VCFS</a></li><li><a href="#reseq">RESEQ</a></li><li><a href="#tws">TWS</a></li>
+<li><a href="#ring">RING</a></li><li><a href="#noi">NOI</a></li><li><a href="#asr">ASR</a></li><li><a href="#com">COM</a></li>
+<li><a href="#str">STR</a></li><li><a href="#prc">PRC</a></li><li><a href="#xfad">XFAD</a></li><li><a href="#vca2">VCA2</a></li>
+<li><a href="#mix">MIX</a></li><li><a href="#dcsm">DCSM</a></li><li><a href="#pt">PT</a></li><li><a href="#wad">WAD</a></li>
+<li><a href="#frs">FRS</a></li><li><a href="#bdr">BDR</a></li><li><a href="#pdiv">PDIV</a></li>
+<li><a href="#voice">A first Serge voice</a></li><li><a href="#recipes">More patch recipes</a></li>
+</ul></nav>
+
+<h2 id="levels">Read this first: levels and jacks</h2>
+<p>These modules use the levels of a real Serge system, not Rack’s usual ones.</p>
+<div class="tblwrap"><table>
+<tr><th>Jack colour</th><th>Signal</th><th>Level</th></tr>
+<tr><td>Black</td><td>audio, bipolar</td><td>about ±2.5 V (5 V peak to peak)</td></tr>
+<tr><td>Blue</td><td>control voltage, unipolar</td><td>0 to +5 V</td></tr>
+<tr><td>Red</td><td>pulse, gate, trigger, logic</td><td>0 or +5 V</td></tr>
+<tr><td>Yellow</td><td>SSG CYCLE and HOT COUPLER</td><td>swings to about ±10.5 V</td></tr>
+</table></div>
+<ul>
+<li>Pitch inputs are 1 V per octave.</li>
+<li>A red input fires when its voltage rises through +2.5 V. Any signal can drive it, which is how Serge patches turn audio and slopes into clocks.</li>
+<li>Any output can go into any input. Patching a module’s output back into its own input is normal Serge practice and is safe here.</li>
+<li>Rack’s own modules use 10 V peak-to-peak audio and 10 V gates. Next to them Serge outputs look half-size, and Rack oscillators drive Serge shapers hard. That is expected: use PRC, MIX or VCA2 to scale between the two worlds.</li>
+<li>Every port and knob has a tooltip with its full name.</li>
+</ul>
+
+<h2 id="modules">The modules</h2>
+<div class="tblwrap"><table>
+<tr><th>Short name</th><th>Module</th><th>What it is</th></tr>
+<tr><td>DSG</td><td>Dual Universal Slope Generator</td><td>envelopes, LFOs, oscillator, slew, clock divider</td></tr>
+<tr><td>SSG</td><td>Smooth &amp; Stepped Generator</td><td>slew, track and hold, sample and hold, random</td></tr>
+<tr><td>NTO</td><td>New Timbral Oscillator</td><td>the main audio oscillator</td></tr>
+<tr><td>VCM</td><td>Wave Multipliers</td><td>squarer, wavefolder, rectifier chain</td></tr>
+<tr><td>VCFQ</td><td>Variable Q VCF</td><td>multimode filter that can ring</td></tr>
+<tr><td>VCFS</td><td>Variable Slope VCF</td><td>filter with a variable slope</td></tr>
+<tr><td>RESEQ</td><td>Resonant Equalizer</td><td>ten fixed resonant bands</td></tr>
+<tr><td>TWS</td><td>Triple Waveshaper</td><td>turns sawtooth into sine</td></tr>
+<tr><td>RING</td><td>Ring Modulator</td><td>ring and amplitude modulation</td></tr>
+<tr><td>NOI</td><td>Noise Source</td><td>white, pink and slow random</td></tr>
+<tr><td>ASR</td><td>Analog Shift Register</td><td>three-stage sample and hold</td></tr>
+<tr><td>COM</td><td>Dual Comparator</td><td>turns levels into pulses</td></tr>
+<tr><td>STR</td><td>Dual Schmitt Trigger</td><td>squaring and a flip-flop</td></tr>
+<tr><td>PRC</td><td>Dual Processor</td><td>mixing, inverting, offsets</td></tr>
+<tr><td>XFAD</td><td>Cross-Fader</td><td>fade between two signals</td></tr>
+<tr><td>VCA2</td><td>Dual VCA</td><td>two exponential VCAs</td></tr>
+<tr><td>MIX</td><td>Dual Audio Mixer</td><td>two small mixers</td></tr>
+<tr><td>DCSM</td><td>Dual Channel Stereo Mixer</td><td>stereo mixer with panning</td></tr>
+<tr><td>PT</td><td>Peak &amp; Trough</td><td>higher and lower of two signals</td></tr>
+<tr><td>WAD</td><td>Wilson Analog Delay</td><td>bucket-brigade delay, flanger, chorus</td></tr>
+<tr><td>FRS</td><td>Frequency Shifter</td><td>shifts every partial by the same number of hertz</td></tr>
+<tr><td>BDR</td><td>Bi-Directional Router</td><td>three voltage-controlled switches</td></tr>
+<tr><td>PDIV</td><td>Pulse Divider</td><td>divides a clock by 2 to 8 at once</td></tr>
+</table></div>
+
+<h2 id="dsg">DSG: Dual Universal Slope Generator</h2>
+<p>Two identical sections. Each one is a voltage follower whose upward speed (RISE) and downward speed (FALL) you set separately. A trigger makes it rise to +5 V and fall back: an envelope. Its END output goes low while it falls, so feeding END back to TRIG makes it cycle.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>RISE, FALL</td><td>time for a 5 V slope, from 20 s (anticlockwise) to 100 µs</td></tr>
+<tr><td>VC</td><td>how much VC IN changes the slopes, ±1 octave per volt at the ends</td></tr>
+<tr><td>RISE / BOTH / FALL</td><td>which slope VC IN changes</td></tr>
+<tr><td>IN</td><td>the voltage the output follows</td></tr>
+<tr><td>TRIG</td><td>starts one rise-and-fall. Ignored while a cycle is running</td></tr>
+<tr><td>1V/OCT</td><td>speeds both slopes, calibrated</td></tr>
+<tr><td>OUT</td><td>the slope, 0 to +5 V for an envelope</td></tr>
+<tr><td>END</td><td>+5 V while rising and at rest, 0 V during the fall</td></tr>
+</table></div>
+<div class="try"><p><strong>Try this:</strong></p><ul>
+<li><strong>Envelope:</strong> a clock or gate into TRIG, OUT to a VCA2 VC. A gate into IN instead gives attack, sustain at the gate level, and release.</li>
+<li><strong>LFO and oscillator:</strong> END → TRIG. Turn RISE and FALL down for a slow triangle, both fully up for about 4.8 kHz. Turn one down for a sawtooth. Pitch it from 1V/OCT.</li>
+<li><strong>Clock divider:</strong> a clock into TRIG, then slow RISE and FALL until each cycle spans two or three clock periods. END now pulses on every second or third clock.</li>
+<li><strong>Pulse delay:</strong> a trigger into TRIG. END rises again one rise-plus-fall time later.</li>
+<li><strong>Portamento:</strong> a sequencer into IN, OUT to a pitch input. RISE sets the glide up, FALL the glide down.</li>
+<li><strong>Envelope follower:</strong> audio into IN, RISE fully up, FALL around noon.</li>
+<li><strong>Curved slopes:</strong> OUT → VC IN, VC turned up or down.</li></ul></div>
+
+<h2 id="ssg">SSG: Smooth &amp; Stepped Generator</h2>
+<p>Two slew sections and a comparator. SMOOTH follows its IN at the speed RATE allows, and freezes while HOLD is high. STEPPED only moves during a 1 ms window after each SAMPLE pulse, so each pulse moves it toward IN by at most RATE × 1 ms. COUPLER is high whenever STEPPED is above SMOOTH.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>RATE</td><td>slew speed, 0.5 V/s to 2 kV/s</td></tr>
+<tr><td>VC</td><td>how much VC IN speeds the slew (no inversion)</td></tr>
+<tr><td>HOLD (smooth)</td><td>high freezes the output: track and hold</td></tr>
+<tr><td>SAMPLE (stepped)</td><td>each rising edge opens the 1 ms window</td></tr>
+<tr><td>CYCLE</td><td>flips between ±10.5 V when OUT passes ±2.5 V</td></tr>
+<tr><td>COUPLER, HOT COUPLER</td><td>stepped &gt; smooth: 0/+5 V and ±10.5 V</td></tr>
+</table></div>
+<div class="try"><p><strong>Try this:</strong></p><ul>
+<li><strong>Triangle LFO:</strong> smooth CYCLE → smooth IN. RATE fully up gives about 200 Hz.</li>
+<li><strong>Staircases:</strong> a clock into SAMPLE, stepped CYCLE → stepped IN. Lower RATE for more, smaller steps.</li>
+<li><strong>Wandering random voltages:</strong> NOI WHITE → stepped IN, a clock into SAMPLE, RATE low. Each step moves only part of the way.</li>
+<li><strong>Classic sample and hold:</strong> as above with RATE fully up.</li>
+<li><strong>Smooth random:</strong> stepped OUT → smooth IN, slow smooth RATE.</li>
+<li><strong>Rhythms from the coupler:</strong> both sections cycling at different rates, COUPLER into a DSG TRIG.</li></ul></div>
+
+<h2 id="nto">NTO: New Timbral Oscillator</h2>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>FREQ, FINE</td><td>16 Hz to 16 kHz, FINE ± half an octave</td></tr>
+<tr><td>1V/OCT</td><td>calibrated pitch input</td></tr>
+<tr><td>1V/OCT PORT</td><td>calibrated pitch input with its own glide, set by PORT</td></tr>
+<tr><td>VC FREQ, FREQ CV</td><td>extra exponential pitch control</td></tr>
+<tr><td>FM, FM VC, LIN FM</td><td>linear FM: LIN FM is the modulator, FM and FM VC set the depth</td></tr>
+<tr><td>WAVE, VC WAVE, WAVE CV</td><td>shape of the VAR output, from sine to saw</td></tr>
+<tr><td>SYNC</td><td>soft sync: a rising edge restarts the cycle if it is at least 70% through</td></tr>
+<tr><td>SAW, TRI</td><td>0 to +5 V</td></tr>
+<tr><td>SINE, VAR</td><td>±2.5 V</td></tr>
+</table></div>
+<p>Linear FM keeps the pitch steady as the depth changes, so it gives clean bell and metal timbres. For sync, tune the NTO slightly flat of the master, or flat of a harmonic of it.</p>
+
+<h2 id="vcm">VCM: Wave Multipliers</h2>
+<p>Three separate shapers.</p>
+<ul>
+<li><strong>1:</strong> HI / LO switch. LO is a plain VCA. HI squares the signal up with rounded corners. VC is the level.</li>
+<li><strong>2:</strong> the folder. As FOLD (plus VC) rises, a sine gains the 3rd, 5th and so on up to the 13th harmonic. IN 1 and IN 2 are mixed first.</li>
+<li><strong>3:</strong> three full-wave rectifiers brought in one after another. A triangle or sine comes out at 2×, 4× then 8× its frequency. SQUARED is a squared-up 0 to +5 V copy.</li></ul>
+<div class="try"><p><strong>Try this:</strong> NTO SINE → VCM 2 IN 1, a DSG envelope into VCM 2 VC: the brightness follows the envelope.</p></div>
+
+<h2 id="vcfq">VCFQ: Variable Q VCF</h2>
+<p>Four outputs at once: LOW, BAND, HIGH, NOTCH. Q runs from 1 to 200.</p>
+<ul>
+<li>IN goes through GAIN. Turn it up to overload the filter on purpose.</li>
+<li>AGC IN turns its level down as Q goes up, so high Q stays clean.</li>
+<li>TRIG pings the filter: with high Q it rings like a struck object (wood blocks, bells, clicks).</li>
+<li>For a sine oscillator, patch BAND → IN and raise GAIN. LOW and BAND are 90° apart.</li></ul>
+
+<h2 id="vcfs">VCFS: Variable Slope VCF</h2>
+<p>LOW, BAND and HIGH outputs. SLOPE at the centre is a smooth 12 dB/octave filter. Anticlockwise the slope softens to 6 dB/octave. Clockwise it sharpens and resonates (about +18 dB at the end) but does not ring like the VCFQ. MIX fades between IN 1 and IN 2. Try a DSG envelope into F CV for a low-pass gate, or BAND → IN 2 with MIX for a comb.</p>
+
+<h2 id="reseq">RESEQ: Resonant Equalizer</h2>
+<p>Ten bands at 29, 61, 115, 218, 411, 777, 1500, 2800, 5200 and 11000 Hz. Most are a major seventh apart, so no musical interval is favoured. With every knob at 12 o’clock, OUT equals IN.</p>
+<ul>
+<li>9 to 3 o’clock: cut or boost up to 12 dB.</li>
+<li>Past 3 o’clock: the band turns resonant and rings.</li>
+<li>Below 9 o’clock: deeper, narrower cut.</li>
+<li>COMB ↑ carries only bands 61, 218, 777, 2.8k and 11k. COMB ↓ carries the other five.</li>
+<li>INPUT sets the level in. The stage has gain, so hot signals clip.</li></ul>
+<div class="try"><p><strong>Try this:</strong> RESEQ OUT → XFAD IN 2, the dry sound into XFAD IN 1, XFAD OUT back into RESEQ IN with a couple of bands past 3 o’clock. That is a resonant feedback loop.</p></div>
+
+<h2 id="tws">TWS: Triple Waveshaper</h2>
+<p>Three shapers that turn a ±2.5 V sawtooth into a sine. VC adds an offset, which slides the wave along the curve and changes the timbre. The NTO’s SAW is 0 to 5 V, so feed it with VC set to give −2.5 V (PRC OFFSET into VC), or use NTO VAR with WAVE fully up.</p>
+
+<h2 id="ring">RING: Ring Modulator</h2>
+<p>MOD runs from the dry SIGNAL, through amplitude modulation at the centre, to full ring modulation. CARRIER sets the carrier level: above the centre the carrier is rounded off and adds harmonics of its own.</p>
+
+<h2 id="noi">NOI: Noise Source</h2>
+<p>WHITE and PINK are ±2.5 V noise. S/H SOURCE is slow random voltage from 0 to 5 V, made for sampling with the SSG.</p>
+
+<h2 id="asr">ASR: Analog Shift Register</h2>
+<p>Each PULSE: OUT 3 takes OUT 2, OUT 2 takes OUT 1, OUT 1 samples IN. PULSE OUT passes the pulse on to a second ASR. Try three NTOs on OUT 1 to OUT 3 for a canon.</p>
+
+<h2 id="com">COM: Dual Comparator</h2>
+<p>OUT is +5 V when + is above − plus THRESHOLD. Use it to square waves, derive pulse-width modulation (a triangle into +, a CV into −), or fire events when a level is crossed.</p>
+
+<h2 id="str">STR: Dual Schmitt Trigger</h2>
+<p>OUT A and OUT B square their inputs with hysteresis (switch at ±0.6 V). R/S is a flip-flop: set by A, reset by B.</p>
+
+<h2 id="prc">PRC: Dual Processor</h2>
+<p>Each half adds three inputs, each through a knob from −1 to +1, plus an OFFSET from −5 to +5 V.</p>
+
+<h2 id="xfad">XFAD: Cross-Fader</h2>
+<p>Equal-power fade from IN 1 to IN 2 by FADE plus FADE CV. GAIN, scaled by GAIN CV when patched, sets the output level.</p>
+
+<h2 id="vca2">VCA2: Dual VCA</h2>
+<p>Exponential VCAs: 12 dB per volt, unity at 5 V, shut below 0.5 V, never more than ×2. GAIN adds up to 5.5 V to VC, so with nothing in VC it works as a level knob.</p>
+
+<h2 id="mix">MIX: Dual Audio Mixer</h2>
+<p>Three inputs with level knobs and IN 4 at unity. Patch OUT A into IN 4 of B for a six-input mixer.</p>
+
+<h2 id="dcsm">DCSM: Dual Channel Stereo Mixer</h2>
+<p>Two channels, each with GAIN (scaled by GAIN CV, 0 to 5 V) and PAN (offset by PAN CV). The same CV into both PAN CV inputs pans the two channels in opposite directions. AUX L and AUX R go straight to the outputs.</p>
+
+<h2 id="pt">PT: Peak &amp; Trough</h2>
+<p>PEAK is the higher of A and B, TROUGH the lower. With one input patched both outputs follow it.</p>
+
+<h2 id="wad">WAD: Wilson Analog Delay</h2>
+<p>A bucket-brigade delay. The signal is stored as a chain of samples taken by an internal clock, so a faster clock means a shorter delay. Two outputs tap the chain: B is always twice the delay of A. Long delays sound darker and grainier, and a bright sound at a long delay with the filter open picks up metallic, out-of-tune tones from the clock. That is the sound of the original circuit.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>DELAY</td><td>delay time. Clockwise is longer: A runs from 0.5 ms to 2.5 s, and B is twice A</td></tr>
+<tr><td>VC DELAY, DELAY CV</td><td>voltage control of the clock. A positive CV with VC DELAY clockwise makes the delay shorter, 1 octave per volt at the end of the knob, like a pitch input</td></tr>
+<tr><td>FILTER, VC FILTER, FILTER CV</td><td>low-pass filters before and after the delay line, 20 Hz to 20 kHz. They do not follow DELAY by themselves</td></tr>
+<tr><td>IN 1, IN 2</td><td>two inputs, each with its level knob. IN 2 is good for control voltages</td></tr>
+<tr><td>IN 3</td><td>feedback level. Clockwise feeds back in phase, anticlockwise inverts it</td></tr>
+<tr><td>A / B / AUX</td><td>where IN 3 takes its feedback from: output A, output B, or the AUX jack</td></tr>
+<tr><td>AUX</td><td>an external return for the feedback, for example through a filter or a VCA</td></tr>
+<tr><td>FLANGE</td><td>depth: how much of A is mixed with the dry input at the FLANGE output</td></tr>
+<tr><td>1V/OCT</td><td>follows the delay clock. Patch it into FILTER CV, or into another filter, so the filter tracks the delay</td></tr>
+</table></div>
+<div class="try"><p><strong>Try this:</strong></p><ul>
+<li><strong>Echo:</strong> switch at B, IN 3 around 2 o’clock, FILTER around 1 o’clock.</li>
+<li><strong>Flanger:</strong> a slow DSG or SSG triangle into DELAY CV, VC DELAY a little clockwise, DELAY short. Listen at FLANGE.</li>
+<li><strong>Chorus:</strong> as the flanger with a slightly longer DELAY, then mix A with the dry sound in MIX.</li>
+<li><strong>Clean long delays:</strong> 1V/OCT → FILTER CV with VC FILTER fully clockwise.</li>
+<li><strong>Delaying a control voltage:</strong> an envelope into IN 2, read it at A or B. Slow signals can be held back for many seconds.</li></ul></div>
+
+<h2 id="frs">FRS: Frequency Shifter</h2>
+<p>Moves every part of a sound up or down by the same number of hertz. It does not transpose: a note with partials at 200, 400 and 600 Hz shifted by 50 Hz has partials at 250, 450 and 650 Hz, so harmonic sounds turn bell-like and metallic. Small shifts of a few hertz give phasing and rotating-speaker effects.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>FREQ</td><td>the shift, from 0.05 Hz to 5 kHz</td></tr>
+<tr><td>VC FREQ, FREQ CV, 1V/OCT</td><td>exponential control of the shift; 1V/OCT is calibrated</td></tr>
+<tr><td>UP, DOWN</td><td>output levels. With VC UP or VC DOWN patched, the knob scales the CV (0 to 5 V)</td></tr>
+<tr><td>UP, DOWN outputs</td><td>the input shifted up, and shifted down. Shifting down past 0 Hz folds back up</td></tr>
+<tr><td>COMP</td><td>a compressed copy of the input, levelled toward ±2.5 V</td></tr>
+<tr><td>0°, 90°</td><td>the internal oscillator: two sines a quarter cycle apart, ±2.5 V. A quadrature LFO or oscillator in its own right</td></tr>
+</table></div>
+<div class="try"><p><strong>Try this:</strong></p><ul>
+<li><strong>Bells:</strong> NTO TRI → IN, a shift of 30 to 200 Hz, mix UP and DOWN.</li>
+<li><strong>Barber-pole echo:</strong> UP → WAD IN 1, WAD A back into FRS IN through MIX with the dry sound, shift of 1 to 5 Hz. Each echo is a little higher than the last.</li>
+<li><strong>Stereo drift:</strong> a shift below 1 Hz, UP and DOWN to the two channels of DCSM, panned apart.</li>
+<li><strong>Two-phase LFO:</strong> 0° and 90° into the two PAN CV inputs of DCSM.</li></ul></div>
+
+<h2 id="bdr">BDR: Bi-Directional Router</h2>
+<p>Three electronic switches. SELECT decides the route: low (below 2.5 V, or unpatched) selects A1, high selects A2. It switches instantly, so an audio-rate signal into SELECT chops between the two routes.</p>
+<p>On the hardware each switch passes signals in either direction through the same jacks. A Rack jack can only be an input or an output, so each section has both directions as separate jacks, steered by the same SELECT:</p>
+<div class="tblwrap"><table>
+<tr><th>Block</th><th>What it does</th></tr>
+<tr><td>1 TO 2</td><td>B IN goes to A1 OUT or A2 OUT. The unselected output is 0 V</td></tr>
+<tr><td>2 TO 1</td><td>A1 IN or A2 IN goes to B OUT</td></tr>
+</table></div>
+<p>Signals are limited to ±7 V, as on the original CMOS switches.</p>
+<div class="try"><p><strong>Try this:</strong></p><ul>
+<li><strong>Alternating notes:</strong> two ASR outputs into A1 IN and A2 IN, PDIV ÷2 into SELECT, B OUT to NTO 1V/OCT.</li>
+<li><strong>Chopping:</strong> two different sounds into A1 IN and A2 IN, an NTO SAW into SELECT.</li>
+<li><strong>A patch that rewires itself:</strong> an envelope into B IN, A1 OUT to VCFQ F CV and A2 OUT to VCM 2 VC, SSG COUPLER into SELECT.</li></ul></div>
+
+<h2 id="pdiv">PDIV: Pulse Divider</h2>
+<p>One input and seven outputs, firing on every 2nd, 3rd, 4th, 5th, 6th, 7th and 8th pulse. Each output goes high on its Nth pulse and low again on the next, so ÷2 is a square wave at half the input rate. Any signal can drive IN: it counts each rise through +2.5 V.</p>
+<div class="try"><p><strong>Try this:</strong></p><ul>
+<li><strong>Polyrhythm:</strong> one clock into IN, ÷3 and ÷4 pinging two VCFQs.</li>
+<li><strong>Sub-harmonics:</strong> NTO SAW into IN, ÷2, ÷3 and ÷4 into MIX. The outputs run 0 to +5 V, so centre them through PRC with OFFSET at −2.5 V.</li></ul></div>
+
+<h2 id="voice">A first Serge voice</h2>
+<ol>
+<li>NTO SINE → VCM 2 IN 1.</li>
+<li>VCM 2 OUT → VCFQ IN.</li>
+<li>VCFQ LOW → VCA2 A IN, VCA2 A OUT → your audio interface (through a Rack VCA or mixer if it is too quiet).</li>
+<li>DSG A: a clock into TRIG, RISE fully up, FALL around 10 o’clock. OUT → VCM 2 VC and VCA2 A VC.</li>
+<li>SSG stepped: NOI S/H SOURCE → IN, the same clock into SAMPLE, OUT → NTO 1V/OCT.</li>
+<li>Play with FOLD, VCFQ Q and the DSG FALL.</li></ol>
+
+<h2 id="recipes">More patch recipes</h2>
+<p>Each recipe starts from an empty patch. “Clock” means any steady pulse: a Rack clock module, or a DSG cycling with END → TRIG. Send the final output to your audio interface through a Rack mixer if it is too quiet.</p>
+
+<h3>1. Struck percussion from a pinged filter</h3>
+<ol><li>A clock → VCFQ TRIG.</li>
+<li>VCFQ Q near maximum, FREQ to taste. Take BAND out.</li>
+<li>For woodblocks, set FREQ high and Q a little lower. For bells and gongs, set Q fully up.</li>
+<li>For random tuned hits, SSG stepped: NOI S/H SOURCE → IN, the same clock → SAMPLE, OUT → VCFQ 1V/OCT.</li></ol>
+
+<h3>2. Bouncing ball</h3>
+<p>A burst of hits that speeds up and dies away, like a dropped ball.</p>
+<ol><li>DSG A: END A → TRIG A, so it cycles. RISE and FALL around 1 o’clock.</li>
+<li>DSG B: a slow trigger or a manual button → TRIG B. RISE B fully up (fast), FALL B slow, around 9 o’clock.</li>
+<li>OUT B → VC IN A. Switch A to BOTH and turn VC A anticlockwise, so A slows down while B is high.</li>
+<li>END A → VCFQ TRIG, VCFQ BAND to the output. Each new trigger into B drops the ball again.</li></ol>
+
+<h3>3. Two-slope chaos</h3>
+<p>Two DSGs that bend each other’s speed. They never quite repeat.</p>
+<ol><li>DSG A: END A → TRIG A. DSG B: END B → TRIG B. Set both to slow cycles at different rates.</li>
+<li>OUT A → VC IN B, OUT B → VC IN A. Turn both VC knobs part way, one clockwise and one anticlockwise.</li>
+<li>Use OUT A and OUT B as tangled LFOs, and END A and END B as uneven rhythms.</li>
+<li>Raise both pairs of RISE and FALL into audio range for a rough, chaotic oscillator.</li></ol>
+
+<h3>4. FM bell</h3>
+<ol><li>NTO 1 is the carrier: SINE → VCA2 A IN.</li>
+<li>NTO 2 is the modulator: SINE → NTO 1 LIN FM. Tune NTO 2 to an odd ratio of NTO 1, such as 1.4 or 3.5 times, for metal and bell tones.</li>
+<li>DSG A: a clock → TRIG A, RISE fully up, FALL slow. OUT A → NTO 1 FM VC and VCA2 A VC.</li>
+<li>The strike is bright, and the tone darkens as it fades. FM sets the brightest point.</li></ol>
+
+<h3>5. Sync sweep</h3>
+<ol><li>NTO 1 SAW → NTO 2 SYNC. NTO 1 sets the pitch you hear.</li>
+<li>Tune NTO 2 a little flat of NTO 1, and take its VAR output with WAVE near saw.</li>
+<li>DSG A envelope OUT → NTO 2 FREQ CV, VC FREQ up. Each trigger sweeps the harmonics.</li>
+<li>Play both oscillators from the same pitch source through their 1V/OCT inputs.</li></ol>
+
+<h3>6. Octaves from the rectifiers</h3>
+<ol><li>NTO TRI → VCM 3 IN 1.</li>
+<li>A slow DSG or SSG LFO → VCM 3 VC. As it rises, the tone climbs through 2×, 4× and 8× the frequency.</li>
+<li>Mix VCM 3 OUT with the plain NTO TRI in MIX for an organ-like stack.</li></ol>
+
+<h3>7. Pulse-width modulation</h3>
+<p>Serge has no pulse oscillator. You make one from a comparator.</p>
+<ol><li>NTO TRI → COM A +.</li>
+<li>A slow LFO (DSG A cycling, or SSG smooth CYCLE) → COM A −.</li>
+<li>COM A OUT is a pulse whose width follows the LFO.</li>
+<li>The pulse runs from 0 to +5 V. To centre it on 0 V, put it through PRC A IN 1 and set OFFSET to −2.5 V.</li></ol>
+
+<h3>8. Canon from the shift register</h3>
+<ol><li>NOI S/H SOURCE → ASR IN, a clock → ASR PULSE.</li>
+<li>ASR OUT 1, OUT 2 and OUT 3 → the 1V/OCT inputs of three voices. Each voice plays the tune one step after the last.</li>
+<li>With only one NTO, use the voice from “A first Serge voice” on OUT 1, and pitch two pinged VCFQs (recipe 1) from OUT 2 and OUT 3.</li>
+<li>Patch ASR PULSE OUT into a second ASR for a six-voice round.</li></ol>
+
+<h3>9. Talking formants</h3>
+<ol><li>NTO SAW → RESEQ IN.</li>
+<li>Turn two or three neighbouring bands past 3 o’clock so they ring, and pull the others below 9 o’clock.</li>
+<li>Change which bands are raised to move between vowel-like sounds.</li>
+<li>For a wide stereo image, RESEQ COMB UP → DCSM 1: IN and COMB DOWN → DCSM 2: IN, PAN 1 left and PAN 2 right.</li></ol>
+
+<h3>10. Wandering stereo</h3>
+<ol><li>SSG smooth: NOI S/H SOURCE → Smooth IN, Smooth RATE low.</li>
+<li>Smooth OUT → DCSM 1: PAN CV and 2: PAN CV.</li>
+<li>Two different sounds into DCSM 1: IN and 2: IN. They drift around each other, always in opposite directions.</li></ol>
+
+<h3>11. Auto-wah from an envelope follower</h3>
+<ol><li>Any audio, such as a drum loop or a Rack oscillator, → DSG A IN and VCFQ IN.</li>
+<li>RISE A fully up, FALL A around noon. OUT A now follows the loudness.</li>
+<li>OUT A → VCFQ F CV, with VC F up and some Q. Take BAND or LOW. Louder playing opens the filter.</li></ol>
+
+<h3>12. Shapes from Peak &amp; Trough</h3>
+<ol><li>Two LFOs at different rates, such as DSG A and SSG smooth CYCLE → PT A and B.</li>
+<li>PEAK and TROUGH give new, lopsided shapes that change as the two LFOs drift apart.</li>
+<li>PEAK → NTO FREQ CV for a pitch that never falls below whichever LFO is higher.</li></ol>
+
+<h3>13. Plucked string</h3>
+<ol><li>NOI WHITE → VCA2 A IN. DSG A: a clock into TRIG, RISE fully up, FALL fully up. OUT A → VCA2 A VC. This makes a short click of noise.</li>
+<li>VCA2 A OUT → WAD IN 1. Switch at A, IN 3 nearly fully clockwise, DELAY short.</li>
+<li>A pitch into WAD DELAY CV with VC DELAY fully clockwise. FILTER sets how quickly the string dulls. Listen at A.</li></ol>
+
+<h3>14. Shifted feedback</h3>
+<ol><li>Any sound → MIX A IN 1. MIX A OUT → FRS IN.</li>
+<li>FRS UP → WAD IN 1, switch at A, IN 3 off, DELAY around 10 o’clock.</li>
+<li>WAD A → MIX A IN 2, level below noon. FRS shift between 1 and 10 Hz.</li>
+<li>Each pass round the loop climbs a little higher: the classic endless rising echo.</li></ol>
+
+<h3>15. Self-switching patch</h3>
+<ol><li>BDR 1: an envelope from DSG A into B IN. A1 OUT → VCFQ F CV, A2 OUT → VCM 2 VC.</li>
+<li>SSG: both sections cycling at different rates, COUPLER → BDR 1 SELECT.</li>
+<li>The envelope moves between brightening the filter and the folder as the SSG drifts.</li></ol>
+
+<footer>Converted from docs/Serge-Manual.pdf in hardyfinn/Serge.</footer>
+</main>
+</body>
+</html>
