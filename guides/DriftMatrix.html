@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DriftMatrix for VCV Rack</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>DriftMatrix</h1>
+<p class="sub">VCV Rack module: a 32 x 32 matrix mixer whose matrix you never see (36 HP)</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#layout">Panel layout</a></li><li><a href="#controls">Controls</a></li><li><a href="#snap">Snapshots and mixing</a></li><li><a href="#menu">Right-click menu</a></li><li><a href="#use">How to use it</a></li><li><a href="#ideas">Patch ideas</a></li><li><a href="#notes">Notes</a></li></ul></nav>
+<h2 id="idea">The idea</h2>
+<p>DriftMatrix has 32 inputs and 32 outputs. Any input can reach any output through a "crosspoint", which makes 1024 of them. Instead of 1024 little knobs, you steer the randomness: how many crosspoints are active, whether they are on/off or at random levels, how much a reseed changes, and which two stored matrices you are mixing between.</p>
+<p>Each crosspoint holds two hidden dice rolls. One decides whether it is <strong>active</strong>, the other decides its <strong>level</strong>. Because the dice are kept, turning CHANCE up adds crosspoints one at a time, and turning it down takes the same ones away again in reverse order. The matrix doesn't jump about.</p>
+<h2 id="layout">Panel layout</h2>
+<ul>
+<li><strong>Display</strong> (top): shows the mode, the chance, how many of the 1024 crosspoints are live, how many inputs and outputs are patched, which matrices A and B point to, and the mix amount.</li>
+<li><strong>Row 1</strong>, left to right: MODE switch, CHANCE knob + CV, RADICAL knob + CV, RESEED button + trigger input, SLEW knob + CV, GAIN switch.</li>
+<li><strong>Row 2</strong>, left to right: STORE button, eight slot buttons (1 to 8), A knob, B knob, MIX knob, SMOOTH/COIN switch, MIX CV, A/B CV.</li>
+<li><strong>Jacks</strong> (bottom): 32 inputs on the left (4 rows of 8) and 32 outputs on the right (4 rows of 8).</li>
+</ul>
+<h2 id="controls">Controls</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td>MODE</td><td>ON/OFF: every active crosspoint is full level. 0-100%: each active crosspoint has its own random level (the default).</td></tr>
+<tr><td>CHANCE (+CV)</td><td>How likely each crosspoint is to be active (default 25%). Turning it up adds crosspoints one at a time, turning it down removes the same ones again. CV: +1 V = +10%.</td></tr>
+<tr><td>RADICAL (+CV)</td><td>How much RESEED changes (default 100%). All the way up = a brand-new matrix. Low = only a few crosspoints get new dice, so the routing mutates slowly. CV: +1 V = +10%.</td></tr>
+<tr><td>RESEED button / trigger input</td><td>Rolls new dice, as much as RADICAL says. The button lights briefly when it fires.</td></tr>
+<tr><td>SLEW (+CV)</td><td>How long every change takes, from 1 ms to 2 s (exponential knob). Keeps audio click-free; long settings make CV routings glide. CV: +1 V = +10%.</td></tr>
+<tr><td>GAIN</td><td>AUTO (the default) keeps each output no louder than one full-level input, however many inputs land on it. SUM just adds them.</td></tr>
+<tr><td>STORE</td><td>Tap it (it blinks), then tap a slot to save the LIVE matrix there. While armed, every slot pulses white.</td></tr>
+<tr><td>Slots 1 to 8</td><td>After STORE: save here. On their own: load that snapshot back into LIVE (if the slot has something in it).</td></tr>
+<tr><td>A, B</td><td>Pick two matrices each: L (LIVE) or slots 1 to 8. Defaults are A = LIVE, B = slot 1.</td></tr>
+<tr><td>MIX (+CV)</td><td>Fades from A (0%) to B (100%). CV: +1 V = +10%.</td></tr>
+<tr><td>SMOOTH / COIN</td><td>SMOOTH crossfades every level (the default). COIN makes each crosspoint jump from A to B at its own point as MIX turns, so the routing changes piece by piece.</td></tr>
+<tr><td>A/B CV</td><td>Moves both A and B one place along per volt, through L, 1 ... 8 and round again. The CV is rounded to whole volts. Feed it a stepped CV to walk through your snapshots.</td></tr>
+<tr><td>IN 1 to 32</td><td>Signal inputs. Only patched inputs count.</td></tr>
+<tr><td>OUT 1 to 32</td><td>Signal outputs. Unpatched outputs cost no CPU.</td></tr></table></div>
+<h2 id="snap">Snapshots and mixing</h2>
+<p>A snapshot stores the matrix's <em>dice</em>, not its final levels. So CHANCE and MODE still shape a stored matrix live: a snapshot saved at 25% chance can be played back at 60%.</p>
+<p>The slot lights tell you what is what: the slot used by A lights <strong>orange</strong>, the one used by B lights <strong>cyan</strong> (white if both), and stored slots glow dim. If A or B points at an empty slot, that side contributes nothing, and the display says <code>(empty)</code>.</p>
+<h2 id="menu">Right-click menu</h2>
+<ul>
+<li><strong>Soft-clip outputs at about 10 V</strong>: handy with GAIN on SUM when things get hot.</li>
+<li><strong>Fill every empty slot with a fresh random matrix</strong>.</li>
+<li><strong>Clear all snapshots</strong>.</li>
+</ul>
+<h2 id="use">How to use it</h2>
+<ol>
+<li>Patch some sources into a few inputs and take the outputs you want to a mixer or other modules.</li>
+<li>Turn CHANCE up slowly. More crosspoints appear one by one, so more inputs reach more outputs.</li>
+<li>Press RESEED for a different routing. With RADICAL at 100% it is brand new; turn RADICAL down to about 5% for a small mutation of what you have.</li>
+<li>When you hear a routing you like, press STORE then a slot.</li>
+<li>Store a few, set A and B to two of them, and turn MIX (or feed it a CV) to drift between them.</li>
+</ol>
+<h2 id="ideas">Patch ideas</h2>
+<ul>
+<li><strong>Drifting mixer:</strong> eight oscillators or loops into inputs 1 to 8, outputs 1 to 4 to a stereo mixer. Slow LFO into MIX, A and B set to two stored snapshots, COIN mode.</li>
+<li><strong>Mutating routing:</strong> a clock into the RESEED input with RADICAL near 10%. Every clock a few connections change, so the patch evolves slowly instead of jumping.</li>
+<li><strong>CV router:</strong> run envelopes and LFOs through it, with long SLEW. Modulation glides from one destination to another.</li>
+<li><strong>Snapshot walker:</strong> a sequencer or stepped random into A/B CV, with MIX at 0%, to step through all your stored matrices.</li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>The matrix, snapshots and soft-clip setting are saved with the patch.</li>
+<li>Randomise (the Rack menu) reseeds the matrix completely. MODE, GAIN, A, B, SMOOTH/COIN and SLEW are excluded from randomise.</li>
+<li>Fonts on the panel (Inter, Climate Crisis) are under the SIL Open Font Licence. The module code is MIT licensed.</li>
+</ul>
+</main></body></html>
