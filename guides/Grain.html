@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pollen (Grain repo) for VCV Rack</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Pollen</h1>
+<p class="sub">VCV Rack module by Haer (the <code>Grain</code> repository): a stereo granular sampler with a display that shows what is going on</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#layout">Panel layout</a></li><li><a href="#sounds">Sounds, Scenes and Morph</a></li><li><a href="#knobs">The ten knobs</a></li><li><a href="#mod">Modulation: X, Y, Z and RAND</a></li><li><a href="#rec">Recording and the live buffer</a></li><li><a href="#jacks">Jacks</a></li><li><a href="#menu">Right-click menu</a></li><li><a href="#use">How to use it</a></li><li><a href="#ideas">Patch ideas</a></li></ul></nav>
+<h2 id="idea">The idea</h2>
+<p>Pollen is a stereo granular sampler made for learning a hardware granular module away from the case. It has the same ideas as the hardware, laid out more clearly: four Sounds, two Scenes each with a MORPH fader between them, START / WRAP / SCAN, RATE / SIZE / PITCH, SHAPE / LEVEL / TONE / BLUR, X / Y / Z / RAND modulation, recording and a live buffer. The display shows the audio, the grains as they fire, the grain envelope, the morph between Scenes, and a plain-words readout of what the knobs are doing.</p>
+<p>A granular sampler plays lots of very short slices of a sound ("grains"), many times a second. Where the grains start, how long they are, how fast they fire and how they are pitched decide whether you hear a smeared pad, a stutter or a cloud of clicks.</p>
+<h2 id="layout">Panel layout</h2>
+<ul>
+<li><strong>Display</strong> (top, full width): see below.</li>
+<li><strong>Left block:</strong> four SOUND buttons; LATCH, SAMPLE and THRU buttons; SCENE A and SCENE B buttons; the MORPH slider.</li>
+<li><strong>WHERE knobs</strong> (top row, left): START, WRAP, SCAN. Below them: SHAPE, REVERSE button, LEVEL.</li>
+<li><strong>GRAIN knobs</strong> (top row, right): RATE, SIZE, PITCH, with a link button between RATE and SIZE and another between SIZE and PITCH. Below: TONE, BLUR and a small MORPH CV amount knob.</li>
+<li><strong>Right edge:</strong> four depth buttons for X, Y, Z and RAND.</li>
+<li><strong>Bottom row:</strong> ten inputs (IN L, IN R, GATE, NEXT, SELECT, SYNC, MORPH, X, Y, Z) and four outputs (OUT L, OUT R, A, B).</li>
+</ul>
+<h3>The display</h3>
+<ul>
+<li><strong>Header:</strong> the selected Sound and its name and length (or "LIVE input"), which Scene you are editing, and LATCH, THRU and SYNC status.</li>
+<li><strong>Audio view:</strong> the waveform, with the grain window shaded from START (marked) across WRAP, the scan head, and a blip for every grain currently playing (height = its envelope). A red line shows the record position while recording. If the Sound is empty it tells you how to load or record one.</li>
+<li><strong>Grain envelope:</strong> the SHAPE curve of Scene A (blue) and Scene B (orange), with a dot showing where the newest grain is, and the direction (forward, reverse or ping-pong).</li>
+<li><strong>Morph view:</strong> the MORPH position, and one column per knob with an A mark, a B mark and a bar for the value you hear right now.</li>
+<li><strong>Readout:</strong> RATE in grains per second (or the clock step, or the overlap when linked), PITCH in semitones with the hardware LED colour, TONE, BLUR, LEVEL, SCAN, which links are on, and whether it is playing. Short messages appear here too.</li>
+</ul>
+<h2 id="sounds">Sounds, Scenes and Morph</h2>
+<ul>
+<li><strong>SOUND 1 to 4:</strong> each button selects a Sound (the audio plus its own settings) and starts it playing. Hold the button to keep it playing when LATCH is off. A lit button is selected; a dim one holds audio.</li>
+<li><strong>LATCH:</strong> keep playing without holding anything. <strong>GATE</strong> input also plays while high.</li>
+<li><strong>SCENE A / SCENE B:</strong> every Sound has two Scenes, each a full set of the ten knob values plus its own modulation depths and reverse setting. These buttons choose which Scene the knobs edit.</li>
+<li><strong>MORPH:</strong> the slider (plus the MORPH CV input and its amount knob, ±5 V) fades between Scene A and Scene B. The display's morph view shows both sets of values and the blend.</li>
+</ul>
+<h2 id="knobs">The ten knobs</h2>
+<div class="tw"><table><tr><th>Knob</th><th>What it does</th></tr>
+<tr><td><strong>START</strong></td><td>Where the grain window begins in the audio. The tooltip shows the time into the audio.</td></tr>
+<tr><td><strong>WRAP</strong></td><td>How wide the window is that grains pick from. At 0% all grains start at START. The window wraps round the end of the audio.</td></tr>
+<tr><td><strong>SCAN</strong></td><td>Moves the start point through the window. Noon = still (grains repeat the same spot); right = forward, left = backward, in multiples of real time.</td></tr>
+<tr><td><strong>RATE</strong></td><td>How often grains fire, in grains per second. Fully left = one grain per trigger. With a clock patched into SYNC, RATE picks a clock division or multiplication instead. With RATE-SIZE linked, it sets how many grains overlap (1x to 8x).</td></tr>
+<tr><td><strong>SIZE</strong></td><td>How long each grain lasts (shown in ms or seconds).</td></tr>
+<tr><td><strong>PITCH</strong></td><td>Playback speed of each grain, ±2 octaves (shown in semitones).</td></tr>
+<tr><td><strong>SHAPE</strong></td><td>The grain envelope: a stepped knob that picks one of the named shapes (see the envelope view).</td></tr>
+<tr><td><strong>LEVEL</strong></td><td>Grain volume.</td></tr>
+<tr><td><strong>TONE</strong></td><td>A per-grain filter. Noon = flat, left = low-pass, right = high-pass (cutoff shown in Hz).</td></tr>
+<tr><td><strong>BLUR</strong></td><td>Reverb send and decay.</td></tr></table></div>
+<h3>Buttons that change how the knobs behave</h3>
+<ul>
+<li><strong>REVERSE:</strong> grains play backwards (this Scene only). "Ping-pong" is in the right-click menu.</li>
+<li><strong>RATE-SIZE link:</strong> RATE becomes an overlap amount, so changing SIZE keeps the density of grains the same.</li>
+<li><strong>SIZE-PITCH link:</strong> pitching up shortens the grains, so they keep the same slice of audio. Unlinked, grain length stays put when you change pitch.</li>
+</ul>
+<h3>PITCH colours in the readout</h3>
+<p>Green: exactly on an octave. Red: between octaves. Purple: the pitch quantiser is on.</p>
+<h2 id="mod">Modulation: X, Y, Z and RAND</h2>
+<p>Four modulation sources can move any of the ten knobs. <strong>X, Y and Z</strong> are the three CV inputs (±5 V). <strong>RAND</strong> is a new random value for every grain.</p>
+<ol>
+<li>Press one of the four depth buttons on the right edge (X, Y, Z or RAND). It blinks, and the knobs now set <em>how much that source moves each parameter</em> for the Scene being edited.</li>
+<li>Noon = no modulation, right = more, left = inverted. (The knob tooltips switch to "X depth: +40%" and so on.) The display's readout shows the depths as bars.</li>
+<li>Press the same button again to go back to editing values.</li></ol>
+<p>A dim light on a depth button means that source is already doing something in this Scene. Depths are stored per Scene, so Scene A and Scene B can respond differently to the same CV.</p>
+<h2 id="rec">Recording and the live buffer</h2>
+<ul>
+<li><strong>SAMPLE:</strong> records the audio at IN L / IN R into the selected Sound. Press again to stop. The button lights while recording, and blinks while waiting for signal if "Wait for signal before recording" is on. On a Live Sound, SAMPLE freezes and unfreezes the buffer.</li>
+<li><strong>Live Sound:</strong> in the right-click menu you can make a Sound "Live", where grains come from the last 8, 16, 24 or 32 seconds of the input instead of a stored recording.</li>
+<li><strong>THRU:</strong> lets you hear the input through BLUR.</li>
+<li>If only IN L is patched, it feeds both channels.</li></ul>
+<h2 id="jacks">Jacks</h2>
+<div class="tw"><table><tr><th>Jack</th><th>What it does</th></tr>
+<tr><td>IN L, IN R</td><td>Audio in (mono if only L is patched).</td></tr>
+<tr><td>GATE</td><td>Plays the Sound while high, and fires a grain on each rising edge.</td></tr>
+<tr><td>NEXT</td><td>Goes to the next Sound that has audio (or, from the menu, resets SCAN).</td></tr>
+<tr><td>SELECT</td><td>0 to 5 V picks Sound 1 to 4.</td></tr>
+<tr><td>SYNC</td><td>A clock. RATE becomes a clock divider / multiplier. The header shows the clock tempo.</td></tr>
+<tr><td>MORPH</td><td>Morph CV, ±5 V, scaled by the small knob.</td></tr>
+<tr><td>X, Y, Z</td><td>Modulation inputs, ±5 V.</td></tr>
+<tr><td>OUT L, OUT R</td><td>Stereo audio out.</td></tr>
+<tr><td>A, B</td><td>CV outputs. Output A defaults to the grain envelope and B to a grain trigger. The menu offers: morph position (0-5 V), grain trigger (5 V pulse), grain envelope (0-5 V), grain pitch (1 V/oct), input envelope follower, output envelope follower, and random per grain (±5 V).</td></tr></table></div>
+<h2 id="menu">Right-click menu</h2>
+<ul>
+<li><strong>Sound:</strong> Load WAV, Save as WAV, Grab the last 4/8/16/32 seconds of input, Clear audio, Live on/off, Ping-pong grains, Pitch quantiser (semitones, major, minor, major or minor pentatonic, octaves and fifths, octaves only), and Scenes (copy A to B or B to A, reset a Scene, clear its modulation depths).</li>
+<li><strong>Recording:</strong> wait for signal, normalise recordings, record from inputs or outputs (resample), live buffer length, input gain.</li>
+<li><strong>Timing and outputs:</strong> RATE follows the SYNC clock, GATE restarts SCAN, what the NEXT input does, the sources for outputs A and B, and whether Sounds are kept with the patch (saved as WAV files beside it).</li>
+<li><strong>On the hardware...:</strong> a short list of how menu items map to the hardware's button combinations. Pollen has 4 Sounds, where the hardware has 8 Sounds and Presets.</li>
+</ul>
+<h2 id="use">How to use it</h2>
+<ol>
+<li>Right-click, <em>Load WAV...</em> into Sound 1 (or patch audio in and press SAMPLE, then SAMPLE again to stop).</li>
+<li>Press SOUND 1, then LATCH, so it keeps playing.</li>
+<li>Set RATE to a few grains per second and SIZE to a few hundred ms. Move START to choose the part of the sound, and open WRAP to let grains pick from a wider area.</li>
+<li>Turn SCAN away from noon to drift slowly through the audio.</li>
+<li>Select SCENE B, set it differently, then move MORPH to blend between A and B.</li>
+<li>Use a depth button (X, Y, Z or RAND) to let CV or randomness move the knobs you choose.</li></ol>
+<h2 id="ideas">Patch ideas</h2>
+<ul>
+<li><strong>Freezing pad:</strong> a Live Sound with a synth into IN L. Press SAMPLE to freeze the buffer, SCAN at noon, long SIZE and some BLUR.</li>
+<li><strong>Rhythmic granular:</strong> a clock into SYNC so RATE locks to it, SIZE short, and a gate sequence into GATE to start and stop it.</li>
+<li><strong>Scene morph on an envelope:</strong> Scene A calm, Scene B dense and pitched up. An envelope or LFO into MORPH.</li>
+<li><strong>Grain-driven modulation:</strong> output B (grain trigger) into an envelope generator or drum voice, and output A (grain envelope) into a filter.</li>
+<li><strong>Pitched cloud:</strong> set the pitch quantiser to a pentatonic scale and give PITCH some RAND depth, so each grain lands on a note of the scale.</li></ul>
+<p class="sub">Source of this guide: the repository README and the module source (<code>src/Pollen.cpp</code>). The plugin is named Pollen; the repository is called Grain.</p>
+</main></body></html>
