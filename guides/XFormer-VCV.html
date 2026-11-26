@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>X|FORMER for VCV Rack</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>X|FORMER for VCV Rack</h1>
+<p class="sub">One sequencer module, <strong>Multi</strong>, holding the seven track engines of the X|FORMER Eurorack firmware</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">Overview</a></li><li><a href="#engines">The seven engines</a></li><li><a href="#panel">The panel</a></li><li><a href="#clock">Clock and run</a></li><li><a href="#outputs">Outputs</a></li><li><a href="#patches">Patch ideas</a></li><li><a href="#notes">Notes</a></li></ul></nav>
+<h2 id="idea">Overview</h2>
+<p>X|FORMER's engines are based on PER|FORMER by Simon Kallweit. Each engine here is a line-for-line C++ port, checked against traces from the firmware simulator, so it plays exactly what the hardware track would.</p>
+<ul>
+<li>The first display page, <strong>ENGINE</strong>, picks the engine (also in the right-click menu).</li>
+<li>The names by the two aux inputs, the aux output and the action button, and the engine name in the title strip, change with the engine.</li>
+<li>Each engine keeps its own settings, CTRL assignments and pattern while another one plays. All seven are saved with the patch.</li>
+<li>Switching restarts the sequence on the next clock pulse.</li></ul>
+<h2 id="engines">The seven engines</h2>
+<div class="tw"><table><tr><th>Engine</th><th>What it does</th><th>Aux in 1 / 2</th><th>Aux out</th><th>Button</th></tr>
+<tr><td><strong>Algo</strong></td><td>16 generative melody algorithms (the Tuesday track)</td><td>RESEED trig</td><td>ACC (accent gate)</td><td>Reseed</td></tr>
+<tr><td><strong>Stochastic</strong></td><td>Rhythm and melody rolled from weighted dice</td><td>NEW R / NEW M trig</td><td>SLIDE gate</td><td>New rhythm + melody</td></tr>
+<tr><td><strong>Note</strong></td><td>64-step sequencer with probabilities, conditions, ratchets, accumulator</td><td>FILL gate</td><td>SLIDE gate</td><td>Fill (hold)</td></tr>
+<tr><td><strong>Indexed</strong></td><td>Steps with their own durations, reshaped by two mod inputs</td><td>MOD A / MOD B (&plusmn;5 V)</td><td>SLIDE gate</td><td>none</td></tr>
+<tr><td><strong>Discrete</strong></td><td>A sweep crossing 32 note thresholds</td><td>INPUT (&plusmn;5 V) / SCAN (0&ndash;10 V)</td><td>SWEEP (&plusmn;5 V)</td><td>none</td></tr>
+<tr><td><strong>PhaseFlux</strong></td><td>16 stages on a 4&times;4 grid, each a burst of shaped pulses</td><td>none</td><td>STAGE trig</td><td>none</td></tr>
+<tr><td><strong>Fractal</strong></td><td>Records a phrase from gate + CV, loops it and grows branches</td><td>REC G gate / REC CV (1 V/oct)</td><td>ORN trig</td><td>Record on/off</td></tr></table></div>
+<h2 id="panel">The panel</h2>
+<h3>Display and DATA encoder</h3>
+<p>The display shows one settings page at a time. Turn (drag) the encoder to change the selected row; click it to move to the next row. Click the left or right half of the display header, or the <code>&lt; PAGE &gt;</code> buttons, to change page. The mouse wheel over the display also works (shift for &times;10).</p>
+<h3>Help</h3>
+<p>The bottom line of the display explains the selected row (long text scrolls). Hold the DATA encoder, or press and hold on the display, to see the full help for that row; let go to return. The same text is in each setting's tooltip and under Help in the right-click page menus. The engine's status (REC, LOCKED, the algorithm&hellip;) is at the top of the display.</p>
+<h3>Grid</h3>
+<p>Shows the pattern. Click or drag to paint values, scroll to nudge one step. Click the grid header to switch lane (Note, Gate, Probability&hellip;) or 32-step page. Right-click for lane choice, randomise and fill.</p>
+<h3>CTRL 1&ndash;4</h3>
+<p>Four assignable knobs, as on Metroplex. The small lit button next to each knob opens that CTRL's page, where the DATA encoder picks the destination (any setting of the module) and the mode:</p>
+<ul><li><strong>Offset:</strong> noon leaves the setting as set, the knob moves it either way.</li><li><strong>Direct:</strong> the knob is the setting.</li></ul>
+<p>The trimpot is the CV amount (noon off, left inverted); &plusmn;5 V on the CV jack sweeps the full range. A CTRL'd row shows a <code>C1</code>&ndash;<code>C4</code> badge.</p>
+<h3>RUN / RESET / action button</h3>
+<p>RUN toggles playback, RESET returns to the start, and the amber button does the engine's action (see the table).</p>
+<h2 id="clock">Clock and run</h2>
+<p>There is no internal clock: patch a clock into <strong>CLOCK</strong>. Set the incoming resolution on the CLOCK page with <code>PPQN</code>: 1, 2, 4 = 16ths (default), 16, 24 or 48. The module measures the time between pulses and divides it into the firmware's 192 ticks per quarter, so swing, ratchets and odd divisions land where the hardware puts them. A higher PPQN mostly helps when the tempo changes; for a steady clock 4 PPQN is enough.</p>
+<p><strong>RESET</strong> and <strong>RUN</strong> (a trigger toggles run, like the button) inputs sit next to it. <strong>V/OCT</strong> transposes the pitch output.</p>
+<h2 id="outputs">Outputs</h2>
+<p><strong>GATE</strong>, <strong>PITCH</strong> (1 V/oct, with slide where the engine slides), <strong>VEL</strong> (0&ndash;10 V), <strong>TRIG</strong> (1 ms per note), <strong>EOC</strong> (end of cycle or pattern) and the engine's aux output.</p>
+<h2 id="patches">Patch ideas</h2>
+<p>Suggestions based on the controls above, not shipped presets.</p>
+<ul>
+<li><strong>Quick voice:</strong> a clock into CLOCK, PITCH to an oscillator, GATE to an envelope and VCA, VEL to VCA level or filter.</li>
+<li><strong>Evolving melody:</strong> Algo engine with a slow trigger into RESEED so the pattern changes every few bars.</li>
+<li><strong>Hands-on control:</strong> assign CTRL 1&ndash;4 to settings you want to ride, in Offset mode so noon leaves the pattern as programmed.</li>
+<li><strong>Looper:</strong> Fractal engine, record a phrase from a keyboard's gate and CV, then let it loop and grow branches; ORN triggers the ornaments.</li>
+<li><strong>Accents and slides:</strong> Note engine with FILL held for fills, and the SLIDE gate to a glide or filter.</li></ul>
+<h2 id="notes">Notes</h2>
+<ul><li>GPL-3.0-or-later. Engines derived from PER|FORMER (MIT, &copy; 2017&ndash;2018 Simon Kallweit).</li>
+<li>Builds on every push to <code>main</code> as a mac-arm64 plugin on the <em>latest</em> release. To install, drop the <code>.vcvplugin</code> into your Rack 2 plugins folder and restart Rack.</li>
+<li>Build: <code>make RACK_DIR=&lt;Rack-SDK&gt;</code> or <code>make dist</code>. <code>test/golden.sh</code> checks every engine against firmware traces.</li></ul>
+</main></body></html>

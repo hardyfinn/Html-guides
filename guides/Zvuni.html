@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Zvuni</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Zvuni</h1>
+<p class="sub">VCV Rack 2 plugin inspired by Bulgarian women's singing: a three-voice singer (Zvuni) and a clock divider for limping meters (Aksak)</p>
+<nav><strong>Contents</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#start">Quick start</a></li><li><a href="#idea">The idea</a></li><li><a href="#display">The display</a></li><li><a href="#zvuni">Zvuni controls</a></li><li><a href="#jacks">Zvuni jacks</a></li><li><a href="#aksak">Aksak</a></li><li><a href="#patches">Patch ideas</a></li><li><a href="#notes">Notes</a></li></ul></nav>
+<h2 id="overview">Overview</h2>
+<ul>
+<li><strong>Zvuni</strong> (&ldquo;it rings&rdquo;) is a three-voice singer: a <strong>drone</strong>, a <strong>melody</strong>, and a <strong>partner</strong> that sits a microtonal second away from the melody. The partner is tuned to a target <em>roughness</em> (how fast the two voices beat) instead of a fixed interval, the way village singers tune by ear. One knob, <strong>TENSION</strong>, goes from unison through the ringing second to an open fifth.</li>
+<li><strong>Aksak</strong> is a clock divider for Bulgarian &ldquo;limping&rdquo; meters: 2+2+3, 2+2+2+3, 2+2+3+2+2 and your own.</li></ul>
+<p>Everything is synthesised, so there is nothing to clear if you use it on a record.</p>
+<h2 id="start">Quick start</h2>
+<ol>
+<li>Patch a pitch (V/oct) and gate into <strong>MELODY</strong> and <strong>GATE</strong> at the bottom left. Leave <strong>DRONE</strong> empty for now: the drone takes the first note of each phrase.</li>
+<li>Listen to <strong>MIX L / R</strong>.</li>
+<li>Turn <strong>TENSION</strong> slowly from fully left. At about 60% the partner reaches the &ldquo;peak ring&rdquo;. Past that it opens out, and fully right it is a fifth.</li>
+<li>Clock <strong>Aksak</strong> with 16ths, patch its <strong>ACCENT</strong> into Zvuni's <strong>ACCENT</strong> and its <strong>END</strong> into <strong>RESOLVE</strong>. Turn up <strong>CLING</strong>: the melody leans onto ringing notes on the strong beats, and every cycle ends on a cadence.</li></ol>
+<h2 id="idea">The idea</h2>
+<p>Two tones beat when they are close in pitch. The ear finds that beating roughest at about a quarter of a &ldquo;critical band&rdquo; apart, roughly 25&ndash;35 beats a second in the singing range. So the interval singers land on depends on pitch:</p>
+<div class="tw"><table><tr><th>Melody note</th><th>Gap for peak ring</th><th>As an interval</th></tr>
+<tr><td>A3 (220 Hz)</td><td>~26 Hz</td><td>~193 cents</td></tr>
+<tr><td>A4 (440 Hz)</td><td>~28 Hz</td><td>~108 cents</td></tr>
+<tr><td>E5 (660 Hz)</td><td>~32 Hz</td><td>~83 cents</td></tr></table></div>
+<p>In <strong>Hz</strong> mode Zvuni does the same: as the melody climbs, the partner moves closer in cents so the rub stays equally strong. <strong>Cents</strong> mode uses a fixed interval so you can hear the difference.</p>
+<h2 id="display">The display</h2>
+<ul>
+<li><strong>Left: roughness curve</strong> for the note the melody is singing. Left edge = unison, then semitone, tone, 4th, 5th (small intervals get more room). The <strong>gold dot</strong> is the partner; the small <strong>red mark</strong> is where RING puts the peak.</li>
+<li><strong>Right:</strong> melody and drone notes, the partner's offset in cents, beat speed, the mode, and <strong>RESOLVING</strong> or <strong>YELP!</strong> when they happen. With several channels it shows channel 1.</li>
+<li><strong>RING bar:</strong> how hard melody and partner ring now (same as the ROUGH output).</li></ul>
+<h2 id="zvuni">Zvuni controls</h2>
+<h3>Partner</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th><th>CV</th></tr>
+<tr><td><strong>TENSION</strong></td><td>0 = unison. To ~60% the gap grows to peak roughness. 60&ndash;80% passes the peak to a wide whole tone. 80&ndash;100% glides to a perfect fifth.</td><td>&plusmn;5 V, with <strong>amt</strong> trimpot</td></tr>
+<tr><td><strong>RING</strong></td><td>Where the peak sits, 0.5&times; to 2&times; the natural spot. Low = slow, wobbly beating; high = fast and buzzy.</td><td>&plusmn;5 V</td></tr>
+<tr><td><strong>DRIFT</strong></td><td>Slow random wander of the partner's tuning, up to &plusmn;25 cents.</td><td>0&ndash;10 V</td></tr>
+<tr><td><strong>CLING</strong></td><td>Pulls the melody toward notes that ring against the drone: unison, a ringing second either side, 4th, 5th, octave. Stronger while ACCENT is high. Fully up, the melody only lands on those.</td><td></td></tr>
+<tr><td><strong>RANGE</strong></td><td>Keeps the melody within this many semitones above the drone (and up to a tone below), folding notes back in. Fully right = off.</td><td></td></tr>
+<tr><td><strong>MODE</strong></td><td><strong>Hz</strong> (bottom): tracks roughness. <strong>Cents</strong> (middle): fixed interval set by Tension, measured at A4. <strong>Seek</strong> (top): the partner hunts around the target and settles. Seek speed is in the right-click menu.</td><td></td></tr>
+<tr><td><strong>SIDE</strong></td><td>Down = partner below the melody (more typical), up = above.</td><td></td></tr>
+<tr><td><strong>FLIP</strong></td><td>Gate: while high, the partner swaps sides.</td><td></td></tr>
+<tr><td><strong>ACCENT</strong></td><td>Gate: makes Cling pull harder. Patch Aksak's ACCENT here.</td><td></td></tr></table></div>
+<h3>Voice</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th><th>CV</th></tr>
+<tr><td><strong>VOWEL</strong></td><td>a &gt; e &gt; i &gt; o &gt; u. Default sits between a and e.</td><td>0&ndash;10 V</td></tr>
+<tr><td><strong>OPEN</strong></td><td>Open throat: brighter, more pushed, more forward.</td><td>0&ndash;10 V</td></tr>
+<tr><td><strong>TRESENE</strong></td><td>Fast, uneven shake on held notes; starts after about a quarter of a second.</td><td>0&ndash;10 V</td></tr>
+<tr><td><strong>ENSEMBLE</strong></td><td>Left = village: one raw singer per part. Turning right adds up to 6 singers per part with small differences in tuning, timing and vowel, spread in stereo, and pulls the partner slightly toward tempered tuning.</td><td>0&ndash;10 V</td></tr>
+<tr><td><strong>NASAL</strong></td><td>A dip around 1 kHz and a peak near 2.5 kHz.</td><td></td></tr>
+<tr><td><strong>BREATH</strong></td><td>Air in the voice.</td><td></td></tr>
+<tr><td><strong>DRONE level</strong>, <strong>PARTNER level</strong></td><td>Mix of those two parts.</td><td></td></tr>
+<tr><td><strong>PARTNER on</strong></td><td>Gate: partner only sings while high. Unpatched = always on.</td><td></td></tr></table></div>
+<h3>Phrase</h3>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>HEIGHT</strong></td><td>How far the yelp flips up, 3&ndash;12 semitones.</td></tr>
+<tr><td><strong>SNAP</strong></td><td>How fast: about 20 ms (a glottal crack) to 150 ms (a whoop).</td></tr>
+<tr><td><strong>HOLD</strong></td><td>Auto yelps happen only after notes held at least this long (0.1&ndash;2 s).</td></tr>
+<tr><td><strong>YELP IN</strong></td><td>Trigger: yelp now. The voice flips up and drops out until the next note.</td></tr>
+<tr><td><strong>AUTO</strong></td><td>Up = yelp automatically when a long-enough note ends.</td></tr>
+<tr><td><strong>PARTNER TOO</strong></td><td>Up = the partner yelps with the melody.</td></tr>
+<tr><td><strong>GLIDE</strong></td><td>How long a resolve takes, 10 ms to 4 s.</td></tr>
+<tr><td><strong>TO</strong></td><td>Resolve to unison (bottom), fifth (middle) or octave (top).</td></tr>
+<tr><td><strong>RESOLVE</strong></td><td>Gate: while high, the partner glides to the TO interval, whatever Tension says. Patch Aksak's END here.</td></tr></table></div>
+<h2 id="jacks">Zvuni jacks (bottom)</h2>
+<div class="tw"><table><tr><th>Jack</th><th>What it does</th></tr>
+<tr><td><strong>DRONE</strong> in</td><td>Drone pitch, V/oct. Unpatched = first melody note after a quarter second of silence.</td></tr>
+<tr><td><strong>MELODY</strong> in</td><td>Melody pitch, V/oct, up to 4 channels, each with its own melody and partner voices.</td></tr>
+<tr><td><strong>GATE</strong> in</td><td>Melody gates (poly). Unpatched = always singing.</td></tr>
+<tr><td><strong>DRONE / MELODY / PARTNER</strong> out</td><td>Each part's audio on its own (melody and partner are poly).</td></tr>
+<tr><td><strong>MIX L / R</strong></td><td>Everything mixed, in stereo.</td></tr>
+<tr><td><strong>MEL V/O</strong></td><td>Melody pitch after Range and Cling.</td></tr>
+<tr><td><strong>PTR V/O</strong></td><td>The partner's pitch, so Zvuni can be the tuning brain for other voices.</td></tr>
+<tr><td><strong>ROUGH</strong></td><td>How hard melody and partner ring, 0&ndash;10 V. Good for filter cutoff or sidechain depth.</td></tr>
+<tr><td><strong>INTERVAL</strong></td><td>Partner's distance from the melody, 1 V per semitone (negative = below).</td></tr></table></div>
+<h2 id="aksak">Aksak</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>METER</strong></td><td>5 (2+3), 7 (2+2+3) Rachenitsa, 7 (3+2+2), 9 (2+2+2+3) Daychovo, 11 (2+2+3+2+2) Kopanitsa, 13, 15, or Custom. A change waits for the end of the current cycle. CV: each 1.25 V moves one meter on.</td></tr>
+<tr><td><strong>MUTATE</strong></td><td>Chance each cycle that one group flips between 2 and 3 (smaller chance for a second). The base meter returns every time. CV 0&ndash;10 V.</td></tr>
+<tr><td><strong>CUSTOM GROUPS</strong></td><td>Eight buttons used when METER is Custom. Tap to cycle off &gt; 2 (green) &gt; 3 (red). Empty groups are skipped.</td></tr>
+<tr><td><strong>CLOCK</strong> in</td><td>One pulse per step (16ths work well).</td></tr>
+<tr><td><strong>RESET</strong> in</td><td>The next clock starts the cycle again.</td></tr>
+<tr><td><strong>STEP</strong> out</td><td>A trigger on every clock.</td></tr>
+<tr><td><strong>ACCENT</strong> out</td><td>A trigger at the start of each group.</td></tr>
+<tr><td><strong>LONG</strong> out</td><td>A trigger at the start of each group of 3.</td></tr>
+<tr><td><strong>END</strong> out</td><td>A gate high during the last group of the cycle.</td></tr></table></div>
+<p>The display shows the cycle as boxes, with a gap between groups and a red mark on groups of 3.</p>
+<h2 id="patches">Patch ideas</h2>
+<ul>
+<li><strong>Tension as arrangement:</strong> automate TENSION: verses near unison, the build climbing to the peak, the drop snapping out to a fifth with RESOLVE.</li>
+<li><strong>Roughness drives the track:</strong> ROUGH into a filter cutoff or a kick sidechain amount, so the rest reacts as the voices rub.</li>
+<li><strong>Aksak hats over a four-on-the-floor kick:</strong> Aksak on 7 drives hats from STEP and an open hat from LONG. Bring MUTATE up slowly.</li>
+<li><strong>Tuning brain:</strong> PTR V/O and MEL V/O to other oscillators; turn Zvuni's own levels down.</li>
+<li><strong>Hear why singers do it:</strong> play a melody that climbs an octave and flip MODE between Hz and Cents.</li></ul>
+<h2 id="notes">Notes</h2>
+<ul><li>The roughness model is the standard critical-band approximation, not a measurement of any particular singer. Interval figures are ballpark values from the ethnomusicology literature.</li>
+<li>MIT licence. Panel fonts (Inter, Climate Crisis) are under the SIL Open Font Licence.</li>
+<li>Build: <code>make dist RACK_DIR=/path/to/Rack-SDK</code>. Engine tests: <code>c++ -std=c++11 -O2 -o test/engine_test test/engine_test.cpp &amp;&amp; test/engine_test</code>.</li></ul>
+</main></body></html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Weighted</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>Weighted</h1>
+<p class="sub">VCV Rack 2 weighted-note quantizer, plus The Changes, a style-aware chord sequencer (28 HP)</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#start">Quick start</a></li><li><a href="#display">The display</a></li><li><a href="#controls">Knobs and buttons</a></li><li><a href="#jacks">Jacks</a></li><li><a href="#profiles">Profiles</a></li><li><a href="#menu">Right-click menu</a></li><li><a href="#changes">The Changes</a></li><li><a href="#gamelan">Gamelan tunings</a></li><li><a href="#patches">Patch ideas</a></li></ul></nav>
+<h2 id="idea">The idea</h2>
+<p>A normal quantizer gives every scale note an equal slice of each volt. <strong>Weighted</strong> makes each slice as wide as that note's weight, so strong scale degrees come up more often than weak ones, the way they do in real melodies. Weights come from published scale-degree statistics (folk, classical and rock corpora, listening experiments) or from the roles of tones in Javanese gamelan pathet.</p>
+<h2 id="start">Quick start</h2>
+<ol><li>Patch a random or wandering CV into <strong>CV</strong> in and a clock into <strong>Trig</strong> in. Take notes from <strong>V/Oct</strong> out.</li>
+<li>Choose <strong>Root</strong>, <strong>Scale</strong> and <strong>Profile</strong>.</li>
+<li>Set <strong>Focus</strong>: 0 is a plain quantizer, 1 is the profile as published, up to 3 is exaggerated.</li>
+<li>Watch the display: the blue mark on each bar shows how often a tone actually came out over the last 256 notes.</li></ol>
+<h2 id="display">The display</h2>
+<ul>
+<li><strong>Top line:</strong> root and scale on the left, profile on the right.</li>
+<li><strong>Bars:</strong> one per scale tone. The white bar is its weight now (Focus and Invert included); the note just played turns red. The thin red line is its weight on accented (&ldquo;landing&rdquo;) notes. The blue mark is how often it came out in the last 256 notes.</li>
+<li><strong>Bottom line:</strong> Focus value, Invert, mode, DRIFT and REL on the left; the last note, its weight and LAND (an accented note) on the right. While learning it shows how many notes have been counted.</li>
+<li><strong>Draw your own weights:</strong> click a bar and drag up or down; drag across bars to set several. The first click copies the current weights into the User profile and switches Profile to User. Weights you draw are what you hear at Focus 1.</li></ul>
+<h2 id="controls">Knobs and buttons</h2>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td><strong>Root</strong></td><td>Home note, around the circle of fifths: C G D A E B F# Db Ab Eb Bb F.</td></tr>
+<tr><td><strong>Scale</strong></td><td>Major, natural minor, Dorian, Phrygian, Lydian, Mixolydian, harmonic minor, major and minor pentatonic, blues, chromatic, slendro, pelog (all 7 tones), pelog bem, pelog barang.</td></tr>
+<tr><td><strong>Profile</strong></td><td>Where the weights come from (see Profiles).</td></tr>
+<tr><td><strong>Focus</strong></td><td>0 = all notes equal. 1 = profile as published. Up to 3 = strong notes take over. Weights are raised to this power.</td></tr>
+<tr><td><strong>Relative</strong></td><td>Same notes, new home: C major becomes A minor, D Dorian becomes C major, and so on. No effect on blues, chromatic or the gamelan scales. The display shows REL while on.</td></tr>
+<tr><td><strong>Step</strong></td><td>Prefers small intervals; each note still plays as often as its weight. Works when Trig is patched.</td></tr>
+<tr><td><strong>Range</strong></td><td>How many octaves the CV covers (1&ndash;5).</td></tr>
+<tr><td><strong>Length / Strong</strong></td><td>Internal accent cycle, used when Accent in is unpatched: every Length triggers, step number Strong is a landing beat. Strong 0 = off.</td></tr>
+<tr><td><strong>Gravity</strong></td><td>Off = <strong>Bins</strong> mode: the whole CV range is re-weighted and higher CV still gives a higher note. On = <strong>Gravity</strong> mode: CV is read as pitch, quantized, then sometimes pulled to a stronger note within 3 semitones (always at Focus 2 and above).</td></tr>
+<tr><td><strong>Invert</strong></td><td>Flips the hierarchy: rare notes become common.</td></tr>
+<tr><td><strong>Octave</strong></td><td>&minus;3 to +3 octaves on V/Oct, applied last.</td></tr>
+<tr><td><strong>Mod A, Mod B</strong></td><td>Two assignable CV inputs, each with an <strong>amt</strong> attenuverter and a <strong>dest</strong> button cycling Root, Scale, Rel, Profile, Focus, Pull. Same destination adds together.</td></tr>
+<tr><td><strong>Pull</strong></td><td>How much the chord at Harm in counts. Right of noon: chord notes chosen more often (up to 4&times;). Left: they become rarer, for a floating sound. Does nothing with Harm unpatched.</td></tr>
+<tr><td><strong>Learn</strong></td><td>Press, play at least 8 notes into CV in, press again. The counts become the User profile.</td></tr></table></div>
+<h2 id="jacks">Jacks</h2>
+<div class="tw"><table><tr><th>Jack</th><th>What it does</th></tr>
+<tr><td><strong>CV</strong> in</td><td>Voltage to quantize. Polyphonic: each channel is its own melody. Bins mode adapts to your CV range (Auto); right-click for fixed ranges.</td></tr>
+<tr><td><strong>Trig</strong> in</td><td>Takes a new note on each trigger. Unpatched: follows CV continuously.</td></tr>
+<tr><td><strong>Accent</strong> in</td><td>High (above 1 V) when a note is taken = use the landing weights.</td></tr>
+<tr><td><strong>Mod A / Mod B</strong> in</td><td>Assignable (see above). As Root: 1 V/oct. As Scale or Profile: 10 V sweeps the list. As Rel: a gate flips Relative. As Focus: 10 V spans the range.</td></tr>
+<tr><td><strong>Harm</strong> in</td><td>A chord to lean on (poly, 1 V/oct, channel 1 = root, up to 6 notes). From The Changes (10+ channels) it also sets key, mode and profile, shown as HARM in the display.</td></tr>
+<tr><td><strong>V/Oct</strong> out</td><td>The note. Root C, Octave 0: the root's middle octave is 0 V (C4).</td></tr>
+<tr><td><strong>Trig</strong> out</td><td>1 ms trigger per new note (right-click: only when the pitch changes).</td></tr>
+<tr><td><strong>Degree</strong> out</td><td>Which scale tone was chosen, 1 V per step, first tone 0 V.</td></tr>
+<tr><td><strong>Stability</strong> out</td><td>0&ndash;10 V, how strong the chosen note is. Patch to a filter, VCA or decay.</td></tr></table></div>
+<h2 id="profiles">Profiles</h2>
+<div class="tw"><table><tr><th>Profile</th><th>Source</th></tr>
+<tr><td>Flat</td><td>None: an ordinary quantizer</td></tr>
+<tr><td>Perceived fit</td><td>Krumhansl &amp; Kessler (1982)</td></tr>
+<tr><td>Folk melody</td><td>Aarden (2003), Essen folk collection</td></tr>
+<tr><td>Classical</td><td>Albrecht &amp; Shanahan (2013)</td></tr>
+<tr><td>Classical downbeats</td><td>Prince &amp; Schmuckler (2014)</td></tr>
+<tr><td>Rock melody</td><td>Temperley &amp; de Clercq (2013)</td></tr>
+<tr><td>Detroit Dorian, House, Gospel, Funk, Soul, Reggae</td><td>Designed (no published counts exist). Try Dorian for Detroit and House, Major or Chromatic for Gospel and Soul, Blues or Dorian for Funk, Major for Reggae</td></tr>
+<tr><td>Pathet 1, 2, 3</td><td>Designed from the stressed, strong and avoided tones of each pathet</td></tr>
+<tr><td>User</td><td>Learned with Learn, or drawn on the display</td></tr></table></div>
+<p>Any profile works on any scale: weights are matched by pitch.</p>
+<h2 id="menu">Right-click menu</h2>
+<ul>
+<li><strong>CV input range</strong> for Bins mode: Auto, &minus;5 to +5 V, 0&ndash;10 V or 0&ndash;5 V.</li>
+<li><strong>No-repeat</strong> (off, low, medium, high) and <strong>Landing boost</strong> (&times;1.5, &times;2, &times;3).</li>
+<li><strong>Trigger output:</strong> every new note, or only pitch changes.</li>
+<li><strong>Phrase ending:</strong> the last step of the accent cycle always lands home (first tone or strongest tone).</li>
+<li><strong>Drift:</strong> weights wander slowly (about a minute, 20 s or 5 s).</li>
+<li><strong>Relative changes:</strong> at once, or at the end of the accent cycle.</li>
+<li><strong>Chord on V/Oct:</strong> V/Oct and Trig become polyphonic, adding the 3rd, 3rd and 5th, or 5th above each note in scale steps.</li>
+<li><strong>HARM input:</strong> follow the Changes cable (default) or keep your own knobs.</li>
+<li><strong>Gamelan tuning:</strong> default, loaded, or snap to 12-TET. <strong>Load a Scala (.scl)</strong> file: 5 notes replaces slendro, 7 replaces pelog. <strong>Clear the User profile.</strong></li></ul>
+<h2 id="changes">The Changes</h2>
+<p>A chord sequencer that picks the next chord the way a player of the chosen style would, with that style's usual extensions, and voice-leads it. Patch its <strong>HARM</strong> output into Weighted's <strong>HARM</strong> input and the melody follows the chords.</p>
+<div class="tw"><table><tr><th>Control</th><th>What it does</th></tr>
+<tr><td>Display</td><td>Chord now (name, Roman numeral, key), the next chord, and the loop. Click a chord to re-roll it; right-click to pick from the style's list.</td></tr>
+<tr><td><strong>Style</strong></td><td>Weighted's profile list. Pathet 1&ndash;3 give a drone on the main tones.</td></tr>
+<tr><td><strong>Key</strong></td><td>Circle of fifths.</td></tr>
+<tr><td><strong>Mode</strong></td><td>Style (default), major, minor, Dorian, Mixolydian.</td></tr>
+<tr><td><strong>Rate</strong></td><td>Bars per chord when clocked: 1/2, 1, 2, 4, 8.</td></tr>
+<tr><td><strong>Loop</strong></td><td>Off, 2, 4 or 8 chords.</td></tr>
+<tr><td><strong>Focus</strong> + CV</td><td>0 = any chord in the key, 1 = style as written, 3 = only its favourite moves.</td></tr>
+<tr><td><strong>Colour</strong> + CV</td><td>Triad, 7th, 9th, 11th, 13th, within what the style uses.</td></tr>
+<tr><td><strong>Spread</strong> + CV</td><td>Close voicing to drop-2 to wide.</td></tr>
+<tr><td><strong>Drift</strong> + CV</td><td>Chance that one chord of the loop (never the first) is rewritten after each pass.</td></tr>
+<tr><td><strong>Hold</strong> / <strong>New</strong> / <strong>Lock</strong></td><td>Hold stays on this chord (button and gate). New makes a fresh loop on the next bar line. Lock stops drift edits.</td></tr></table></div>
+<p><strong>Inputs:</strong> CLOCK (16ths by default; right-click for 24 PPQN, 8ths or quarters), RESET, CHANGE, HOLD, TRANSP (1 V/oct), LINK (from Long Form). With no clock only CHANGE moves on.</p>
+<p><strong>Outputs:</strong> CHORD (poly), BASS (C2&ndash;B2), ROOT, TOP (highest voice), GATE, CHANGE, TENSION (0&ndash;10 V, home 0 V, dominants high), HARM (to Weighted).</p>
+<h2 id="gamelan">Gamelan tunings</h2>
+<p>Defaults are rough guides: slendro as five equal steps of 240 cents, pelog as a subset of 9-tone equal temperament. Load a Scala file of a real gamelan, or choose Snap to 12-TET to play with Western gear. For gamelan, set Strong to the last step (4 of 4).</p>
+<h2 id="patches">Patch ideas</h2>
+<ul>
+<li><strong>Melody that sounds like a style:</strong> a slow random CV into CV in, a clock into Trig, Profile on Folk or Rock, Focus around 1.</li>
+<li><strong>Chords drive melody:</strong> The Changes HARM into Weighted HARM, Pull right of noon so the melody lands on chord notes.</li>
+<li><strong>Tense, floating line:</strong> same patch with Pull left of noon.</li>
+<li><strong>Accents you can hear:</strong> Stability out to a filter or VCA, so landing notes are brighter or louder.</li>
+<li><strong>Chords from one lane:</strong> turn on Chord on V/Oct and send V/Oct to a polyphonic voice.</li>
+<li><strong>Learn your own:</strong> play a phrase into CV in, press Learn twice, and the module imitates the note balance.</li></ul>
+<p>Build: <code>make dist RACK_DIR=/path/to/Rack-SDK</code>. Engine checks: see <code>test/</code>.</p>
+</main></body></html>

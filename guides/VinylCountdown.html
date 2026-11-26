@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VinylCountdown</title><style>:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#666;--acc:#a8621a;--line:#ddd;--card:#fff;--code:#f0eee6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#e8e6df;--mut:#9a978d;--acc:#e0a050;--line:#3a3935;--card:#1e1e1b;--code:#2a2925}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:800px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:.2em 0}h2{margin-top:2.2em;padding-top:.4em;border-top:1px solid var(--line)}h3{margin-top:1.6em;color:var(--acc)}
+.sub{color:var(--mut);margin-top:0}nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 20px;margin:20px 0}
+nav ul{margin:.3em 0;padding-left:1.2em}a{color:var(--acc)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code,pre{background:var(--code);border-radius:4px;font-family:ui-monospace,Menlo,monospace}code{padding:1px 5px;font-size:.9em}pre{padding:12px;overflow-x:auto}
+.note{background:var(--card);border-left:4px solid var(--acc);padding:8px 14px;margin:1em 0;border-radius:0 6px 6px 0}</style></head><body><main>
+<h1>VinylCountdown</h1>
+<p class="sub">Five VCV Rack 2 modules by Haer, each copying a physical part of making or playing a record</p>
+<nav><strong>Contents</strong><ul><li><a href="#idea">The idea</a></li><li><a href="#vc">Vinyl Countdown (36 HP)</a></li><li><a href="#studio">Studio (20 HP)</a></li><li><a href="#room">Listening Room (20 HP)</a></li><li><a href="#onair">On Air (24 HP)</a></li><li><a href="#scratch">Scratch (24 HP)</a></li><li><a href="#patches">Patch ideas</a></li><li><a href="#notes">Notes</a></li></ul></nav>
+<h2 id="idea">The idea</h2>
+<p>These go past noise, crackle and a filter. Each module models a real stage a record goes through, and they are laid out in the order a record travels: <strong>Studio</strong> (before the lathe) &rarr; <strong>Vinyl Countdown</strong> (cutting, pressing, playing) &rarr; <strong>Listening Room</strong> (after the preamp). <strong>On Air</strong> plays a record over FM instead, and <strong>Scratch</strong> is a scratch sequencer.</p>
+<div class="note"><strong>House rule:</strong> every module works on live audio and adds at most 100 ms of latency. Studio, Listening Room and On Air also have CV A/B, BYPASS and presets, like Vinyl Countdown.</div>
+<h2 id="vc">Vinyl Countdown (36 HP)</h2>
+<p>Eight stages in record order, each with an on/off button:</p>
+<div class="tw"><table><tr><th>Stage</th><th>Controls named in the docs</th></tr>
+<tr><td>LATHE</td><td>hot cut DRIVE, ELLIPTIC (mono bass), HF LIMIT, groove ECHO</td></tr>
+<tr><td>RIAA cut curve</td><td>&mdash;</td></tr>
+<tr><td>PRESSING</td><td>GENERATION, WEAR</td></tr>
+<tr><td>GROOVE</td><td>RADIUS, TRACK, SIDE, and PLAY, which sweeps a whole side</td></tr>
+<tr><td>STYLUS</td><td>TIP, LOAD, AZIMUTH, VERTICAL</td></tr>
+<tr><td>PLATTER</td><td>off-centre OFFSET, RPM (33 or 45), BEATS</td></tr>
+<tr><td>RIAA play curve</td><td>&mdash;</td></tr>
+<tr><td>PREAMP</td><td>VALVE drive, STEP-UP transformer, mains HUM (50/60 Hz)</td></tr>
+<tr><td>WRECK</td><td>deck B drifts and gets nudged; B is the dry input unless patched</td></tr></table></div>
+<ul>
+<li>RADIUS drives both the inner-groove loss and the wow. DRIVE is the cut level for lathe and groove.</li>
+<li><strong>BYPASS</strong> (top right) passes the dry input straight through, with no delay. Randomize leaves it alone.</li>
+<li><strong>Presets:</strong> the arrows either side of the screen at the top step through 35 starting points, wrapping round (or right-click &gt; Presets). A * after the name means you changed something since loading.</li>
+<li><strong>Latency:</strong> 0, plus 6 ms with PLATTER on, plus up to 100 ms on deck B in WRECK.</li></ul>
+<h2 id="studio">Studio (20 HP)</h2>
+<p>The record before the lathe: <strong>CONSOLE</strong> (DRIVE, IRON transformer, XTALK) &rarr; <strong>TAPE</strong> master (SAT, BUMP, FLUTTER, AZIMUTH, 7.5/15/30 ips) with <strong>DOLBY A</strong> around it &rarr; <strong>GLUE</strong> (vari-mu AMOUNT, TIME).</p>
+<ul><li>Dolby ERROR means it is played back off level. The status reads PATH OK, ENC (never decoded) or DEC (never encoded).</li>
+<li>Latency 0, +3 ms with TAPE on.</li></ul>
+<h2 id="room">Listening Room (20 HP)</h2>
+<p>After the preamp: <strong>AMP</strong> (VOLUME, VALVE/SOLID/CHEAP, LOUDNESS) &rarr; <strong>SPEAKER</strong> (8 boxes from phone to club stack, BREAKUP) &rarr; <strong>ROOM</strong> (SIZE, DAMP, bass MODES, WALL = next door) &rarr; <strong>EARS</strong> (DISTANCE, head ANGLE, PARTY = the morning after). The direct sound is never delayed.</p>
+<h2 id="onair">On Air (24 HP)</h2>
+<p>A record played on FM radio, simulated end to end.</p>
+<ol>
+<li><strong>STATION:</strong> PROCESSING, ERA (70s/80s/90s), EU/US pre-emphasis and final clipper.</li>
+<li>Stereo multiplex with a 19 kHz pilot, then FM at about 768 kHz.</li>
+<li><strong>AIR:</strong> SIGNAL (carrier to noise), MULTIPATH, MOTION (picket fencing), plus a <strong>NEXT</strong> station with its own input, LEVEL, and 100/200 kHz spacing.</li>
+<li><strong>RADIO:</strong> TUNE, and HIFI/CAR/CHEAP sets with stereo blend, high cut and soft mute; MONO.</li></ol>
+<p>Latency is under 1 ms. Right-click <strong>Eco mode</strong> halves the radio sample rate for less CPU.</p>
+<h2 id="scratch">Scratch (24 HP)</h2>
+<p>A scratch sequencer that plays like a person.</p>
+<ul>
+<li><strong>12 gestures:</strong> baby, chirp, forward, transformer, 1- and 2-click flare, crab, orbit, tear, scribble, stab, drag. They run on 8 clocked steps or from a TRIG input.</li>
+<li><strong>HUMAN</strong> adds drifting timing (early and late), speed and stroke changes. <strong>SLOPPY</strong> makes the fader work messier, scaled by how complex the gesture is.</li>
+<li><strong>Sources:</strong> LIVE (rolling 8 s), GRAB (freeze recent audio) or a WAV (right-click, or drag a file onto the module). Cues snap to hits.</li>
+<li>Live audio passes straight through between gestures. Choose INSERT or OVER (with DUCK), set the fader CURVE, and use the hamster option. Outputs: HAND, FADER, END.</li></ul>
+<h2 id="patches">Patch ideas</h2>
+<p>These are suggestions built from the chain order above, not presets shipped with the plugin.</p>
+<ul>
+<li><strong>Full record chain:</strong> source &rarr; Studio &rarr; Vinyl Countdown &rarr; Listening Room, so a track is mastered, cut, played and heard in a room.</li>
+<li><strong>Radio edit:</strong> source &rarr; Vinyl Countdown &rarr; On Air, with SIGNAL lowered and MOTION raised for a drifting broadcast.</li>
+<li><strong>Second deck:</strong> patch a different sound into deck B in WRECK, so it drifts against the main record.</li>
+<li><strong>Scratch a loop:</strong> a drum loop into Scratch on LIVE, a clock into the steps, HUMAN up a little, then out through Vinyl Countdown.</li></ul>
+<h2 id="notes">Notes</h2>
+<ul><li>MIT licence. Panel fonts (Inter, Climate Crisis) are under the SIL Open Font Licence.</li>
+<li>The README opens with &ldquo;Eight VCV Rack modules&rdquo; but describes five, and <code>plugin.json</code> (version 2.7.0) lists five: Vinyl Countdown, Scratch, Studio, Listening Room, On Air. This guide follows the five. The eight is likely the eight stages in Vinyl Countdown.</li>
+<li>Build: <code>make RACK_DIR=path/to/Rack-SDK dist</code>. Offline engine checks: <code>make test</code>.</li></ul>
+</main></body></html>
