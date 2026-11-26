@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fallen for VCV Rack</title>
+<style>
+:root{--bg:#fff;--fg:#1c1c20;--mut:#666;--acc:#8a2b2b;--line:#ddd;--code:#f3f3f5}
+@media (prefers-color-scheme:dark){:root{--bg:#16161a;--fg:#e8e8ec;--mut:#9a9aa2;--acc:#e08a8a;--line:#33333a;--code:#222228}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:820px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:2rem;margin:.2em 0}
+h2{margin-top:2.2em;border-bottom:2px solid var(--acc);padding-bottom:.2em}
+h3{margin-top:1.8em;color:var(--acc)}
+a{color:var(--acc)}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--code)}
+td:first-child{white-space:nowrap;font-weight:600}
+code{background:var(--code);padding:1px 5px;border-radius:3px}
+nav{background:var(--code);padding:12px 18px;border-radius:6px;margin:1.5em 0}
+nav ul{margin:.3em 0;padding-left:1.2em;columns:2;column-gap:2em}
+nav li{break-inside:avoid}
+.lead{color:var(--mut);font-size:1.1rem}
+.note{border-left:4px solid var(--acc);background:var(--code);padding:8px 14px;margin:1em 0}
+footer{margin-top:3em;color:var(--mut);font-size:.85rem}
+@media (max-width:560px){nav ul{columns:1}}
+</style>
+</head>
+<body>
+<main>
+<h1>Fallen for VCV Rack</h1>
+<p class="lead">Ten modules for making music the way Mark Fell describes making it: systems of timing that run in milliseconds rather than beats, patterns whose loops are a little too short, 4-operator FM presets “tweaked a little”, and dry drum-machine sounds. You build a system, let it generate material, change one or two parameters while it runs, and record what comes out.</p>
+
+<div class="tblwrap"><table>
+<tr><th>Group</th><th>Modules</th></tr>
+<tr><td>Time</td><td>DURA, GROUP, PRIME, HOLD</td></tr>
+<tr><td>Patterns</td><td>LANES, CYCLE, CHORD</td></tr>
+<tr><td>Sound</td><td>FM4, KIT, SPECTRA</td></tr>
+</table></div>
+
+<p>Search for any module in Rack’s browser by its short name (DURA, GROUP, PRIME, HOLD, LANES, CYCLE, CHORD, FM4, KIT, SPECTRA), or by words like milliseconds, SysEx, WAV, prime, stutter.</p>
+
+<nav>
+<strong>Contents</strong>
+<ul>
+<li><a href="#conventions">Conventions</a></li>
+<li><a href="#time">Time</a>: <a href="#dura">DURA</a>, <a href="#group">GROUP</a>, <a href="#prime">PRIME</a>, <a href="#hold">HOLD</a></li>
+<li><a href="#patterns">Patterns</a>: <a href="#lanes">LANES</a>, <a href="#cycle">CYCLE</a>, <a href="#chord">CHORD</a></li>
+<li><a href="#sound">Sound</a>: <a href="#fm4">FM4</a>, <a href="#kit">KIT</a>, <a href="#spectra">SPECTRA</a></li>
+<li><a href="#recipes">Patch recipes</a></li>
+<li><a href="#others">Using other modules</a></li>
+<li><a href="#sysex">SysEx formats FM4 reads</a></li>
+<li><a href="#ideas">Where the ideas come from</a></li>
+</ul>
+</nav>
+
+<h2 id="conventions">Conventions</h2>
+<ul>
+<li><strong>Levels.</strong> Audio is ±5 V. Pitch is 1 V/oct with 0 V = C4. Gates and triggers are 0 or 10 V, and inputs see a rise through 1 V as an edge.</li>
+<li><strong>Timing.</strong> All timing modules count time in samples with no drift, so a pattern in milliseconds stays exact for hours and sounds the same at every sample rate.</li>
+<li><strong>Repeatable variation.</strong> Nothing in Fallen uses a live random number. Where something varies (gate spread, fill patterns, S&amp;H), it comes from a SEED, so the same settings always give the same result. EVOLVE options change the seed each loop, still repeatably.</li>
+<li><strong>Labels.</strong> Two-line labels such as STRETCH CV mark the jack under them. Outputs sit on dark plates. Hover over any control in Rack for its full name and value.</li>
+</ul>
+
+<h2 id="time">Time</h2>
+
+<h3 id="dura">DURA: duration sequencer</h3>
+<p>Fell’s sequencers are lists of durations. DURA has 16 steps, and each step is a length of time rather than a slot on a grid. The step also has a repeat count, so a step of 20 ms with REP 8 is a machine-gun stutter, and a step of 400 ms with REP 1 is a pause.</p>
+<p>Each step’s LEN knob means different things in the three MODEs, and each mode keeps its own 16 values:</p>
+<ul>
+<li><strong>MS:</strong> milliseconds, 1 ms to 2 s.</li>
+<li><strong>UNITS:</strong> whole multiples of UNIT (1 to 16). With UNIT 40 ms, a pattern of 3, 3, 2 gives 120, 120, 80 ms. Fell’s interval tables are made of these.</li>
+<li><strong>RATIO:</strong> ratios of BASE (1/4, 1/3, 1/2, 2/3, 3/4, 1, 4/3, 3/2, 2, 3, 4 and so on). Triplet and dotted steps against a fundamental.</li>
+</ul>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>LEN 1 to 16</td><td>Step length, in the current MODE. The display draws each step as a bar as wide as its time.</td></tr>
+<tr><td>REP 1 to 16</td><td>How many times the step plays before moving on (1 to 16).</td></tr>
+<tr><td>ON 1 to 16</td><td>Step on, or rest (the time passes silently).</td></tr>
+<tr><td>MODE</td><td>MS, UNITS or RATIO.</td></tr>
+<tr><td>UNIT</td><td>Length of one unit in UNITS mode, 5 to 500 ms.</td></tr>
+<tr><td>BASE</td><td>Length of ratio 1 in RATIO mode, 20 ms to 4 s.</td></tr>
+<tr><td>STRETCH</td><td>Scales every step at once, ¼× to 4×. Turn this one knob while the pattern runs (the “one slider” technique). Takes effect at the next event, so it never makes a step jump.</td></tr>
+<tr><td>STEPS</td><td>Loop length, 1 to 16.</td></tr>
+<tr><td>NUDGE</td><td>Lengthens or shortens the last interval of the loop by up to 50%, so the loop is “a little too short” or a little too long.</td></tr>
+<tr><td>LENGTH</td><td>Gate length, as a percentage of the time to the next event.</td></tr>
+<tr><td>SPREAD, SEED</td><td>SPREAD varies each gate length between 1% and 99%, repeatably; SEED chooses which variation.</td></tr>
+<tr><td>VARY</td><td>LOOP: the spread is the same every loop. EVOLVE: it differs each loop.</td></tr>
+<tr><td>RUN, RESET</td><td>Start and stop; back to step 1.</td></tr>
+<tr><td>CLOCK</td><td>Optional. In UNITS mode the clock period sets UNIT; in RATIO mode it sets BASE; in MS mode steps are scaled by period/100 ms.</td></tr>
+<tr><td>Outputs</td><td>TRIG (each event on an ON step), GATE, STEP (which step), INTERVAL (time to the next event as a voltage: 0 V = 100 ms, +1 V per doubling, for HOLD), REP (the repeat number) and EOC (end of loop).</td></tr>
+</table></div>
+<p><strong>Context menu:</strong> Fill from table (UNITS 1 to 10, chosen by SEED), Reverse steps, Rotate right/left, and Wait for the first clock edge after reset.</p>
+
+<h3 id="group">GROUP: compressing and expanding bursts</h3>
+<p>Fell often plays events in small groups whose spacing tightens or relaxes inside the group, like a ball bouncing or a roll slowing down. GROUP fires a group of COUNT events. The first gap is SPACE. CURVE squeezes the later gaps (negative) or stretches them (positive). Groups start every PERIOD, or straight after the last one if the group is longer.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>COUNT</td><td>Events per group, 1 to 16.</td></tr>
+<tr><td>SPACE</td><td>First gap, 1 ms to 1 s.</td></tr>
+<tr><td>CURVE</td><td>−1 compresses, +1 expands, 0 keeps every gap equal.</td></tr>
+<tr><td>PERIOD</td><td>Group start to group start, 20 ms to 10 s.</td></tr>
+<tr><td>LENGTH</td><td>Gate as a percentage of each gap.</td></tr>
+<tr><td>FIRE, TRIG IN</td><td>Start a group now. With TRIG IN patched, groups start only on its edges.</td></tr>
+<tr><td>DRIFT RATE, DEPTH</td><td>A slow triangle drift of SPACE from group to group (up to ±2 octaves), so successive groups differ a little.</td></tr>
+<tr><td>CVs</td><td>COUNT, SPACE, CURVE, PERIOD.</td></tr>
+<tr><td>Outputs</td><td>TRIG, GATE, FIRST and LAST event of the group, INDEX (position in the group), BUSY (high during a group).</td></tr>
+</table></div>
+
+<h3 id="prime">PRIME: nested prime loops</h3>
+<p>Four Euclidean rows whose lengths are prime numbers (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31). Prime lengths share no factors, so the rows take a long time to line up again. Set a row’s source to NEST and it only moves when the row above it fires, which stretches the cycle further. The display shows each row and how many pulses remain until all four realign.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>LEN A to D</td><td>Row length, a prime from 2 to 31.</td></tr>
+<tr><td>HITS A to D</td><td>Events spread evenly across the row (Euclidean).</td></tr>
+<tr><td>ROT A to D</td><td>Rotates the row.</td></tr>
+<tr><td>SOURCE B, C, D</td><td>PULSE: the row moves on every pulse. NEST: it moves on each event of the row above.</td></tr>
+<tr><td>RATE</td><td>Time per pulse when nothing is patched to CLOCK, 5 ms to 2 s.</td></tr>
+<tr><td>CLOCK, RESET, RUN</td><td>External pulse, back to the start, start and stop.</td></tr>
+<tr><td>Outputs</td><td>TRIG and GATE per row, ANY (any row fired) and REALIGN (all rows back at step 1).</td></tr>
+</table></div>
+
+<h3 id="hold">HOLD: sustain against the gap</h3>
+<p>A stab’s length is part of the rhythm. HOLD opens a gate for a percentage of the gap to the next event, so as DURA’s durations change, the notes stay in proportion: short and clipped at 5%, legato at 100%, overlapping at 150%.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>LENGTH</td><td>1% to 200% of the gap.</td></tr>
+<tr><td>ATTACK</td><td>0.1 to 200 ms.</td></tr>
+<tr><td>SHAPE</td><td>From a hard gate (0%) to an exponential decay that ends at the gate’s end (100%).</td></tr>
+<tr><td>TRIG</td><td>Starts a note.</td></tr>
+<tr><td>INTERVAL</td><td>Patch DURA’s INTERVAL here and HOLD knows the gap ahead of time. Without it, HOLD uses the last measured gap between triggers.</td></tr>
+<tr><td>LENGTH CV</td><td>±5 V = ±100%.</td></tr>
+<tr><td>IN, OUT</td><td>A VCA (polyphonic): IN is shaped by the envelope.</td></tr>
+<tr><td>GATE, ENV</td><td>The gate, and the envelope as 0 to 10 V.</td></tr>
+</table></div>
+
+<h2 id="patterns">Patterns</h2>
+
+<h3 id="lanes">LANES: drum grid with drifting loop points</h3>
+<p>A six-row grid, 32 steps wide, where every row has its own loop length and can scroll. A kick on 16 against hats on 13 and 15 gives loops “a little too short” that come back together slowly. Rows 1 to 5 are triggers, row 6 is a pitch row.</p>
+<ul>
+<li>Click a cell to toggle it, drag to paint or erase.</li>
+<li>On row 6, drag a cell up or down to set its pitch in semitones.</li>
+<li>The playhead shows the cell that played last on each row.</li>
+</ul>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>LEN 1 to 6</td><td>Row loop length, 1 to 32.</td></tr>
+<tr><td>SCROLL 1 to 6</td><td>The row’s pattern moves this many steps left (−) or right (+) every time it loops.</td></tr>
+<tr><td>MUTE 1 to 6</td><td>Mutes the row.</td></tr>
+<tr><td>INTENSITY</td><td>Fell’s relaxed-to-intense control. At 100% every set cell plays. Lower, the off-beat cells drop out first, in a fixed order, so the pattern thins out musically and always the same way.</td></tr>
+<tr><td>PATTERN</td><td>8 patterns. A new pattern starts at the end of row 1’s loop, unless the menu says switch immediately.</td></tr>
+<tr><td>CLOCK, RESET</td><td>Each clock edge is one step.</td></tr>
+<tr><td>Outputs</td><td>TRIG 1 to 5, GATES (rows 1 to 5 as one polyphonic cable), PITCH and PITCH GATE (row 6).</td></tr>
+</table></div>
+<p><strong>Context menu:</strong> clear, copy and paste the pattern, Fill from seed, clear a row, rename rows, and switch patterns immediately.</p>
+
+<h3 id="cycle">CYCLE: lanes in and out of phase</h3>
+<p>Four lanes of values. Each lane has its own length and divider, and all four advance on the same trigger, so a 5-step pitch lane against a 3-step voice lane goes in and out of phase. Draw the values in the display with the mouse. The display also counts the triggers until the lanes realign.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>LEN A to D</td><td>Lane length, 1 to 16.</td></tr>
+<tr><td>DIV A to D</td><td>The lane moves every Nth trigger.</td></tr>
+<tr><td>OFFSET A to D</td><td>Adds to the lane’s output.</td></tr>
+<tr><td>MODE A to D</td><td>UNI (0 to 10 V), BI (±5 V), PITCH (semitones as V/oct) or VOICE (0.1 V per voice, for FM4’s VOICE CV).</td></tr>
+<tr><td>TRIG, RESET</td><td>Advance every lane; back to step 1. The first trigger after reset plays step 1.</td></tr>
+<tr><td>Outputs</td><td>OUT A to D, and POLY (all four lanes on one cable).</td></tr>
+</table></div>
+<p><strong>Context menu:</strong> glide time per lane.</p>
+
+<h3 id="chord">CHORD: chord memory</h3>
+<p>Eight chord slots for house-organ stabs. The factory slots are m7, m9, m11, maj7, maj9, sus4, quartal and 7. Click the keys in the display to change the shown slot.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>CHORD</td><td>Slot 1 to 8 (CHORD CV: 1 V per slot).</td></tr>
+<tr><td>INVERT</td><td>0 to 5: the lowest note moves up an octave, that many times (INVERT CV: 1 V per step).</td></tr>
+<tr><td>VOICING</td><td>CLOSE, DROP2 (second-highest note down an octave) or SPREAD (every other note up an octave).</td></tr>
+<tr><td>TRANSPOSE</td><td>±12 semitones.</td></tr>
+<tr><td>ROOT</td><td>V/oct root.</td></tr>
+<tr><td>GATE IN</td><td>Copied to every output channel. Chord changes wait for its next rising edge, so a stab never changes under a held note. Unpatched, changes are immediate.</td></tr>
+<tr><td>Outputs</td><td>V/OCT and GATE, one channel per note. Patch both into FM4.</td></tr>
+</table></div>
+
+<h2 id="sound">Sound</h2>
+
+<h3 id="fm4">FM4: four-operator FM voice with SysEx loading</h3>
+<p>A 4-operator FM voice in the style of the mid-80s 4-op Yamaha synths, up to 8 voices. It reads their voice data from .syx files, so you can load banks from your own synth or from the internet, pick a preset and tweak it a little. Voices can step on every new note, so a sequence of five notes against three sounds goes in and out of phase.</p>
+<p><strong>Playing.</strong> Patch V/OCT and GATE (polyphonic: one channel per voice). VEL (0 to 10 V) sets velocity; unpatched, every note is full velocity. POLY OUT has one channel per voice and OUT is the mono sum.</p>
+<p><strong>Choosing voices.</strong> VOICE picks one of the 32 voices in the working bank, plus VOICE CV at 0.1 V per voice (CYCLE’s VOICE mode). With STEP ON, every new note takes the next voice from FIRST to FIRST + COUNT − 1, wrapping, and VOICE is ignored; STEP RESET goes back to FIRST. A note keeps its voice until it ends.</p>
+<p><strong>Macros</strong> change every note without changing the stored voice. At the centre they do nothing. Each has a CV input (±5 V = full range, polyphonic).</p>
+<div class="tblwrap"><table>
+<tr><th>Macro</th><th>Effect</th></tr>
+<tr><td>BRIGHT</td><td>Adds up to ±20 to every modulator’s output level.</td></tr>
+<tr><td>RATIO</td><td>Moves every modulator up or down the ratio table by up to 8 steps.</td></tr>
+<tr><td>DECAY</td><td>±10 rate steps on D1R and D2R. + is longer.</td></tr>
+<tr><td>ATTACK</td><td>±10 rate steps on AR. + is slower.</td></tr>
+<tr><td>FDBK</td><td>±7 on feedback.</td></tr>
+<tr><td>SPREAD</td><td>Detunes the voices from each other, up to 20 cents.</td></tr>
+</table></div>
+<p><strong>Editing the voice.</strong> The edit section writes straight into the voice VOICE shows (even while STEP is playing others). OP 1 to OP 4 choose the operator; the LED shows which. ALG (1 to 8) and FB (0 to 7) are for the whole voice; CRS (ratio), FINE, LEVEL, WAVE (W1 to W8), DET, AR, D1R, D1L, D2R and RR are for the chosen operator. When you change voice or operator the knobs jump to the stored values. Changing WAVE or FINE on a DX21-style voice makes it a TX81Z-style (extended) voice.</p>
+<p>The display shows the voice number and name, the algorithm as text (<code>4&gt;3&gt;2&gt;1</code> means 4 modulates 3, which modulates 2, which modulates 1; <code>+</code> means mixed), and the chosen operator’s values, with CAR for a carrier and MOD for a modulator.</p>
+<div class="tblwrap"><table>
+<tr><th>ALG</th><th>Routing</th></tr>
+<tr><td>1</td><td>4→3→2→1</td></tr>
+<tr><td>2</td><td>(4 + 3) → 2 → 1</td></tr>
+<tr><td>3</td><td>4 → 1 and 3 → 2 → 1</td></tr>
+<tr><td>4</td><td>4 → 3 → 1 and 2 → 1</td></tr>
+<tr><td>5</td><td>4 → 3, 2 → 1; out 3 + 1</td></tr>
+<tr><td>6</td><td>4 → 3, 2, 1; out 3 + 2 + 1</td></tr>
+<tr><td>7</td><td>4 → 3; out 3 + 2 + 1</td></tr>
+<tr><td>8</td><td>out 4 + 3 + 2 + 1</td></tr>
+</table></div>
+<p><strong>Context menu.</strong></p>
+<ul>
+<li><strong>Load .syx…</strong> reads a file and finds every SysEx message in it. A 32-voice bank replaces the working bank. A single voice replaces the voice VOICE shows.</li>
+<li><strong>Load raw 4096-byte bank…</strong> for bank files without a SysEx header.</li>
+<li><strong>Save bank as .syx…</strong> and <strong>Save voice as .syx…</strong> write files a hardware synth or another editor can read.</li>
+<li><strong>Revert voice</strong> returns the shown voice to how it was loaded.</li>
+<li><strong>Load factory bank.</strong></li>
+<li><strong>Last load report</strong> lists what the last file held: messages found and recognised, checksum status and values that were out of range and clamped.</li>
+<li><strong>Voices</strong> sets the maximum polyphony (1 to 8). Voices are allocated by channel: channel 1 of V/OCT and GATE is voice 1, and so on.</li>
+</ul>
+<p>The working bank, and the originals for Revert, are saved in the patch, so your edits are kept.</p>
+<p><strong>The factory bank</strong> (our own voices, not copies of Yamaha presets): 1 HOUSE ORG, 2 ORG HOLLOW, 3 ORG CLICK, 4 RUBBER BS, 5 PICK BASS, 6 SUB BASS, 7 SYNC BASS, 8 E.PIANO, 9 GLASS EP, 10 BELL 1, 11 BELL 2, 12 TUBULAR, 13 MARIMBA, 14 METAL PERC, 15 WOOD PERC, 16 KALIMBA, 17 PLUCK, 18 HARP, 19 BRASS STB, 20 CHORD STB, 21 VOX PAD, 22 HOLLOW PAD, 23 WARM PAD, 24 SWEEP PAD, 25 FLUTE, 26 REED, 27 NOISE HIT, 28 ZAP, 29 CLANG, 30 INHARM 1, 31 INHARM 2, 32 INIT.</p>
+
+<h3 id="kit">KIT: drum machine with WAV loading</h3>
+<p>Six dry drum voices: KICK, SNARE, CLAP, C.HAT, O.HAT and PERC. Each voice’s switch chooses its source:</p>
+<ul>
+<li><strong>EARLY:</strong> the sharp sound of early-80s sampled drum machines, synthesised and then crunched to 8-bit at about 28 kHz. CRUNCH sets how much (0 clean, 0.5 that machine, 1 harsher: 6-bit, 18 kHz).</li>
+<li><strong>ANALOG:</strong> 808/909-style analogue synthesis: a deep ringing kick, a noisy snare, six-square-wave metallic hats.</li>
+<li><strong>SAMPLE:</strong> a WAV file you load.</li>
+</ul>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>TUNE</td><td>±24 semitones (TUNE CV: 1 V/oct).</td></tr>
+<tr><td>DECAY</td><td>0.1× to 2× the voice’s natural decay. For samples, below 1× fades the sample out early; at 1× and above it plays in full.</td></tr>
+<tr><td>LEVEL</td><td>Off to +6 dB.</td></tr>
+<tr><td>TRIG</td><td>The voltage at the edge sets velocity: 10 V is full, 5 V half.</td></tr>
+<tr><td>OUT</td><td>The voice alone. It also stays in MIX unless the menu says otherwise.</td></tr>
+<tr><td>CRUNCH</td><td>The EARLY character, for all EARLY voices.</td></tr>
+<tr><td>ACCENT</td><td>While high, every hit is 4 dB louder.</td></tr>
+<tr><td>MIX</td><td>All six voices.</td></tr>
+</table></div>
+<p>C.HAT stops a ringing O.HAT, as on drum machines (menu option).</p>
+<p><strong>Loading WAVs.</strong></p>
+<ul>
+<li>Right-click a voice’s name strip and choose Load sample…, or drag a WAV file from your computer onto the name strip. The voice switches to SAMPLE.</li>
+<li>Load kit from folder… (module menu) picks a folder and gives each voice the first WAV whose name matches: KICK kick, kik, bd, bassdrum; SNARE snare, snr, sd; CLAP clap, clp, cp; C.HAT chh, closed, hihat, hh, ch; O.HAT ohh, open, oh; PERC rim, rs, perc, cow, tom, tamb, shaker. Last load report shows what went where.</li>
+<li>WAVs can be 8, 16, 24 or 32-bit, or 32/64-bit float, at any sample rate, mono or stereo (mixed to mono). Up to 20 s; longer files are cut. They are converted to Rack’s sample rate when loaded, and again if you change it.</li>
+<li>The patch stores each file’s path. Tick Store samples in patch to put the audio itself in the patch, so it works on another computer. If a file is missing when the patch opens, the strip says MISSING: name and the voice plays its EARLY sound until you load the file again.</li>
+</ul>
+<p><strong>Menu options:</strong> Crunch samples (apply CRUNCH to samples too), Individual outs remove from mix, Kick drive (ANALOG), Snare snappy (ANALOG, 0.3/0.6/0.9).</p>
+
+<h3 id="spectra">SPECTRA: long linear spectrum</h3>
+<p>An additive voice of up to 32 sine partials. STRETCH pushes the partials from harmonic (0) to inharmonic and bell-like (+) or compressed (−). A soft window moves slowly up and down the partials, so the sound changes over minutes without a filter. Up to 4 voices.</p>
+<div class="tblwrap"><table>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>PARTIALS</td><td>1 to 32 (PARTIALS CV: 0 to 10 V). Partials above the audio range are muted.</td></tr>
+<tr><td>STRETCH</td><td>Partial n sits at n<sup>(1 + STRETCH/2)</sup> times the fundamental (STRETCH CV: ±5 V).</td></tr>
+<tr><td>TILT</td><td>−12 to +6 dB per octave (TILT CV: 1 V = 3 dB/oct).</td></tr>
+<tr><td>ODD/EVEN</td><td>−1 odd partials only, +1 even only.</td></tr>
+<tr><td>RATE, DEPTH</td><td>The moving window’s speed (0.01 to 2 Hz) and how much it shapes the sound (DEPTH CV: 0 to 10 V).</td></tr>
+<tr><td>DETUNE</td><td>Spreads each partial by up to 20 cents, for slow beating.</td></tr>
+<tr><td>WIDTH</td><td>Odd partials left, even partials right.</td></tr>
+<tr><td>ATTACK, RELEASE</td><td>The envelope, driven by GATE. With GATE unpatched SPECTRA drones.</td></tr>
+<tr><td>LEVEL</td><td>Output level.</td></tr>
+<tr><td>V/OCT, GATE</td><td>Polyphonic, up to 4 voices.</td></tr>
+<tr><td>L, R</td><td>Stereo out.</td></tr>
+</table></div>
+
+<h2 id="recipes">Patch recipes</h2>
+<p>Knob settings are starting points. Cables are written MODULE OUTPUT → MODULE INPUT. Every recipe ends with VCV Mix (or any mixer) and VCV Audio.</p>
+
+<h3>1. Microtime from a table</h3>
+<ol>
+<li>DURA: MODE UNITS, UNIT 40 ms, STEPS 8. Right-click, Fill from table. SPREAD 1, LENGTH 50%.</li>
+<li>DURA TRIG → KIT TRIG 4 (C.HAT, EARLY). DURA GATE → FM4 GATE, and leave FM4 V/OCT unpatched (C4). FM4 VOICE 14 (METAL PERC).</li>
+<li>Listen, then change UNIT to 50 ms: the same pattern at another table. Change SEED for another fill.</li>
+</ol>
+
+<h3>2. Stutters</h3>
+<ol>
+<li>DURA: MODE MS. Steps 1 to 4 at 300, 20, 180, 15 ms with REP 1, 8, 1, 12.</li>
+<li>DURA TRIG → KIT TRIG 2 (SNARE) and TRIG 1 (KICK). The REP 8 and REP 12 steps are the machine-gun stutters. Turn their LEN knobs between 10 and 40 ms while it plays.</li>
+</ol>
+
+<h3>3. One slider</h3>
+<ol>
+<li>DURA: MODE UNITS, UNIT 50 ms, STEPS 6, LEN 3, 3, 3, 4, 2, 1.</li>
+<li>DURA TRIG → KIT TRIG 1. DURA GATE → FM4 GATE (VOICE 4, RUBBER BS).</li>
+<li>Perform only with STRETCH. Then patch a slow LFO (VCV LFO, 0.02 Hz) into STRETCH CV.</li>
+</ol>
+
+<h3>4. Bursts</h3>
+<ol>
+<li>GROUP: COUNT 5, SPACE 80 ms, CURVE −0.6, PERIOD 1.2 s, DRIFT RATE 0.05, DEPTH 0.5.</li>
+<li>GROUP TRIG → KIT TRIG 5 (O.HAT). GROUP TRIG → HOLD TRIG, HOLD GATE → FM4 GATE (VOICE 1, HOUSE ORG), HOLD LENGTH 60%.</li>
+<li>GROUP LAST → KIT TRIG 1 to mark the end of each burst.</li>
+</ol>
+
+<h3>5. Loops a little too short</h3>
+<ol>
+<li>Any clock at 8 Hz (or DURA in MS mode, one step of 125 ms) → LANES CLOCK.</li>
+<li>LANES: row 1 kick on steps 1, 5, 9, 13, LEN 16. Row 3 hats every other step, LEN 13. Row 4 open hat on step 7, LEN 15. Row 2 claps on 5 and 13, LEN 15, SCROLL −1.</li>
+<li>LANES TRIG 1 to 5 → KIT TRIG 1, 3, 4, 5 and 2 as you like.</li>
+<li>Perform INTENSITY from relaxed (40%) to intense (100%).</li>
+</ol>
+
+<h3>6. Nested primes</h3>
+<ol>
+<li>PRIME: A LEN 3, B LEN 5 NEST, C LEN 7, D LEN 11. HITS 2, 2, 3, 4. RATE 110 ms.</li>
+<li>Merge the four PRIME TRIG outputs into one polyphonic cable (VCV Merge) → CYCLE TRIG; or use PRIME ANY → CYCLE TRIG.</li>
+<li>CYCLE lane A MODE PITCH, LEN 5; lane B MODE VOICE, LEN 4, values on voices 16, 13, 10 and 14 (KALIMBA, MARIMBA, BELL 1, METAL PERC).</li>
+<li>CYCLE OUT A → FM4 V/OCT, CYCLE OUT B → FM4 VOICE CV, PRIME ANY → FM4 GATE. A nod to the metallophones on Intra.</li>
+</ol>
+
+<h3>7. Sounds against notes</h3>
+<ol>
+<li>DURA (any pattern) TRIG → CYCLE TRIG. CYCLE lane A MODE PITCH, LEN 5, draw five pitches.</li>
+<li>CYCLE OUT A → FM4 V/OCT, DURA GATE → FM4 GATE.</li>
+<li>FM4 STEP ON, FIRST 8, COUNT 3. Five notes against three sounds: the pairing of note and sound changes every pass and comes back after 15 notes.</li>
+</ol>
+
+<h3>8. Expanding the stab</h3>
+<ol>
+<li>DURA (UNITS, any pattern) TRIG → HOLD TRIG, DURA INTERVAL → HOLD INTERVAL.</li>
+<li>HOLD GATE → CHORD GATE IN. CHORD slot 2 (m9), ROOT from a sequencer or a fixed voltage.</li>
+<li>CHORD V/OCT → FM4 V/OCT, CHORD GATE → FM4 GATE. FM4 VOICE 1 (HOUSE ORG).</li>
+<li>Sweep HOLD LENGTH from 5% to 150%: the house organ stab grows from a click to a held chord, always in proportion to DURA’s durations.</li>
+</ol>
+
+<h3>9. Long linear spectrum</h3>
+<ol>
+<li>SPECTRA with GATE unpatched (drone). V/OCT −2 V (C2). PARTIALS 24, STRETCH 0.15, DEPTH 0.7, RATE 0.05 Hz, WIDTH 0.8, TILT −6.</li>
+<li>Play recipe 1 over it. Raise STRETCH slowly to 0.5 over a few minutes.</li>
+</ol>
+
+<h3>10. Your own sounds</h3>
+<p><strong>A 4-op bank in FM4.</strong> Banks for the DX21, DX27, DX100, TX81Z and similar 4-operator synths are shared widely online as .syx files (32-voice banks are 4104 bytes). Right-click FM4, Load .syx…. The display shows LOADED 32 VOICES and the file name; if it says BAD CHECKSUM the bank still loaded (many files online have bad checksums). Last load report lists the details. A DX7 bank (6-operator) is refused with a message. Pick a voice with VOICE, tweak it with BRIGHT, RATIO and DECAY, or edit an operator, then Save bank as .syx… to keep it.</p>
+<p><strong>A kit folder in KIT.</strong> Put WAVs in a folder with names like kick.wav, snare.wav, clap.wav, hh.wav, oh.wav, rim.wav. Right-click KIT, Load kit from folder…, then check Last load report. Drag a single WAV onto a name strip to replace one voice. Tick Store samples in patch before sending the patch to someone else.</p>
+
+<h3>11. Generate, record, perform</h3>
+<p>Build any of the systems above. Add VCV Recorder on the mixer output and start it. Change one or two parameters by hand for ten minutes (STRETCH, INTENSITY, HOLD LENGTH, FM4 BRIGHT), then stop. Store the settings you liked with a snapshot module such as Stoermelder 8FACE, so you can return to them. Listen back and keep the parts that work: Fell describes generating material this way and choosing from it afterwards.</p>
+
+<h2 id="others">Using other modules with Fallen</h2>
+<ul>
+<li><strong>Mixing:</strong> VCV Mix or a Bogaudio mixer. Fallen has no mixer.</li>
+<li><strong>Reverb:</strong> mostly not needed; Fell’s own work is dry. Valley Plateau if you want space.</li>
+<li><strong>Recording and snapshots:</strong> VCV Recorder; Stoermelder 8FACE or TRANSIT.</li>
+<li><strong>Tempo clock:</strong> any clock module (e.g. Impromptu Clocked) into DURA CLOCK when DURA should follow a BPM.</li>
+<li><strong>Other FM:</strong> Valley Dexter is a fine FM voice but does not load 4-op banks or step through voices per note, which is why FM4 exists.</li>
+</ul>
+
+<h2 id="sysex">The SysEx formats FM4 reads</h2>
+<div class="tblwrap"><table>
+<tr><th>Message</th><th>Header</th><th>Size</th><th>What FM4 does</th></tr>
+<tr><td>32-voice bulk (VMEM)</td><td><code>F0 43 0n 04 20 00</code></td><td>4096 bytes</td><td>Replaces the working bank</td></tr>
+<tr><td>Single voice (VCED)</td><td><code>F0 43 0n 03 00 5D</code></td><td>93 bytes</td><td>Replaces the shown voice</td></tr>
+<tr><td>Additional voice data (ACED, TX81Z)</td><td><code>F0 43 0n 7E 00 21 + LM 8976AE</code></td><td>23 bytes</td><td>Adds waveforms, fixed frequency and fine ratio to the single voice with it</td></tr>
+<tr><td>Performance, system, microtuning</td><td></td><td></td><td>Ignored, listed in the report</td></tr>
+<tr><td>6-operator bank (DX7)</td><td><code>F0 43 0n 09 20 00</code></td><td></td><td>Refused with a message</td></tr>
+</table></div>
+<p>The device channel n is ignored. TX81Z banks keep their extra data in bytes 73 to 83 of each packed voice; when those are all zero the voice is treated as a DX21-style voice (sine waves, ratio mode).</p>
+
+<h2 id="ideas">Where the ideas come from</h2>
+<p>Mark Fell has described his working methods in interviews, papers and talks: sequencers built in Max from lists of millisecond durations and repeat counts; interval tables of whole multiples of 40 or 50 ms; groups of events compressed or expanded; one parameter stretching a whole pattern; patterns layered with loops one step short and scrolling in different directions; a relaxed-to-intense density control; nested prime-number loops; 4-op FM presets from Yamaha synths tweaked a little and stepped through note by note; early-90s house organ stabs whose length changes; and dry drum-machine sounds. Multistability has long linear-spectrum textures under its percussion. The research notes, with sources, are in RESEARCH-AND-PROPOSAL.md in the plugin’s repository.</p>
+<p>Fallen is an independent project, not affiliated with Mark Fell or with Yamaha, Roland or any other maker. Names belong to their owners.</p>
+
+<footer>Converted from Fallen-Manual.pdf (15 pages). The PDF’s module panel screenshots are not reproduced here.</footer>
+</main>
+</body>
+</html>
